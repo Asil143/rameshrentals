@@ -1,0 +1,143 @@
+export type VehicleType = "bike" | "car";
+export type VehicleStatus = "available" | "booked" | "maintenance";
+export type BookingStatus = "pending" | "confirmed" | "completed" | "cancelled";
+export type OwnerType = "platform" | "individual";
+
+// NOTE: these row types must be `type` aliases, not `interface`s — only type
+// aliases get TypeScript's implicit index signature, which Supabase's
+// GenericTable constraint (Row/Insert/Update extends Record<string, unknown>)
+// relies on. Interfaces here silently make every query resolve to `never`.
+export type Town = {
+  id: string;
+  name: string;
+  slug: string;
+  state: string;
+  active: boolean;
+};
+
+export type Owner = {
+  id: string;
+  name: string;
+  phone: string;
+  type: OwnerType;
+  verified: boolean;
+};
+
+export type Vehicle = {
+  id: string;
+  owner_id: string;
+  town_id: string;
+  type: VehicleType;
+  make: string;
+  model: string;
+  year: number;
+  registration_no: string;
+  price_per_day: number;
+  photos: string[];
+  status: VehicleStatus;
+  created_at: string;
+};
+
+export type Booking = {
+  id: string;
+  vehicle_id: string;
+  customer_id: string | null;
+  customer_name: string;
+  customer_phone: string;
+  start_date: string;
+  end_date: string;
+  status: BookingStatus;
+  created_at: string;
+};
+
+export type Profile = {
+  id: string;
+  name: string | null;
+  phone: string | null;
+  is_admin: boolean;
+};
+
+type GenericRelationship = {
+  foreignKeyName: string;
+  columns: string[];
+  isOneToOne?: boolean;
+  referencedRelation: string;
+  referencedColumns: string[];
+};
+
+export type Database = {
+  public: {
+    Tables: {
+      towns: {
+        Row: Town;
+        Insert: Partial<Town> & Pick<Town, "name" | "slug">;
+        Update: Partial<Town>;
+        Relationships: GenericRelationship[];
+      };
+      owners: {
+        Row: Owner;
+        Insert: Partial<Owner> & Pick<Owner, "name" | "phone" | "type">;
+        Update: Partial<Owner>;
+        Relationships: GenericRelationship[];
+      };
+      vehicles: {
+        Row: Vehicle;
+        Insert: Partial<Vehicle> &
+          Pick<
+            Vehicle,
+            | "owner_id"
+            | "town_id"
+            | "type"
+            | "make"
+            | "model"
+            | "year"
+            | "registration_no"
+            | "price_per_day"
+          >;
+        Update: Partial<Vehicle>;
+        Relationships: [
+          {
+            foreignKeyName: "vehicles_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "owners";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "vehicles_town_id_fkey";
+            columns: ["town_id"];
+            isOneToOne: false;
+            referencedRelation: "towns";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      bookings: {
+        Row: Booking;
+        Insert: Partial<Booking> &
+          Pick<
+            Booking,
+            "vehicle_id" | "customer_name" | "customer_phone" | "start_date" | "end_date"
+          >;
+        Update: Partial<Booking>;
+        Relationships: [
+          {
+            foreignKeyName: "bookings_vehicle_id_fkey";
+            columns: ["vehicle_id"];
+            isOneToOne: false;
+            referencedRelation: "vehicles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      profiles: {
+        Row: Profile;
+        Insert: Partial<Profile> & Pick<Profile, "id">;
+        Update: Partial<Profile>;
+        Relationships: GenericRelationship[];
+      };
+    };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+  };
+};
