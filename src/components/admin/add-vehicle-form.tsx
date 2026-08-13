@@ -71,6 +71,19 @@ export function AddVehicleForm({ towns }: { towns: Town[] }) {
         <input name="price_per_day" type="number" min={1} step="1" required className="rounded-lg border border-black/10 px-3 py-2 dark:border-white/10 dark:bg-black" />
       </label>
 
+      <label className="flex flex-col gap-1 text-sm sm:col-span-2 lg:col-span-3">
+        Photo URL (optional)
+        <input
+          name="photo_url"
+          type="text"
+          placeholder="/vehicles/your-photo.jpg or https://…"
+          className="rounded-lg border border-black/10 px-3 py-2 dark:border-white/10 dark:bg-black"
+        />
+        <span className="text-xs font-normal text-black/50 dark:text-white/50">
+          A path under /public/vehicles (deployed with the site) or any public image URL.
+        </span>
+      </label>
+
       <div className="sm:col-span-2 lg:col-span-3">
         <p className="mb-2 text-sm font-medium">Long-term discount rates (optional)</p>
         <div className="grid grid-cols-3 gap-3">
