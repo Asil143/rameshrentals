@@ -67,9 +67,30 @@ export function AddVehicleForm({ towns }: { towns: Town[] }) {
       </label>
 
       <label className="flex flex-col gap-1 text-sm">
-        Price / day (₹)
+        Price / day (₹) — base rate, 1+ days
         <input name="price_per_day" type="number" min={1} step="1" required className="rounded-lg border border-black/10 px-3 py-2 dark:border-white/10 dark:bg-black" />
       </label>
+
+      <div className="sm:col-span-2 lg:col-span-3">
+        <p className="mb-2 text-sm font-medium">Long-term discount rates (optional)</p>
+        <div className="grid grid-cols-3 gap-3">
+          <label className="flex flex-col gap-1 text-sm">
+            5+ days (₹/day)
+            <input name="tier_5_price" type="number" min={0} step="1" className="rounded-lg border border-black/10 px-3 py-2 dark:border-white/10 dark:bg-black" />
+          </label>
+          <label className="flex flex-col gap-1 text-sm">
+            10+ days (₹/day)
+            <input name="tier_10_price" type="number" min={0} step="1" className="rounded-lg border border-black/10 px-3 py-2 dark:border-white/10 dark:bg-black" />
+          </label>
+          <label className="flex flex-col gap-1 text-sm">
+            15+ days (₹/day)
+            <input name="tier_15_price" type="number" min={0} step="1" className="rounded-lg border border-black/10 px-3 py-2 dark:border-white/10 dark:bg-black" />
+          </label>
+        </div>
+        <p className="mt-1 text-xs text-black/50 dark:text-white/50">
+          Leave blank to skip a tier. Each rate should be lower than the one before it.
+        </p>
+      </div>
 
       <div className="flex items-end">
         <button

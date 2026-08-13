@@ -16,7 +16,11 @@ Bike & car rental MVP for Addanki, Ongole, Markapur, Darsi, Martur and beyond. N
 
 1. Open your Supabase project's **SQL Editor**.
 2. Paste and run the contents of [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql). This creates the `towns`, `owners`, `vehicles`, `bookings`, `profiles` tables and their Row Level Security policies.
-3. Paste and run [`supabase/seed.sql`](supabase/seed.sql) to add the five towns (Addanki active, the rest marked "coming soon") and a small demo fleet in Addanki.
+3. Paste and run [`supabase/migrations/0002_pricing_tiers.sql`](supabase/migrations/0002_pricing_tiers.sql). Adds `vehicles.price_tiers` (duration-based discount rates) and `bookings.estimated_total`.
+4. Paste and run [`supabase/seed.sql`](supabase/seed.sql) to add the five towns (Addanki active, the rest marked "coming soon") and a small demo fleet in Addanki.
+5. Optionally run [`supabase/seed_price_tiers.sql`](supabase/seed_price_tiers.sql) to give the demo fleet example long-term discount rates.
+
+If you already ran `0001_init.sql` and `seed.sql` on a live project before pricing tiers existed, you only need to run `0002_pricing_tiers.sql` (and optionally `seed_price_tiers.sql`) to catch up — the other two are safe to skip since they'd just error on already-existing tables/rows.
 
 ## 3. Enable phone (OTP) login
 
@@ -57,6 +61,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - **WhatsApp booking** — every vehicle page and town page also offers a "Book via WhatsApp" button as an equally first-class booking path, since it's often the higher-trust channel in smaller towns.
 - **Multi-town ready** — `towns.active` controls whether a town shows live listings or a "coming soon" page. Flip a town to `active = true` in Supabase once you have real vehicles there — no code change needed.
 - **Owner-ready data model** — `vehicles.owner_id` already points at an `owners` table with a `platform` vs `individual` type. The MVP only uses the seeded platform owner (your own fleet); opening the platform to local vehicle owners later is a UI addition, not a schema change.
+- **Duration-based pricing** — each vehicle has a base `price_per_day` plus optional discount tiers (e.g. 5+/10+/15+ days) set in `/admin` when adding a vehicle. The booking form shows a live estimated total as the customer picks dates, and that estimate is saved on the booking so `/admin` and `/bookings` don't need to recompute it.
 - **PWA** — `public/manifest.json` + `public/sw.js` make the site installable to a phone's home screen with an offline app-shell fallback. Icons in `public/icons/` are placeholders — swap them for real branded artwork before launch.
 
 ## Deploying

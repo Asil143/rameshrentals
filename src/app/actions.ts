@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getEstimatedTotal } from "@/lib/pricing";
+import type { PriceTier } from "@/types/database";
 
 export type CreateBookingResult = { ok: true } | { ok: false; error: string };
 
@@ -28,6 +30,14 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
     data: { user },
   } = await supabase.auth.getUser();
 
+  const { data: vehicle } = await supabase
+    .from("vehicles")
+    .select("price_per_day, price_tiers")
+    .eq("id", vehicleId)
+    .single();
+
+  const estimatedTotal = vehicle ? getEstimatedTotal(vehicle, startDate, endDate) : null;
+
   const { error } = await supabase.from("bookings").insert({
     vehicle_id: vehicleId,
     customer_id: user?.id ?? null,
@@ -35,6 +45,7 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
     customer_phone: customerPhone,
     start_date: startDate,
     end_date: endDate,
+    estimated_total: estimatedTotal,
     status: "pending",
   });
 
@@ -120,6 +131,22 @@ export async function addVehicle(formData: FormData): Promise<ActionResult> {
     return { ok: false, error: "Invalid vehicle type." };
   }
 
+  const priceTiers: PriceTier[] = ([5, 10, 15] as const)
+    .map((minDays) => ({
+      min_days: minDays,
+      price_per_day: Number(formData.get(`tier_${minDays}_price`)),
+    }))
+    .filter((tier) => tier.price_per_day > 0);
+
+  for (let i = 1; i < priceTiers.length; i++) {
+    if (priceTiers[i].price_per_day >= priceTiers[i - 1].price_per_day) {
+      return { ok: false, error: "Longer-duration rates should be lower than shorter ones." };
+    }
+  }
+  if (priceTiers[0]?.price_per_day >= pricePerDay) {
+    return { ok: false, error: "Tier rates should be lower than the base price/day." };
+  }
+
   const { data: platformOwner } = await supabase
     .from("owners")
     .select("id")
@@ -140,6 +167,7 @@ export async function addVehicle(formData: FormData): Promise<ActionResult> {
     year,
     registration_no: registrationNo,
     price_per_day: pricePerDay,
+    price_tiers: priceTiers,
     status: "available",
   });
 

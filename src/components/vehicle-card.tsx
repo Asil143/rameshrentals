@@ -42,6 +42,11 @@ export function VehicleCard({
           <span className="text-lg font-bold">₹{vehicle.price_per_day}</span>
           <span className="text-sm text-black/60 dark:text-white/60">/ day</span>
         </div>
+        {vehicle.price_tiers.length > 0 && (
+          <span className="text-xs font-medium text-emerald-700 dark:text-emerald-400">
+            Cheaper for longer rentals
+          </span>
+        )}
       </div>
     </Link>
   );

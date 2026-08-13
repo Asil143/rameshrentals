@@ -64,6 +64,9 @@ export default async function AdminPage() {
                     {booking.vehicles?.make} {booking.vehicles?.model} (
                     {booking.vehicles?.towns?.name}) · {booking.start_date} →{" "}
                     {booking.end_date}
+                    {booking.estimated_total != null && (
+                      <> · est. ₹{booking.estimated_total.toLocaleString("en-IN")}</>
+                    )}
                   </p>
                   <span className="text-xs font-medium capitalize text-black/50 dark:text-white/50">
                     {booking.status}

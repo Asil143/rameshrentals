@@ -3,6 +3,7 @@ import { BookingForm } from "@/components/booking-form";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { getTownBySlug, getVehicleById } from "@/lib/queries";
 import { whatsappBookingLink } from "@/lib/whatsapp";
+import { getPricingRows } from "@/lib/pricing";
 
 const PLACEHOLDER_IMAGE = { bike: "🏍️", car: "🚗" } as const;
 
@@ -53,9 +54,30 @@ export default async function VehicleDetailPage({
           <span className="text-black/60 dark:text-white/60">/ day</span>
         </div>
 
+        {vehicle.price_tiers.length > 0 && (
+          <div className="rounded-xl border border-black/10 p-4 dark:border-white/10">
+            <h2 className="mb-2 text-sm font-semibold">Longer you rent, less you pay</h2>
+            <table className="w-full text-sm">
+              <tbody>
+                {getPricingRows(vehicle).map((row) => (
+                  <tr key={row.label} className="border-t border-black/5 first:border-t-0 dark:border-white/5">
+                    <td className="py-1.5 text-black/60 dark:text-white/60">{row.label}</td>
+                    <td className="py-1.5 text-right font-medium">₹{row.price_per_day}/day</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
         <div className="rounded-xl border border-black/10 p-5 dark:border-white/10">
           <h2 className="mb-3 font-semibold">Request this booking</h2>
-          <BookingForm vehicleId={vehicle.id} townSlug={townSlug} />
+          <BookingForm
+            vehicleId={vehicle.id}
+            townSlug={townSlug}
+            pricePerDay={vehicle.price_per_day}
+            priceTiers={vehicle.price_tiers}
+          />
         </div>
 
         <div className="flex items-center gap-3">

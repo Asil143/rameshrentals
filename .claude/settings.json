@@ -20,7 +20,18 @@
       "Bash(curl -s -o /dev/null -w \"vehicles: %{http_code}\\\\n\" http://localhost:3000/addanki/vehicles)",
       "Bash(curl -s http://localhost:3000/addanki/vehicles)",
       "Bash(curl -s -o /dev/null -w \"coming-soon: %{http_code}\\\\n\" http://localhost:3000/ongole/vehicles)",
-      "Bash(git check-ignore *)"
+      "Bash(git check-ignore *)",
+      "Bash(gh repo *)",
+      "Bash(vercel link *)",
+      "Bash(vercel env *)",
+      "Bash(vercel --prod --yes)",
+      "Bash(curl -s -o /dev/null -w \"home: %{http_code}\\\\n\" https://rameshrentals.vercel.app/)",
+      "Bash(curl -s -o /dev/null -w \"addanki vehicles: %{http_code}\\\\n\" https://rameshrentals.vercel.app/addanki/vehicles)",
+      "Bash(curl -s https://rameshrentals.vercel.app/addanki/vehicles)",
+      "Bash(curl -s -o /dev/null -w \"ongole coming-soon: %{http_code}\\\\n\" https://rameshrentals.vercel.app/ongole/vehicles)",
+      "Bash(curl -s -o /dev/null -w \"manifest: %{http_code}\\\\n\" https://rameshrentals.vercel.app/manifest.json)",
+      "Bash(vercel domains *)",
+      "WebFetch(domain:go-onriders.com)"
     ]
   }
 }

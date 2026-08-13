@@ -2,19 +2,32 @@
 
 import { useState, useTransition } from "react";
 import { createBooking } from "@/app/actions";
+import { getBookingDays, getEstimatedTotal } from "@/lib/pricing";
+import type { PriceTier } from "@/types/database";
 
 export function BookingForm({
   vehicleId,
   townSlug,
+  pricePerDay,
+  priceTiers,
 }: {
   vehicleId: string;
   townSlug: string;
+  pricePerDay: number;
+  priceTiers: PriceTier[];
 }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   const today = new Date().toISOString().slice(0, 10);
+
+  const days =
+    startDate && endDate ? getBookingDays(startDate, endDate) : 0;
+  const estimatedTotal =
+    days > 0 ? getEstimatedTotal({ price_per_day: pricePerDay, price_tiers: priceTiers }, startDate, endDate) : 0;
 
   function handleSubmit(formData: FormData) {
     setError(null);
@@ -49,6 +62,8 @@ export function BookingForm({
             type="date"
             name="start_date"
             min={today}
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
             required
             className="rounded-lg border border-black/10 px-3 py-2 dark:border-white/10 dark:bg-black"
           />
@@ -58,12 +73,23 @@ export function BookingForm({
           <input
             type="date"
             name="end_date"
-            min={today}
+            min={startDate || today}
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
             required
             className="rounded-lg border border-black/10 px-3 py-2 dark:border-white/10 dark:bg-black"
           />
         </label>
       </div>
+
+      {days > 0 && (
+        <div className="rounded-lg bg-emerald-50 px-3 py-2 text-sm dark:bg-emerald-950/30">
+          <span className="text-black/70 dark:text-white/70">
+            {days} day{days > 1 ? "s" : ""} · ₹{Math.round(estimatedTotal / days)}/day
+          </span>{" "}
+          <span className="font-semibold">≈ ₹{estimatedTotal.toLocaleString("en-IN")} estimated</span>
+        </div>
+      )}
 
       <label className="flex flex-col gap-1 text-sm">
         Your name

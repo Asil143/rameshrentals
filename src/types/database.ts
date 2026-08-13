@@ -23,6 +23,15 @@ export type Owner = {
   verified: boolean;
 };
 
+// A discount tier for longer rentals: price_per_day applies once a booking
+// runs `min_days` or more (e.g. { min_days: 5, price_per_day: 349 } means
+// day 5 onward costs 349/day instead of the base rate). Tiers beyond the
+// base rate only — the base rate itself stays in `Vehicle.price_per_day`.
+export type PriceTier = {
+  min_days: number;
+  price_per_day: number;
+};
+
 export type Vehicle = {
   id: string;
   owner_id: string;
@@ -33,6 +42,7 @@ export type Vehicle = {
   year: number;
   registration_no: string;
   price_per_day: number;
+  price_tiers: PriceTier[];
   photos: string[];
   status: VehicleStatus;
   created_at: string;
@@ -46,6 +56,7 @@ export type Booking = {
   customer_phone: string;
   start_date: string;
   end_date: string;
+  estimated_total: number | null;
   status: BookingStatus;
   created_at: string;
 };

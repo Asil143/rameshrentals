@@ -45,6 +45,9 @@ export default async function BookingsPage() {
                 </p>
                 <p className="text-sm text-black/60 dark:text-white/60">
                   {booking.start_date} → {booking.end_date}
+                  {booking.estimated_total != null && (
+                    <> · est. ₹{booking.estimated_total.toLocaleString("en-IN")}</>
+                  )}
                 </p>
               </div>
               <span
