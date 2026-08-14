@@ -25,14 +25,14 @@ export function BookingActions({
         <button
           disabled={isPending}
           onClick={() => set("confirmed")}
-          className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+          className="rounded-full bg-gradient-to-br from-[var(--color-brand-500)] to-[var(--color-brand-700)] px-3.5 py-1.5 text-xs font-semibold text-white shadow-soft transition hover:brightness-105 disabled:opacity-60"
         >
           Confirm
         </button>
         <button
           disabled={isPending}
           onClick={() => set("cancelled")}
-          className="rounded-lg border border-black/10 px-3 py-1.5 text-xs font-semibold hover:bg-black/5 disabled:opacity-60 dark:border-white/10 dark:hover:bg-white/10"
+          className="rounded-full border border-hairline px-3.5 py-1.5 text-xs font-semibold text-ink-soft transition hover:border-[var(--color-border-strong)] disabled:opacity-60"
         >
           Cancel
         </button>
@@ -45,7 +45,7 @@ export function BookingActions({
       <button
         disabled={isPending}
         onClick={() => set("completed")}
-        className="rounded-lg border border-black/10 px-3 py-1.5 text-xs font-semibold hover:bg-black/5 disabled:opacity-60 dark:border-white/10 dark:hover:bg-white/10"
+        className="rounded-full border border-hairline px-3.5 py-1.5 text-xs font-semibold text-ink-soft transition hover:border-[var(--color-border-strong)] disabled:opacity-60"
       >
         Mark completed
       </button>

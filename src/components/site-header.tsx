@@ -19,25 +19,34 @@ export async function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-10 border-b border-black/10 bg-white/90 backdrop-blur dark:border-white/10 dark:bg-black/90">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-        <Link href="/" className="text-lg font-bold text-emerald-700 dark:text-emerald-400">
-          {SITE_NAME}
+    <header className="sticky top-0 z-20 border-b border-hairline bg-[var(--color-surface)]/80 backdrop-blur-lg backdrop-saturate-150">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6">
+        <Link href="/" className="group flex items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--color-brand-500)] to-[var(--color-brand-700)] text-base font-bold text-white shadow-soft transition-transform group-hover:scale-105">
+            R
+          </span>
+          <span className="font-display text-lg font-bold tracking-tight">{SITE_NAME}</span>
         </Link>
-        <nav className="flex items-center gap-4 text-sm">
+        <nav className="flex items-center gap-3 text-sm sm:gap-5">
           {isAdmin && (
-            <Link href="/admin" className="hover:underline">
+            <Link
+              href="/admin"
+              className="font-medium text-ink-soft transition-colors hover:text-[var(--color-brand-700)] dark:hover:text-[var(--color-brand-400)]"
+            >
               Admin
             </Link>
           )}
           {user ? (
-            <Link href="/bookings" className="hover:underline">
+            <Link
+              href="/bookings"
+              className="font-medium text-ink-soft transition-colors hover:text-[var(--color-brand-700)] dark:hover:text-[var(--color-brand-400)]"
+            >
               My Bookings
             </Link>
           ) : (
             <Link
               href="/login"
-              className="rounded-lg bg-emerald-600 px-3 py-1.5 font-medium text-white hover:bg-emerald-700"
+              className="rounded-full bg-gradient-to-br from-[var(--color-brand-500)] to-[var(--color-brand-700)] px-4 py-2 text-sm font-semibold text-white shadow-soft transition-all hover:shadow-brand hover:brightness-105 active:scale-[0.97]"
             >
               Login
             </Link>

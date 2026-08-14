@@ -25,11 +25,11 @@ export default async function BookingsPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="mb-6 text-2xl font-bold">My Bookings</h1>
+    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+      <h1 className="font-display mb-8 text-2xl font-bold sm:text-3xl">My Bookings</h1>
 
       {!bookings || bookings.length === 0 ? (
-        <p className="text-black/60 dark:text-white/60">
+        <p className="rounded-2xl border border-hairline bg-surface-raised p-8 text-center text-ink-soft shadow-soft">
           No bookings yet. Browse vehicles and request a booking to see it here.
         </p>
       ) : (
@@ -37,13 +37,13 @@ export default async function BookingsPage() {
           {bookings.map((booking) => (
             <li
               key={booking.id}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-black/10 p-4 dark:border-white/10"
+              className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft"
             >
               <div>
-                <p className="font-semibold">
+                <p className="font-display font-semibold">
                   {booking.vehicles?.make} {booking.vehicles?.model}
                 </p>
-                <p className="text-sm text-black/60 dark:text-white/60">
+                <p className="text-sm text-ink-soft">
                   {booking.start_date} → {booking.end_date}
                   {booking.estimated_total != null && (
                     <> · est. ₹{booking.estimated_total.toLocaleString("en-IN")}</>
@@ -51,7 +51,7 @@ export default async function BookingsPage() {
                 </p>
               </div>
               <span
-                className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${STATUS_STYLES[booking.status]}`}
+                className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${STATUS_STYLES[booking.status]}`}
               >
                 {booking.status}
               </span>

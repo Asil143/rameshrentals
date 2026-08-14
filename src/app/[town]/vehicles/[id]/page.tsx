@@ -24,45 +24,45 @@ export default async function VehicleDetailPage({
   }
 
   return (
-    <div className="mx-auto grid max-w-5xl gap-8 px-4 py-8 md:grid-cols-2">
-      <div className="flex aspect-[4/3] items-center justify-center rounded-xl bg-emerald-50 text-8xl dark:bg-emerald-950/40">
+    <div className="mx-auto grid max-w-5xl gap-10 px-4 py-10 sm:px-6 md:grid-cols-2">
+      <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--color-brand-50)] to-[var(--color-brand-100)] text-8xl shadow-soft dark:from-[var(--color-brand-900)] dark:to-[var(--color-brand-800)]">
         {vehicle.photos[0] ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={vehicle.photos[0]}
             alt={`${vehicle.make} ${vehicle.model}`}
-            className="h-full w-full rounded-xl object-cover"
+            className="h-full w-full object-cover"
           />
         ) : (
           <span aria-hidden>{PLACEHOLDER_IMAGE[vehicle.type]}</span>
         )}
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-5">
         <div>
-          <span className="text-xs font-medium uppercase tracking-wide text-emerald-700 dark:text-emerald-400">
+          <span className="mb-1 inline-block text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-600)] dark:text-[var(--color-brand-400)]">
             {vehicle.type} · {town.name}
           </span>
-          <h1 className="text-2xl font-bold">
+          <h1 className="font-display text-3xl font-bold">
             {vehicle.make} {vehicle.model}
           </h1>
-          <p className="text-black/60 dark:text-white/60">{vehicle.year}</p>
+          <p className="text-ink-faint">{vehicle.year}</p>
         </div>
 
-        <div className="flex items-baseline gap-1">
-          <span className="text-3xl font-extrabold">₹{vehicle.price_per_day}</span>
-          <span className="text-black/60 dark:text-white/60">/ day</span>
+        <div className="flex items-baseline gap-1.5">
+          <span className="font-display text-3xl font-extrabold">₹{vehicle.price_per_day}</span>
+          <span className="text-ink-faint">/ day</span>
         </div>
 
         {vehicle.price_tiers.length > 0 && (
-          <div className="rounded-xl border border-black/10 p-4 dark:border-white/10">
-            <h2 className="mb-2 text-sm font-semibold">Longer you rent, less you pay</h2>
+          <div className="rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft">
+            <h2 className="mb-3 text-sm font-display font-semibold">Longer you rent, less you pay</h2>
             <table className="w-full text-sm">
               <tbody>
                 {getPricingRows(vehicle).map((row) => (
-                  <tr key={row.label} className="border-t border-black/5 first:border-t-0 dark:border-white/5">
-                    <td className="py-1.5 text-black/60 dark:text-white/60">{row.label}</td>
-                    <td className="py-1.5 text-right font-medium">₹{row.price_per_day}/day</td>
+                  <tr key={row.label} className="border-t border-hairline first:border-t-0">
+                    <td className="py-2 text-ink-soft">{row.label}</td>
+                    <td className="py-2 text-right font-semibold">₹{row.price_per_day}/day</td>
                   </tr>
                 ))}
               </tbody>
@@ -70,8 +70,8 @@ export default async function VehicleDetailPage({
           </div>
         )}
 
-        <div className="rounded-xl border border-black/10 p-5 dark:border-white/10">
-          <h2 className="mb-3 font-semibold">Request this booking</h2>
+        <div className="rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft sm:p-6">
+          <h2 className="mb-4 font-display font-semibold">Request this booking</h2>
           <BookingForm
             vehicleId={vehicle.id}
             townSlug={townSlug}
@@ -81,7 +81,7 @@ export default async function VehicleDetailPage({
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-sm text-black/50 dark:text-white/50">or</span>
+          <span className="text-sm text-ink-faint">or</span>
           <WhatsAppButton href={whatsappBookingLink(vehicle, town.name)} />
         </div>
       </div>

@@ -16,34 +16,34 @@ export function VehicleCard({
   return (
     <Link
       href={`/${townSlug}/vehicles/${vehicle.id}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-black/10 bg-white transition hover:shadow-md dark:border-white/10 dark:bg-white/5"
+      className="card-hover group flex flex-col overflow-hidden rounded-2xl border border-hairline bg-surface-raised shadow-soft"
     >
-      <div className="flex aspect-[4/3] items-center justify-center bg-emerald-50 text-6xl dark:bg-emerald-950/40">
+      <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-gradient-to-br from-[var(--color-brand-50)] to-[var(--color-brand-100)] text-6xl dark:from-[var(--color-brand-900)] dark:to-[var(--color-brand-800)]">
         {vehicle.photos[0] ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={vehicle.photos[0]}
             alt={`${vehicle.make} ${vehicle.model}`}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
           <span aria-hidden>{PLACEHOLDER_IMAGE[vehicle.type]}</span>
         )}
-      </div>
-      <div className="flex flex-1 flex-col gap-1 p-4">
-        <span className="text-xs font-medium uppercase tracking-wide text-emerald-700 dark:text-emerald-400">
+        <span className="absolute left-2.5 top-2.5 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur-sm">
           {vehicle.type}
         </span>
-        <h3 className="font-semibold">
+      </div>
+      <div className="flex flex-1 flex-col gap-1 p-4">
+        <h3 className="font-display font-semibold leading-snug">
           {vehicle.make} {vehicle.model}
         </h3>
-        <p className="text-sm text-black/60 dark:text-white/60">{vehicle.year}</p>
+        <p className="text-sm text-ink-faint">{vehicle.year}</p>
         <div className="mt-2 flex items-baseline gap-1">
-          <span className="text-lg font-bold">₹{vehicle.price_per_day}</span>
-          <span className="text-sm text-black/60 dark:text-white/60">/ day</span>
+          <span className="font-display text-lg font-bold">₹{vehicle.price_per_day}</span>
+          <span className="text-sm text-ink-faint">/ day</span>
         </div>
         {vehicle.price_tiers.length > 0 && (
-          <span className="text-xs font-medium text-emerald-700 dark:text-emerald-400">
+          <span className="mt-1 inline-flex w-fit items-center gap-1 rounded-full bg-[var(--color-accent-400)]/15 px-2 py-0.5 text-[11px] font-semibold text-[var(--color-accent-600)]">
             Cheaper for longer rentals
           </span>
         )}

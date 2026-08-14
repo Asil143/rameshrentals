@@ -10,7 +10,7 @@ export function TownSelector({ currentSlug }: { currentSlug: string }) {
     <select
       value={currentSlug}
       onChange={(e) => router.push(`/${e.target.value}/vehicles`)}
-      className="rounded-lg border border-black/10 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-black"
+      className="rounded-full border border-hairline bg-surface-raised px-4 py-2 text-sm font-medium shadow-soft transition-colors hover:border-[var(--color-brand-500)]"
       aria-label="Select town"
     >
       {TOWNS.map((town) => (

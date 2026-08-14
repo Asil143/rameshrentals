@@ -5,6 +5,9 @@ import { createBooking } from "@/app/actions";
 import { getBookingDays, getEstimatedTotal } from "@/lib/pricing";
 import type { PriceTier } from "@/types/database";
 
+const inputClass =
+  "rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-brand-500)]/20";
+
 export function BookingForm({
   vehicleId,
   townSlug,
@@ -43,20 +46,21 @@ export function BookingForm({
 
   if (success) {
     return (
-      <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300">
-        Booking request sent! We&apos;ll call you shortly to confirm. You can
-        pay the deposit and rent at pickup.
+      <div className="rounded-xl border border-[var(--color-brand-500)]/25 bg-[var(--color-brand-500)]/10 p-4 text-sm text-[var(--color-brand-800)] dark:text-[var(--color-brand-100)]">
+        <p className="mb-0.5 font-display font-semibold">Booking request sent!</p>
+        We&apos;ll call you shortly to confirm. You can pay the deposit and rent
+        at pickup.
       </div>
     );
   }
 
   return (
-    <form action={handleSubmit} className="flex flex-col gap-3">
+    <form action={handleSubmit} className="flex flex-col gap-4">
       <input type="hidden" name="vehicle_id" value={vehicleId} />
       <input type="hidden" name="town_slug" value={townSlug} />
 
       <div className="grid grid-cols-2 gap-3">
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="flex flex-col gap-1.5 text-sm font-medium">
           Start date
           <input
             type="date"
@@ -65,10 +69,10 @@ export function BookingForm({
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             required
-            className="rounded-lg border border-black/10 px-3 py-2 dark:border-white/10 dark:bg-black"
+            className={inputClass}
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="flex flex-col gap-1.5 text-sm font-medium">
           End date
           <input
             type="date"
@@ -77,31 +81,28 @@ export function BookingForm({
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
             required
-            className="rounded-lg border border-black/10 px-3 py-2 dark:border-white/10 dark:bg-black"
+            className={inputClass}
           />
         </label>
       </div>
 
       {days > 0 && (
-        <div className="rounded-lg bg-emerald-50 px-3 py-2 text-sm dark:bg-emerald-950/30">
-          <span className="text-black/70 dark:text-white/70">
+        <div className="rounded-xl bg-[var(--color-accent-400)]/12 px-4 py-3 text-sm">
+          <span className="text-ink-soft">
             {days} day{days > 1 ? "s" : ""} · ₹{Math.round(estimatedTotal / days)}/day
           </span>{" "}
-          <span className="font-semibold">≈ ₹{estimatedTotal.toLocaleString("en-IN")} estimated</span>
+          <span className="font-display font-semibold text-[var(--color-accent-600)]">
+            ≈ ₹{estimatedTotal.toLocaleString("en-IN")} estimated
+          </span>
         </div>
       )}
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="flex flex-col gap-1.5 text-sm font-medium">
         Your name
-        <input
-          type="text"
-          name="customer_name"
-          required
-          className="rounded-lg border border-black/10 px-3 py-2 dark:border-white/10 dark:bg-black"
-        />
+        <input type="text" name="customer_name" required className={inputClass} />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="flex flex-col gap-1.5 text-sm font-medium">
         Phone number
         <input
           type="tel"
@@ -110,7 +111,7 @@ export function BookingForm({
           maxLength={10}
           placeholder="10-digit mobile number"
           required
-          className="rounded-lg border border-black/10 px-3 py-2 dark:border-white/10 dark:bg-black"
+          className={inputClass}
         />
       </label>
 
@@ -119,11 +120,11 @@ export function BookingForm({
       <button
         type="submit"
         disabled={isPending}
-        className="mt-2 rounded-lg bg-emerald-600 px-4 py-2.5 font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+        className="mt-1 rounded-full bg-gradient-to-br from-[var(--color-brand-500)] to-[var(--color-brand-700)] px-5 py-3 font-display font-semibold text-white shadow-soft transition-all hover:shadow-brand disabled:opacity-60 active:scale-[0.98]"
       >
         {isPending ? "Sending request…" : "Request Booking"}
       </button>
-      <p className="text-xs text-black/50 dark:text-white/50">
+      <p className="text-xs text-ink-faint">
         No payment now — pay the deposit and rent in cash or UPI at pickup.
       </p>
     </form>

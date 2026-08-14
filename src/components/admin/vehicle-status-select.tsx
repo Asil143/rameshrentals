@@ -23,7 +23,7 @@ export function VehicleStatusSelect({
           void updateVehicleStatus(vehicleId, next);
         });
       }}
-      className="rounded-lg border border-black/10 px-2 py-1 text-xs dark:border-white/10 dark:bg-black"
+      className="rounded-full border border-hairline bg-[var(--color-surface)] px-3 py-1.5 text-xs font-medium outline-none transition-colors focus:border-[var(--color-brand-500)]"
     >
       <option value="available">Available</option>
       <option value="booked">Booked</option>

@@ -37,7 +37,8 @@
       "Bash(vercel ls *)",
       "Bash(ls -lat ~/Downloads/ 2>&1 | head -20)",
       "Read(//Users/asil/Downloads/**)",
-      "Bash(mkdir -p /Users/asil/projects/rameshrentals/public/vehicles *)"
+      "Bash(mkdir -p /Users/asil/projects/rameshrentals/public/vehicles *)",
+      "Bash(curl -s -o /dev/null -w \"image asset: %{http_code}\\\\n\" https://rameshrentals.vercel.app/vehicles/hero-hf-deluxe.avif)"
     ],
     "additionalDirectories": [
       "/Users/asil/Downloads"

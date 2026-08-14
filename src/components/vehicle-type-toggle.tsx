@@ -14,7 +14,7 @@ export function VehicleTypeToggle({
   ];
 
   return (
-    <div className="inline-flex rounded-lg border border-black/10 p-1 dark:border-white/10">
+    <div className="inline-flex rounded-full border border-hairline bg-surface-raised p-1 shadow-soft">
       {options.map((option) => {
         const href =
           option.value === "all"
@@ -25,10 +25,10 @@ export function VehicleTypeToggle({
           <Link
             key={option.value}
             href={href}
-            className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
+            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
               isActive
-                ? "bg-emerald-600 text-white"
-                : "text-black/70 hover:bg-black/5 dark:text-white/70 dark:hover:bg-white/10"
+                ? "bg-gradient-to-br from-[var(--color-brand-500)] to-[var(--color-brand-700)] text-white shadow-soft"
+                : "text-ink-soft hover:text-[var(--color-brand-700)] dark:hover:text-[var(--color-brand-400)]"
             }`}
           >
             {option.label}
