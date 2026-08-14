@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BookingForm } from "@/components/booking-form";
 import { VehicleGallery } from "@/components/vehicle-gallery";
@@ -5,6 +6,8 @@ import { WhatsAppButton } from "@/components/whatsapp-button";
 import { getTownBySlug, getVehicleById } from "@/lib/queries";
 import { whatsappBookingLink } from "@/lib/whatsapp";
 import { getPricingRows } from "@/lib/pricing";
+import { getLocale } from "@/lib/i18n/get-locale";
+import { getDictionary } from "@/lib/i18n/dictionary";
 
 const PLACEHOLDER_IMAGE = { bike: "🏍️", car: "🚗" } as const;
 
@@ -23,6 +26,9 @@ export default async function VehicleDetailPage({
   if (!town || !vehicle || vehicle.town_id !== town.id) {
     notFound();
   }
+
+  const locale = await getLocale();
+  const t = getDictionary(locale).vehicleDetail;
 
   return (
     <div className="mx-auto grid max-w-5xl gap-10 px-4 py-10 sm:px-6 md:grid-cols-2">
@@ -47,15 +53,15 @@ export default async function VehicleDetailPage({
 
         <div className="flex items-baseline gap-1.5">
           <span className="font-display text-3xl font-extrabold">₹{vehicle.price_per_day}</span>
-          <span className="text-ink-faint">/ day</span>
+          <span className="text-ink-faint">{t.perDay}</span>
         </div>
 
         {vehicle.price_tiers.length > 0 && (
           <div className="rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft">
-            <h2 className="mb-3 text-sm font-display font-semibold">Longer you rent, less you pay</h2>
+            <h2 className="mb-3 text-sm font-display font-semibold">{t.longerYouRent}</h2>
             <table className="w-full text-sm">
               <tbody>
-                {getPricingRows(vehicle).map((row) => (
+                {getPricingRows(vehicle, t.daysWord).map((row) => (
                   <tr key={row.label} className="border-t border-hairline first:border-t-0">
                     <td className="py-2 text-ink-soft">{row.label}</td>
                     <td className="py-2 text-right font-semibold">₹{row.price_per_day}/day</td>
@@ -67,17 +73,24 @@ export default async function VehicleDetailPage({
         )}
 
         <div className="rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft sm:p-6">
-          <h2 className="mb-4 font-display font-semibold">Request this booking</h2>
+          <h2 className="mb-4 font-display font-semibold">{t.requestThisBooking}</h2>
           <BookingForm
             vehicleId={vehicle.id}
             townSlug={townSlug}
             pricePerDay={vehicle.price_per_day}
             priceTiers={vehicle.price_tiers}
+            locale={locale}
           />
+          <Link
+            href="/about#policy"
+            className="mt-3 block text-center text-xs text-ink-faint hover:text-[var(--color-brand-700)] hover:underline dark:hover:text-[var(--color-brand-400)]"
+          >
+            {t.policyLink}
+          </Link>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-sm text-ink-faint">or</span>
+          <span className="text-sm text-ink-faint">{t.or}</span>
           <WhatsAppButton href={whatsappBookingLink(vehicle, town.name)} />
         </div>
       </div>

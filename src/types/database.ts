@@ -149,6 +149,11 @@ export type Database = {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      vehicle_has_overlap: {
+        Args: { p_vehicle_id: string; p_start: string; p_end: string };
+        Returns: boolean;
+      };
+    };
   };
 };

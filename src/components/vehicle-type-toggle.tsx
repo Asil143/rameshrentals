@@ -1,16 +1,21 @@
 import Link from "next/link";
+import { getDictionary, type Locale } from "@/lib/i18n/dictionary";
 
 export function VehicleTypeToggle({
   townSlug,
   current,
+  locale = "en",
 }: {
   townSlug: string;
   current: "all" | "bike" | "car";
+  locale?: Locale;
 }) {
+  const t = getDictionary(locale).listing;
+
   const options: { label: string; value: "all" | "bike" | "car" }[] = [
-    { label: "All", value: "all" },
-    { label: "Bikes", value: "bike" },
-    { label: "Cars", value: "car" },
+    { label: t.typeAll, value: "all" },
+    { label: t.typeBikes, value: "bike" },
+    { label: t.typeCars, value: "car" },
   ];
 
   return (

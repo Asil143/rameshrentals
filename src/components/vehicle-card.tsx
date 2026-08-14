@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Vehicle } from "@/types/database";
+import { getDictionary, type Locale } from "@/lib/i18n/dictionary";
 
 const PLACEHOLDER_IMAGE: Record<Vehicle["type"], string> = {
   bike: "🏍️",
@@ -9,10 +10,14 @@ const PLACEHOLDER_IMAGE: Record<Vehicle["type"], string> = {
 export function VehicleCard({
   vehicle,
   townSlug,
+  locale = "en",
 }: {
   vehicle: Vehicle;
   townSlug: string;
+  locale?: Locale;
 }) {
+  const t = getDictionary(locale).vehicleCard;
+
   return (
     <Link
       href={`/${townSlug}/vehicles/${vehicle.id}`}
@@ -40,11 +45,11 @@ export function VehicleCard({
         <p className="text-sm text-ink-faint">{vehicle.year}</p>
         <div className="mt-2 flex items-baseline gap-1">
           <span className="font-display text-lg font-bold">₹{vehicle.price_per_day}</span>
-          <span className="text-sm text-ink-faint">/ day</span>
+          <span className="text-sm text-ink-faint">{t.perDay}</span>
         </div>
         {vehicle.price_tiers.length > 0 && (
           <span className="mt-1 inline-flex w-fit items-center gap-1 rounded-full bg-[var(--color-accent-400)]/15 px-2 py-0.5 text-[11px] font-semibold text-[var(--color-accent-600)]">
-            Cheaper for longer rentals
+            {t.cheaperLongTerm}
           </span>
         )}
       </div>

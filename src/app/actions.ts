@@ -1,9 +1,19 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { getEstimatedTotal } from "@/lib/pricing";
+import { LOCALE_COOKIE, type Locale } from "@/lib/i18n/dictionary";
 import type { PriceTier } from "@/types/database";
+
+export async function setLanguage(locale: Locale) {
+  const cookieStore = await cookies();
+  cookieStore.set(LOCALE_COOKIE, locale, {
+    maxAge: 60 * 60 * 24 * 365,
+    path: "/",
+  });
+}
 
 export type CreateBookingResult = { ok: true } | { ok: false; error: string };
 
@@ -29,6 +39,19 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const { data: hasOverlap } = await supabase.rpc("vehicle_has_overlap", {
+    p_vehicle_id: vehicleId,
+    p_start: startDate,
+    p_end: endDate,
+  });
+
+  if (hasOverlap) {
+    return {
+      ok: false,
+      error: "This vehicle is already booked for those dates. Try different dates or another vehicle.",
+    };
+  }
 
   const { data: vehicle } = await supabase
     .from("vehicles")

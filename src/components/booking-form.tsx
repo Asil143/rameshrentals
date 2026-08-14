@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { createBooking } from "@/app/actions";
 import { getBookingDays, getEstimatedTotal } from "@/lib/pricing";
+import { getDictionary, type Locale } from "@/lib/i18n/dictionary";
 import type { PriceTier } from "@/types/database";
 
 const inputClass =
@@ -13,12 +14,15 @@ export function BookingForm({
   townSlug,
   pricePerDay,
   priceTiers,
+  locale = "en",
 }: {
   vehicleId: string;
   townSlug: string;
   pricePerDay: number;
   priceTiers: PriceTier[];
+  locale?: Locale;
 }) {
+  const t = getDictionary(locale).bookingForm;
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -47,9 +51,8 @@ export function BookingForm({
   if (success) {
     return (
       <div className="rounded-xl border border-[var(--color-brand-500)]/25 bg-[var(--color-brand-500)]/10 p-4 text-sm text-[var(--color-brand-800)] dark:text-[var(--color-brand-100)]">
-        <p className="mb-0.5 font-display font-semibold">Booking request sent!</p>
-        We&apos;ll call you shortly to confirm. You can pay the deposit and rent
-        at pickup.
+        <p className="mb-0.5 font-display font-semibold">{t.successTitle}</p>
+        {t.successBody}
       </div>
     );
   }
@@ -61,7 +64,7 @@ export function BookingForm({
 
       <div className="grid grid-cols-2 gap-3">
         <label className="flex flex-col gap-1.5 text-sm font-medium">
-          Start date
+          {t.startDate}
           <input
             type="date"
             name="start_date"
@@ -73,7 +76,7 @@ export function BookingForm({
           />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium">
-          End date
+          {t.endDate}
           <input
             type="date"
             name="end_date"
@@ -89,27 +92,27 @@ export function BookingForm({
       {days > 0 && (
         <div className="rounded-xl bg-[var(--color-accent-400)]/12 px-4 py-3 text-sm">
           <span className="text-ink-soft">
-            {days} day{days > 1 ? "s" : ""} · ₹{Math.round(estimatedTotal / days)}/day
+            {t.estimateDays(days, Math.round(estimatedTotal / days))}
           </span>{" "}
           <span className="font-display font-semibold text-[var(--color-accent-600)]">
-            ≈ ₹{estimatedTotal.toLocaleString("en-IN")} estimated
+            {t.estimateTotal(estimatedTotal.toLocaleString("en-IN"))}
           </span>
         </div>
       )}
 
       <label className="flex flex-col gap-1.5 text-sm font-medium">
-        Your name
+        {t.yourName}
         <input type="text" name="customer_name" required className={inputClass} />
       </label>
 
       <label className="flex flex-col gap-1.5 text-sm font-medium">
-        Phone number
+        {t.phoneNumber}
         <input
           type="tel"
           name="customer_phone"
           pattern="\d{10}"
           maxLength={10}
-          placeholder="10-digit mobile number"
+          placeholder={t.phonePlaceholder}
           required
           className={inputClass}
         />
@@ -122,11 +125,9 @@ export function BookingForm({
         disabled={isPending}
         className="mt-1 rounded-full bg-gradient-to-br from-[var(--color-brand-500)] to-[var(--color-brand-700)] px-5 py-3 font-display font-semibold text-white shadow-soft transition-all hover:shadow-brand disabled:opacity-60 active:scale-[0.98]"
       >
-        {isPending ? "Sending request…" : "Request Booking"}
+        {isPending ? t.submitting : t.submit}
       </button>
-      <p className="text-xs text-ink-faint">
-        No payment now — pay the deposit and rent in cash or UPI at pickup.
-      </p>
+      <p className="text-xs text-ink-faint">{t.payAtPickupNote}</p>
     </form>
   );
 }

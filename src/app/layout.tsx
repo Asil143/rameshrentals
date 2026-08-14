@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Sora } from "next/font/google";
+import { Geist, Geist_Mono, Sora, Noto_Sans_Telugu } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -20,6 +20,16 @@ const sora = Sora({
   variable: "--font-display",
   subsets: ["latin"],
   weight: ["600", "700", "800"],
+});
+
+// Loaded globally (not just for Telugu locale) so Telugu script renders
+// consistently even on budget Android phones with poor system font
+// coverage — falls back after Geist/Sora for Latin text, kicks in for
+// Telugu glyphs neither of those fonts include.
+const notoSansTelugu = Noto_Sans_Telugu({
+  variable: "--font-telugu",
+  subsets: ["telugu"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -44,7 +54,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${sora.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${sora.variable} ${notoSansTelugu.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <SiteHeader />

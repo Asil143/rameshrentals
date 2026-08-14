@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { SITE_NAME } from "@/lib/constants";
+import { getLocale } from "@/lib/i18n/get-locale";
+import { getDictionary } from "@/lib/i18n/dictionary";
+import { LanguageToggle } from "@/components/language-toggle";
 
 export async function SiteHeader() {
   const supabase = await createClient();
@@ -18,6 +21,9 @@ export async function SiteHeader() {
     isAdmin = profile?.is_admin ?? false;
   }
 
+  const locale = await getLocale();
+  const t = getDictionary(locale).header;
+
   return (
     <header className="sticky top-0 z-20 border-b border-hairline bg-[var(--color-surface)]/80 backdrop-blur-lg backdrop-saturate-150">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6">
@@ -28,12 +34,13 @@ export async function SiteHeader() {
           <span className="font-display text-lg font-bold tracking-tight">{SITE_NAME}</span>
         </Link>
         <nav className="flex items-center gap-3 text-sm sm:gap-5">
+          <LanguageToggle locale={locale} />
           {isAdmin && (
             <Link
               href="/admin"
               className="font-medium text-ink-soft transition-colors hover:text-[var(--color-brand-700)] dark:hover:text-[var(--color-brand-400)]"
             >
-              Admin
+              {t.admin}
             </Link>
           )}
           {user ? (
@@ -41,14 +48,14 @@ export async function SiteHeader() {
               href="/bookings"
               className="font-medium text-ink-soft transition-colors hover:text-[var(--color-brand-700)] dark:hover:text-[var(--color-brand-400)]"
             >
-              My Bookings
+              {t.myBookings}
             </Link>
           ) : (
             <Link
               href="/login"
               className="rounded-full bg-gradient-to-br from-[var(--color-brand-500)] to-[var(--color-brand-700)] px-4 py-2 text-sm font-semibold text-white shadow-soft transition-all hover:shadow-brand hover:brightness-105 active:scale-[0.97]"
             >
-              Login
+              {t.login}
             </Link>
           )}
         </nav>
