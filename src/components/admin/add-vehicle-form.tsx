@@ -71,7 +71,7 @@ export function AddVehicleForm({ towns }: { towns: Town[] }) {
         <input name="price_per_day" type="number" min={1} step="1" required className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-brand-500)]/20" />
       </label>
 
-      <label className="flex flex-col gap-1.5 text-sm font-medium sm:col-span-2 lg:col-span-3">
+      <label className="flex flex-col gap-1.5 text-sm font-medium">
         Photo URL (optional)
         <input
           name="photo_url"
@@ -79,10 +79,21 @@ export function AddVehicleForm({ towns }: { towns: Town[] }) {
           placeholder="/vehicles/your-photo.jpg or https://…"
           className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-brand-500)]/20"
         />
-        <span className="text-xs font-normal text-ink-faint">
-          A path under /public/vehicles (deployed with the site) or any public image URL.
-        </span>
       </label>
+
+      <label className="flex flex-col gap-1.5 text-sm font-medium">
+        Second photo URL (optional)
+        <input
+          name="photo_url_2"
+          type="text"
+          placeholder="/vehicles/your-photo-2.jpg or https://…"
+          className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-brand-500)]/20"
+        />
+      </label>
+
+      <p className="text-xs text-ink-faint sm:col-span-2 lg:col-span-3">
+        Photos: a path under /public/vehicles (deployed with the site) or any public image URL. Add a second for a mini gallery on the vehicle page.
+      </p>
 
       <div className="sm:col-span-2 lg:col-span-3">
         <p className="mb-2 text-sm font-medium">Long-term discount rates (optional)</p>

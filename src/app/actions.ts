@@ -124,6 +124,7 @@ export async function addVehicle(formData: FormData): Promise<ActionResult> {
   const registrationNo = (formData.get("registration_no") as string)?.trim();
   const pricePerDay = Number(formData.get("price_per_day"));
   const photoUrl = (formData.get("photo_url") as string)?.trim();
+  const photoUrl2 = (formData.get("photo_url_2") as string)?.trim();
 
   if (!townId || !make || !model || !year || !registrationNo || !pricePerDay) {
     return { ok: false, error: "Please fill in all fields." };
@@ -169,7 +170,7 @@ export async function addVehicle(formData: FormData): Promise<ActionResult> {
     registration_no: registrationNo,
     price_per_day: pricePerDay,
     price_tiers: priceTiers,
-    photos: photoUrl ? [photoUrl] : [],
+    photos: [photoUrl, photoUrl2].filter((url): url is string => Boolean(url)),
     status: "available",
   });
 

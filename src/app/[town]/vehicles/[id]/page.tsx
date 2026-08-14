@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { BookingForm } from "@/components/booking-form";
+import { VehicleGallery } from "@/components/vehicle-gallery";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { getTownBySlug, getVehicleById } from "@/lib/queries";
 import { whatsappBookingLink } from "@/lib/whatsapp";
@@ -25,18 +26,13 @@ export default async function VehicleDetailPage({
 
   return (
     <div className="mx-auto grid max-w-5xl gap-10 px-4 py-10 sm:px-6 md:grid-cols-2">
-      <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--color-brand-50)] to-[var(--color-brand-100)] text-8xl shadow-soft dark:from-[var(--color-brand-900)] dark:to-[var(--color-brand-800)]">
-        {vehicle.photos[0] ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={vehicle.photos[0]}
-            alt={`${vehicle.make} ${vehicle.model}`}
-            className="h-full w-full object-cover"
-          />
-        ) : (
+      {vehicle.photos.length > 0 ? (
+        <VehicleGallery photos={vehicle.photos} alt={`${vehicle.make} ${vehicle.model}`} />
+      ) : (
+        <div className="flex aspect-[4/3] items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--color-brand-50)] to-[var(--color-brand-100)] text-8xl shadow-soft dark:from-[var(--color-brand-900)] dark:to-[var(--color-brand-800)]">
           <span aria-hidden>{PLACEHOLDER_IMAGE[vehicle.type]}</span>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="flex flex-col gap-5">
         <div>
