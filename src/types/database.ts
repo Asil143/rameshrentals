@@ -154,6 +154,10 @@ export type Database = {
         Args: { p_vehicle_id: string; p_start: string; p_end: string };
         Returns: boolean;
       };
+      vehicle_booked_ranges: {
+        Args: { p_vehicle_id: string };
+        Returns: { start_date: string; end_date: string }[];
+      };
     };
   };
 };

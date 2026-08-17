@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { TownSelector } from "@/components/town-selector";
 import { VehicleCard } from "@/components/vehicle-card";
@@ -5,9 +6,25 @@ import { VehicleTypeToggle } from "@/components/vehicle-type-toggle";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { getTownBySlug, getVehiclesForTown } from "@/lib/queries";
 import { whatsappGeneralLink } from "@/lib/whatsapp";
+import { SITE_NAME } from "@/lib/constants";
 import type { VehicleType } from "@/types/database";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ town: string }>;
+}): Promise<Metadata> {
+  const { town: townSlug } = await params;
+  const town = await getTownBySlug(townSlug);
+  const townName = town?.name ?? townSlug;
+
+  return {
+    title: `Bike & Car Rentals in ${townName} | ${SITE_NAME}`,
+    description: `Rent bikes and cars in ${townName} — doorstep delivery, pay at pickup, book online or on WhatsApp.`,
+  };
+}
 
 export default async function VehiclesPage({
   params,

@@ -3,7 +3,7 @@ import { VehicleCard } from "@/components/vehicle-card";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { getTownBySlug, getVehiclesForTown } from "@/lib/queries";
 import { whatsappGeneralLink } from "@/lib/whatsapp";
-import { DEFAULT_TOWN_SLUG, SITE_NAME, TOWNS } from "@/lib/constants";
+import { DEFAULT_TOWN_SLUG, SITE_NAME, SITE_URL, TOWNS, WHATSAPP_NUMBER } from "@/lib/constants";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
 
@@ -44,8 +44,21 @@ export default async function Home() {
   const townName = town?.name ?? "Addanki";
   const townList = TOWNS.map((tn) => tn.name).join(", ");
 
+  const localBusinessJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: SITE_NAME,
+    url: SITE_URL,
+    telephone: `+${WHATSAPP_NUMBER}`,
+    areaServed: TOWNS.map((tn) => ({ "@type": "City", name: tn.name })),
+  };
+
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+      />
       <section className="relative overflow-hidden mesh-hero text-white">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.08),transparent_60%)]" />
         <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-7 px-4 py-20 text-center sm:py-28">

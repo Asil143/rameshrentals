@@ -50,9 +50,16 @@ type Dictionary = {
     or: string;
     daysWord: string;
   };
+  calendar: {
+    prevMonth: string;
+    nextMonth: string;
+    legendBooked: string;
+    helperText: string;
+  };
   bookingForm: {
     startDate: string;
     endDate: string;
+    selectDatesError: string;
     estimateDays: (days: number, rate: number) => string;
     estimateTotal: (total: string) => string;
     yourName: string;
@@ -167,9 +174,16 @@ const en: Dictionary = {
     or: "or",
     daysWord: "days",
   },
+  calendar: {
+    prevMonth: "Previous month",
+    nextMonth: "Next month",
+    legendBooked: "Booked",
+    helperText: "Tap a start date, then an end date.",
+  },
   bookingForm: {
     startDate: "Start date",
     endDate: "End date",
+    selectDatesError: "Please select your start and end date.",
     estimateDays: (days, rate) => `${days} day${days > 1 ? "s" : ""} · ₹${rate}/day`,
     estimateTotal: (total) => `≈ ₹${total} estimated`,
     yourName: "Your name",
@@ -233,7 +247,7 @@ const en: Dictionary = {
       },
       {
         title: "Security deposit & payment",
-        body: "A refundable security deposit is collected at pickup, along with the rental amount — both payable in cash or UPI.",
+        body: "A refundable security deposit is collected at pickup, along with the rental amount — both payable in cash or UPI. ₹1,000 for bikes, ₹5,000 for cars.",
       },
       {
         title: "Damage & fuel policy",
@@ -317,9 +331,16 @@ const te: Dictionary = {
     or: "లేదా",
     daysWord: "రోజులు",
   },
+  calendar: {
+    prevMonth: "మునుపటి నెల",
+    nextMonth: "తదుపరి నెల",
+    legendBooked: "బుక్ చేయబడింది",
+    helperText: "ప్రారంభ తేదీని నొక్కండి, తర్వాత ముగింపు తేదీని నొక్కండి.",
+  },
   bookingForm: {
     startDate: "ప్రారంభ తేదీ",
     endDate: "ముగింపు తేదీ",
+    selectDatesError: "దయచేసి మీ ప్రారంభ మరియు ముగింపు తేదీని ఎంచుకోండి.",
     estimateDays: (days, rate) => `${days} రోజులు · ₹${rate}/రోజుకు`,
     estimateTotal: (total) => `≈ ₹${total} అంచనా`,
     yourName: "మీ పేరు",
@@ -382,7 +403,7 @@ const te: Dictionary = {
       },
       {
         title: "సెక్యూరిటీ డిపాజిట్ & చెల్లింపు",
-        body: "పికప్ వద్ద రీఫండ్ చేయదగిన సెక్యూరిటీ డిపాజిట్‌తో పాటు అద్దె మొత్తం వసూలు చేస్తాం — రెండూ నగదు లేదా UPI ద్వారా చెల్లించవచ్చు.",
+        body: "పికప్ వద్ద రీఫండ్ చేయదగిన సెక్యూరిటీ డిపాజిట్‌తో పాటు అద్దె మొత్తం వసూలు చేస్తాం — రెండూ నగదు లేదా UPI ద్వారా చెల్లించవచ్చు. బైక్‌లకు ₹1,000, కార్లకు ₹5,000.",
       },
       {
         title: "డ్యామేజ్ & ఇంధన పాలసీ",

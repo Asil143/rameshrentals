@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { whatsappGeneralLink } from "@/lib/whatsapp";
 import { SITE_NAME, TOWNS } from "@/lib/constants";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
+
+export const metadata: Metadata = {
+  title: `About & Booking Policy | ${SITE_NAME}`,
+  description:
+    "How booking works, documents required, security deposit, damage and cancellation policy for Ramesh Rentals bike & car rentals.",
+};
 
 export default async function AboutPage() {
   const locale = await getLocale();
@@ -43,18 +50,13 @@ export default async function AboutPage() {
         <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6">
           <h2 className="font-display mb-8 text-center text-2xl font-bold">{t.policyTitle}</h2>
           <div className="grid gap-5 sm:grid-cols-2">
-            {t.policies.map((policy, i) => (
+            {t.policies.map((policy) => (
               <div
                 key={policy.title}
                 className="rounded-2xl border border-hairline bg-[var(--color-surface)] p-6"
               >
                 <h3 className="mb-1.5 font-display font-semibold">{policy.title}</h3>
                 <p className="text-sm leading-relaxed text-ink-soft">{policy.body}</p>
-                {i === 1 && (
-                  <p className="mt-2 text-xs italic text-[var(--color-accent-600)]">
-                    [Owner: replace with your exact deposit amount per vehicle type.]
-                  </p>
-                )}
               </div>
             ))}
           </div>

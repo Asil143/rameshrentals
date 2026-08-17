@@ -8,8 +8,37 @@ import { whatsappBookingLink } from "@/lib/whatsapp";
 import { getPricingRows } from "@/lib/pricing";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
+import { SITE_NAME, SITE_URL } from "@/lib/constants";
+import type { Metadata } from "next";
 
 const PLACEHOLDER_IMAGE = { bike: "🏍️", car: "🚗" } as const;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ town: string; id: string }>;
+}): Promise<Metadata> {
+  const { town: townSlug, id } = await params;
+  const [town, vehicle] = await Promise.all([getTownBySlug(townSlug), getVehicleById(id)]);
+
+  if (!town || !vehicle) {
+    return { title: `Vehicle not found | ${SITE_NAME}` };
+  }
+
+  const title = `${vehicle.make} ${vehicle.model} rental in ${town.name} | ${SITE_NAME}`;
+  const description = `Rent the ${vehicle.make} ${vehicle.model} in ${town.name} from ₹${vehicle.price_per_day}/day. Doorstep delivery, pay at pickup.`;
+  const imageUrl = vehicle.photos[0] ? `${SITE_URL}${vehicle.photos[0]}` : undefined;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: imageUrl ? [imageUrl] : undefined,
+    },
+  };
+}
 
 export default async function VehicleDetailPage({
   params,
@@ -30,7 +59,30 @@ export default async function VehicleDetailPage({
   const locale = await getLocale();
   const t = getDictionary(locale).vehicleDetail;
 
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: `${vehicle.make} ${vehicle.model}`,
+    image: vehicle.photos[0] ? `${SITE_URL}${vehicle.photos[0]}` : undefined,
+    description: `${vehicle.type === "bike" ? "Bike" : "Car"} rental in ${town.name}`,
+    offers: {
+      "@type": "Offer",
+      price: vehicle.price_per_day,
+      priceCurrency: "INR",
+      availability:
+        vehicle.status === "available"
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+      url: `${SITE_URL}/${townSlug}/vehicles/${vehicle.id}`,
+    },
+  };
+
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
     <div className="mx-auto grid max-w-5xl gap-10 px-4 py-10 sm:px-6 md:grid-cols-2">
       {vehicle.photos.length > 0 ? (
         <VehicleGallery photos={vehicle.photos} alt={`${vehicle.make} ${vehicle.model}`} />
@@ -95,5 +147,6 @@ export default async function VehicleDetailPage({
         </div>
       </div>
     </div>
+    </>
   );
 }

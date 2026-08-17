@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { createBooking } from "@/app/actions";
+import { AvailabilityCalendar } from "@/components/availability-calendar";
 import { getBookingDays, getEstimatedTotal } from "@/lib/pricing";
 import { getDictionary, type Locale } from "@/lib/i18n/dictionary";
 import type { PriceTier } from "@/types/database";
@@ -29,8 +30,6 @@ export function BookingForm({
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const today = new Date().toISOString().slice(0, 10);
-
   const days =
     startDate && endDate ? getBookingDays(startDate, endDate) : 0;
   const estimatedTotal =
@@ -38,6 +37,10 @@ export function BookingForm({
 
   function handleSubmit(formData: FormData) {
     setError(null);
+    if (!startDate || !endDate) {
+      setError(t.selectDatesError);
+      return;
+    }
     startTransition(async () => {
       const result = await createBooking(formData);
       if (result.ok) {
@@ -61,32 +64,28 @@ export function BookingForm({
     <form action={handleSubmit} className="flex flex-col gap-4">
       <input type="hidden" name="vehicle_id" value={vehicleId} />
       <input type="hidden" name="town_slug" value={townSlug} />
+      <input type="hidden" name="start_date" value={startDate} />
+      <input type="hidden" name="end_date" value={endDate} />
 
-      <div className="grid grid-cols-2 gap-3">
-        <label className="flex flex-col gap-1.5 text-sm font-medium">
-          {t.startDate}
-          <input
-            type="date"
-            name="start_date"
-            min={today}
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            required
-            className={inputClass}
-          />
-        </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium">
-          {t.endDate}
-          <input
-            type="date"
-            name="end_date"
-            min={startDate || today}
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            required
-            className={inputClass}
-          />
-        </label>
+      <div className="flex flex-col gap-1.5 text-sm font-medium">
+        <div className="grid grid-cols-2 gap-3 text-xs text-ink-soft">
+          <span>
+            {t.startDate}: <span className="font-semibold text-[var(--color-ink)]">{startDate || "—"}</span>
+          </span>
+          <span>
+            {t.endDate}: <span className="font-semibold text-[var(--color-ink)]">{endDate || "—"}</span>
+          </span>
+        </div>
+        <AvailabilityCalendar
+          vehicleId={vehicleId}
+          startDate={startDate}
+          endDate={endDate}
+          onChange={(s, e) => {
+            setStartDate(s);
+            setEndDate(e);
+          }}
+          locale={locale}
+        />
       </div>
 
       {days > 0 && (

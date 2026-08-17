@@ -36,3 +36,18 @@ export async function getVehicleById(id: string): Promise<Vehicle | null> {
   const { data } = await supabase.from("vehicles").select("*").eq("id", id).single();
   return data;
 }
+
+export async function getActiveTowns() {
+  const supabase = await createClient();
+  const { data } = await supabase.from("towns").select("*").eq("active", true);
+  return data ?? [];
+}
+
+export async function getAllAvailableVehicleUrls() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("vehicles")
+    .select("id, town:towns(slug)")
+    .eq("status", "available");
+  return data ?? [];
+}
