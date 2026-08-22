@@ -23,7 +23,7 @@ export function LoginForm({ locale }: { locale: Locale }) {
     e.preventDefault();
     setError(null);
     if (!/^\d{10}$/.test(phone)) {
-      setError("Enter a valid 10-digit phone number.");
+      setError(t.invalidPhone);
       return;
     }
     setIsLoading(true);

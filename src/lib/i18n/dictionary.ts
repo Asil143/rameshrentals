@@ -21,6 +21,7 @@ type Dictionary = {
     availableNow: (town: string) => string;
     viewAll: string;
     viewAllVehicles: string;
+    bookViaWhatsapp: string;
     whyChooseUs: string;
     whySiteName: (siteName: string) => string;
     features: { title: string; body: string }[];
@@ -49,6 +50,7 @@ type Dictionary = {
     policyLink: string;
     or: string;
     daysWord: string;
+    bookViaWhatsapp: string;
   };
   calendar: {
     prevMonth: string;
@@ -76,6 +78,7 @@ type Dictionary = {
     subtitle: string;
     phoneNumber: string;
     phonePlaceholder: string;
+    invalidPhone: string;
     sendCode: string;
     sendingCode: string;
     enterCode: (phone: string) => string;
@@ -105,6 +108,21 @@ type Dictionary = {
     questionsBody: (towns: string) => string;
     chatCta: string;
   };
+  bookings: {
+    title: string;
+    empty: string;
+    estimatedPrefix: string;
+    status: {
+      pending: string;
+      confirmed: string;
+      completed: string;
+      cancelled: string;
+    };
+  };
+  whatsapp: {
+    generalMessage: (town?: string) => string;
+    bookingMessage: (make: string, model: string, type: string, town: string) => string;
+  };
 };
 
 const en: Dictionary = {
@@ -127,6 +145,7 @@ const en: Dictionary = {
     availableNow: (town) => `Available now in ${town}`,
     viewAll: "View all →",
     viewAllVehicles: "View all vehicles →",
+    bookViaWhatsapp: "Book via WhatsApp",
     whyChooseUs: "Why choose us",
     whySiteName: (siteName) => `Why ${siteName}?`,
     features: [
@@ -173,6 +192,7 @@ const en: Dictionary = {
     policyLink: "Booking & deposit policy →",
     or: "or",
     daysWord: "days",
+    bookViaWhatsapp: "Book via WhatsApp",
   },
   calendar: {
     prevMonth: "Previous month",
@@ -201,6 +221,7 @@ const en: Dictionary = {
     subtitle: "We'll text you a one-time code — no password needed.",
     phoneNumber: "Phone number",
     phonePlaceholder: "10-digit mobile number",
+    invalidPhone: "Enter a valid 10-digit phone number.",
     sendCode: "Send code",
     sendingCode: "Sending code…",
     enterCode: (phone) => `Enter the 6-digit code sent to +91${phone}`,
@@ -262,6 +283,23 @@ const en: Dictionary = {
     questionsBody: (towns) => `We're on WhatsApp and serve ${towns}. Message us any time.`,
     chatCta: "Chat with us on WhatsApp",
   },
+  bookings: {
+    title: "My Bookings",
+    empty: "No bookings yet. Browse vehicles and request a booking to see it here.",
+    estimatedPrefix: "est.",
+    status: {
+      pending: "Pending",
+      confirmed: "Confirmed",
+      completed: "Completed",
+      cancelled: "Cancelled",
+    },
+  },
+  whatsapp: {
+    generalMessage: (town) =>
+      town ? `Hi, I'd like to rent a bike/car in ${town}.` : "Hi, I'd like to rent a bike/car.",
+    bookingMessage: (make, model, type, town) =>
+      `Hi, I'd like to book the ${make} ${model} (${type}) in ${town}. Is it available?`,
+  },
 };
 
 const te: Dictionary = {
@@ -284,6 +322,7 @@ const te: Dictionary = {
     availableNow: (town) => `${town}‌లో ఇప్పుడు అందుబాటులో`,
     viewAll: "అన్నీ చూడండి →",
     viewAllVehicles: "అన్ని వాహనాలు చూడండి →",
+    bookViaWhatsapp: "వాట్సాప్‌లో బుక్ చేయండి",
     whyChooseUs: "మమ్మల్ని ఎందుకు ఎంచుకోవాలి",
     whySiteName: (siteName) => `${siteName} ఎందుకు?`,
     features: [
@@ -330,6 +369,7 @@ const te: Dictionary = {
     policyLink: "బుకింగ్ & డిపాజిట్ పాలసీ →",
     or: "లేదా",
     daysWord: "రోజులు",
+    bookViaWhatsapp: "వాట్సాప్‌లో బుక్ చేయండి",
   },
   calendar: {
     prevMonth: "మునుపటి నెల",
@@ -357,6 +397,7 @@ const te: Dictionary = {
     subtitle: "మేము మీకు వన్-టైమ్ కోడ్ పంపుతాం — పాస్‌వర్డ్ అవసరం లేదు.",
     phoneNumber: "ఫోన్ నంబర్",
     phonePlaceholder: "10-అంకెల మొబైల్ నంబర్",
+    invalidPhone: "దయచేసి సరైన 10-అంకెల ఫోన్ నంబర్‌ను నమోదు చేయండి.",
     sendCode: "కోడ్ పంపండి",
     sendingCode: "పంపుతోంది…",
     enterCode: (phone) => `+91${phone}కు పంపిన 6-అంకెల కోడ్‌ను నమోదు చేయండి`,
@@ -417,6 +458,25 @@ const te: Dictionary = {
     questionsTitle: "ఇంకా ప్రశ్నలు ఉన్నాయా?",
     questionsBody: (towns) => `మేము వాట్సాప్‌లో ఉన్నాం మరియు ${towns}‌లో సేవలు అందిస్తున్నాం. ఎప్పుడైనా మమ్మల్ని సంప్రదించండి.`,
     chatCta: "వాట్సాప్‌లో మాతో చాట్ చేయండి",
+  },
+  bookings: {
+    title: "నా బుకింగ్‌లు",
+    empty: "ఇంకా బుకింగ్‌లు లేవు. వాహనాలను బ్రౌజ్ చేసి బుకింగ్ కోరితే ఇక్కడ కనిపిస్తుంది.",
+    estimatedPrefix: "అంచనా",
+    status: {
+      pending: "పెండింగ్‌లో ఉంది",
+      confirmed: "నిర్ధారించబడింది",
+      completed: "పూర్తయింది",
+      cancelled: "రద్దు చేయబడింది",
+    },
+  },
+  whatsapp: {
+    generalMessage: (town) =>
+      town
+        ? `నమస్తే, నేను ${town}‌లో బైక్/కారు అద్దెకు తీసుకోవాలనుకుంటున్నాను.`
+        : "నమస్తే, నేను బైక్/కారు అద్దెకు తీసుకోవాలనుకుంటున్నాను.",
+    bookingMessage: (make, model, type, town) =>
+      `నమస్తే, నేను ${town}‌లో ${make} ${model} (${type}) బుక్ చేయాలనుకుంటున్నాను. ఇది అందుబాటులో ఉందా?`,
   },
 };
 

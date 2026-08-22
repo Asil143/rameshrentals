@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getLocale } from "@/lib/i18n/get-locale";
+import { getDictionary } from "@/lib/i18n/dictionary";
 
 const STATUS_STYLES: Record<string, string> = {
   pending: "bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-400",
@@ -18,6 +20,9 @@ export default async function BookingsPage() {
     redirect("/login");
   }
 
+  const locale = await getLocale();
+  const t = getDictionary(locale).bookings;
+
   const { data: bookings } = await supabase
     .from("bookings")
     .select("*, vehicles(make, model, type)")
@@ -26,11 +31,11 @@ export default async function BookingsPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-      <h1 className="font-display mb-8 text-2xl font-bold sm:text-3xl">My Bookings</h1>
+      <h1 className="font-display mb-8 text-2xl font-bold sm:text-3xl">{t.title}</h1>
 
       {!bookings || bookings.length === 0 ? (
         <p className="rounded-2xl border border-hairline bg-surface-raised p-8 text-center text-ink-soft shadow-soft">
-          No bookings yet. Browse vehicles and request a booking to see it here.
+          {t.empty}
         </p>
       ) : (
         <ul className="flex flex-col gap-3">
@@ -46,14 +51,17 @@ export default async function BookingsPage() {
                 <p className="text-sm text-ink-soft">
                   {booking.start_date} → {booking.end_date}
                   {booking.estimated_total != null && (
-                    <> · est. ₹{booking.estimated_total.toLocaleString("en-IN")}</>
+                    <>
+                      {" "}
+                      · {t.estimatedPrefix} ₹{booking.estimated_total.toLocaleString("en-IN")}
+                    </>
                   )}
                 </p>
               </div>
               <span
-                className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${STATUS_STYLES[booking.status]}`}
+                className={`rounded-full px-3 py-1 text-xs font-semibold ${STATUS_STYLES[booking.status]}`}
               >
-                {booking.status}
+                {t.status[booking.status as keyof typeof t.status] ?? booking.status}
               </span>
             </li>
           ))}

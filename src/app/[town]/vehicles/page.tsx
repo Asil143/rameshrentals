@@ -57,7 +57,7 @@ export default async function VehiclesPage({
           <p className="mb-7 text-white/75">{t.comingSoonBody(town.name)}</p>
           <div className="flex justify-center">
             <WhatsAppButton
-              href={whatsappGeneralLink(town.name)}
+              href={whatsappGeneralLink(town.name, locale)}
               label={t.notifyMe(town.name)}
               className="shadow-lift"
             />

@@ -9,6 +9,7 @@ import { getPricingRows } from "@/lib/pricing";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { SITE_NAME, SITE_URL } from "@/lib/constants";
+import { toJsonLdScript } from "@/lib/json-ld";
 import type { Metadata } from "next";
 
 const PLACEHOLDER_IMAGE = { bike: "🏍️", car: "🚗" } as const;
@@ -81,7 +82,7 @@ export default async function VehicleDetailPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: toJsonLdScript(productJsonLd) }}
       />
     <div className="mx-auto grid max-w-5xl gap-10 px-4 py-10 sm:px-6 md:grid-cols-2">
       {vehicle.photos.length > 0 ? (
@@ -116,7 +117,10 @@ export default async function VehicleDetailPage({
                 {getPricingRows(vehicle, t.daysWord).map((row) => (
                   <tr key={row.label} className="border-t border-hairline first:border-t-0">
                     <td className="py-2 text-ink-soft">{row.label}</td>
-                    <td className="py-2 text-right font-semibold">₹{row.price_per_day}/day</td>
+                    <td className="py-2 text-right font-semibold">
+                      ₹{row.price_per_day}
+                      {t.perDay}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -143,7 +147,10 @@ export default async function VehicleDetailPage({
 
         <div className="flex items-center gap-3">
           <span className="text-sm text-ink-faint">{t.or}</span>
-          <WhatsAppButton href={whatsappBookingLink(vehicle, town.name)} />
+          <WhatsAppButton
+            href={whatsappBookingLink(vehicle, town.name, locale)}
+            label={t.bookViaWhatsapp}
+          />
         </div>
       </div>
     </div>

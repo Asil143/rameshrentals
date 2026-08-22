@@ -34,11 +34,35 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
   if (new Date(endDate) < new Date(startDate)) {
     return { ok: false, error: "End date must be on or after the start date." };
   }
+  // Compare as IST calendar dates regardless of the server's own timezone —
+  // the business and every customer are in India, and this form has no
+  // client-side re-check once submitted (the calendar UI only disables past
+  // dates visually), so a crafted or stale request could otherwise slip a
+  // past start date through.
+  const todayIst = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(
+    new Date()
+  );
+  if (startDate < todayIst) {
+    return { ok: false, error: "Start date can't be in the past." };
+  }
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const { data: vehicle } = await supabase
+    .from("vehicles")
+    .select("price_per_day, price_tiers")
+    .eq("id", vehicleId)
+    .single();
+
+  // A missing vehicle here means either a bad id or one RLS is hiding
+  // because it's not currently `available` (booked/maintenance) — either
+  // way it shouldn't accept a new booking request.
+  if (!vehicle) {
+    return { ok: false, error: "This vehicle isn't available for booking right now." };
+  }
 
   const { data: hasOverlap } = await supabase.rpc("vehicle_has_overlap", {
     p_vehicle_id: vehicleId,
@@ -53,13 +77,7 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
     };
   }
 
-  const { data: vehicle } = await supabase
-    .from("vehicles")
-    .select("price_per_day, price_tiers")
-    .eq("id", vehicleId)
-    .single();
-
-  const estimatedTotal = vehicle ? getEstimatedTotal(vehicle, startDate, endDate) : null;
+  const estimatedTotal = getEstimatedTotal(vehicle, startDate, endDate);
 
   const { error } = await supabase.from("bookings").insert({
     vehicle_id: vehicleId,

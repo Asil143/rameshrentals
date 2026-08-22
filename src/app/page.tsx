@@ -6,6 +6,7 @@ import { whatsappGeneralLink } from "@/lib/whatsapp";
 import { DEFAULT_TOWN_SLUG, SITE_NAME, SITE_URL, TOWNS, WHATSAPP_NUMBER } from "@/lib/constants";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
+import { toJsonLdScript } from "@/lib/json-ld";
 
 const FEATURE_ICONS = [
   <path
@@ -57,7 +58,7 @@ export default async function Home() {
     <div>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: toJsonLdScript(localBusinessJsonLd) }}
       />
       <section className="relative overflow-hidden mesh-hero text-white">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.08),transparent_60%)]" />
@@ -82,7 +83,8 @@ export default async function Home() {
               {t.browseCta(townName)}
             </Link>
             <WhatsAppButton
-              href={whatsappGeneralLink(town?.name)}
+              href={whatsappGeneralLink(town?.name, locale)}
+              label={t.bookViaWhatsapp}
               className="shadow-lift hover:brightness-105 active:scale-[0.98]"
             />
           </div>

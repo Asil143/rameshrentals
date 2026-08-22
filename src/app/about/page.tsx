@@ -67,7 +67,7 @@ export default async function AboutPage() {
         <h2 className="font-display mb-3 text-2xl font-bold">{t.questionsTitle}</h2>
         <p className="mb-6 text-ink-soft">{t.questionsBody(townList)}</p>
         <div className="flex justify-center">
-          <WhatsAppButton href={whatsappGeneralLink()} label={t.chatCta} />
+          <WhatsAppButton href={whatsappGeneralLink(undefined, locale)} label={t.chatCta} />
         </div>
       </section>
     </div>
