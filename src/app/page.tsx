@@ -4,7 +4,7 @@ import { VehicleCard } from "@/components/vehicle-card";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { getAllTowns, getTownBySlug, getVehiclesForTown } from "@/lib/queries";
 import { whatsappGeneralLink } from "@/lib/whatsapp";
-import { DEFAULT_TOWN_SLUG, SITE_NAME, SITE_URL, WHATSAPP_NUMBER } from "@/lib/constants";
+import { DEFAULT_TOWN_SLUG, GOOGLE_BUSINESS_URL, GOOGLE_REVIEW_URL, SITE_NAME, SITE_URL, WHATSAPP_NUMBER } from "@/lib/constants";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { toJsonLdScript } from "@/lib/json-ld";
@@ -220,6 +220,8 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
+      {(GOOGLE_BUSINESS_URL || GOOGLE_REVIEW_URL) && <section className="border-y border-hairline bg-[var(--color-brand-900)] text-white"><div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 px-4 py-10 sm:flex-row sm:items-center sm:px-6"><div><p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-accent-300)]">Local and accountable</p><h2 className="font-display mt-1 text-2xl font-bold">See what real customers say</h2><p className="mt-1 text-sm text-white/70">Reviews are hosted and verified by Google.</p></div><div className="flex gap-3">{GOOGLE_BUSINESS_URL && <a href={GOOGLE_BUSINESS_URL} target="_blank" rel="noreferrer" className="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[var(--color-brand-900)]">View on Google</a>}{GOOGLE_REVIEW_URL && <a href={GOOGLE_REVIEW_URL} target="_blank" rel="noreferrer" className="rounded-xl bg-[var(--color-accent-400)] px-4 py-3 text-sm font-semibold text-[var(--color-brand-900)]">Leave a review</a>}</div></div></section>}
 
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-600)] dark:text-[var(--color-brand-400)]">

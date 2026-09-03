@@ -2,10 +2,14 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
+import { BookingControls } from "@/components/booking-controls";
 
 const STATUS_STYLES: Record<string, string> = {
   pending: "bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-400",
   confirmed: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-400",
+  ready: "bg-blue-100 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300",
+  picked_up: "bg-violet-100 text-violet-800 dark:bg-violet-950/50 dark:text-violet-300",
+  returned: "bg-cyan-100 text-cyan-800 dark:bg-cyan-950/50 dark:text-cyan-300",
   completed: "bg-black/10 text-black/70 dark:bg-white/10 dark:text-white/70",
   cancelled: "bg-red-100 text-red-800 dark:bg-red-950/50 dark:text-red-400",
 };
@@ -42,9 +46,11 @@ export default async function BookingsPage() {
           {bookings.map((booking) => (
             <li
               key={booking.id}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft"
+              className="rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft"
             >
+              <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-600)]">{booking.reference}</p>
                 <p className="font-display font-semibold">
                   {booking.vehicles?.make} {booking.vehicles?.model}
                 </p>
@@ -58,6 +64,7 @@ export default async function BookingsPage() {
                   )}
                   <span className="block text-xs text-ink-faint">
                     {booking.fulfillment_method === "doorstep_delivery" ? "Doorstep delivery" : "Pickup at location"}
+                    {booking.pickup_time ? ` · ${booking.pickup_time.slice(0, 5)}` : ""}
                   </span>
                 </p>
               </div>
@@ -66,6 +73,16 @@ export default async function BookingsPage() {
               >
                 {t.status[booking.status as keyof typeof t.status] ?? booking.status}
               </span>
+              </div>
+              <div className="mt-4 grid grid-cols-4 gap-1" aria-label="Booking progress">
+                {["Requested", "Confirmed", "Ready", "Returned"].map((label, index) => {
+                  const order = ["pending", "confirmed", "ready", "picked_up", "returned", "completed"];
+                  const thresholds = [0, 1, 2, 4];
+                  const active = booking.status !== "cancelled" && order.indexOf(booking.status) >= thresholds[index];
+                  return <div key={label}><span className={`block h-1.5 rounded-full ${active ? "bg-[var(--color-brand-500)]" : "bg-[var(--color-border)]"}`} /><span className="mt-1 block text-[10px] text-ink-faint">{label}</span></div>;
+                })}
+              </div>
+              <BookingControls bookingId={booking.id} status={booking.status} />
             </li>
           ))}
         </ul>

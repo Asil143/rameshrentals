@@ -116,6 +116,8 @@ export default async function VehicleDetailPage({
           <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Handover</span><strong>Delivery or pickup</strong></div>
           <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Refundable deposit</span><strong>₹{vehicle.type === "bike" ? "1,000" : "5,000"}</strong></div>
         </div>
+        {(vehicle.fuel_type || vehicle.transmission || vehicle.included_km_per_day) && <div className="flex flex-wrap gap-2 text-xs text-ink-soft">{vehicle.fuel_type && <span className="rounded-full border border-hairline px-3 py-1.5 capitalize">{vehicle.fuel_type}</span>}{vehicle.transmission && <span className="rounded-full border border-hairline px-3 py-1.5 capitalize">{vehicle.transmission}</span>}{vehicle.seats && <span className="rounded-full border border-hairline px-3 py-1.5">{vehicle.seats} seats</span>}{vehicle.included_km_per_day && <span className="rounded-full border border-hairline px-3 py-1.5">{vehicle.included_km_per_day} km/day included</span>}{vehicle.helmet_count > 0 && <span className="rounded-full border border-hairline px-3 py-1.5">{vehicle.helmet_count} helmet(s)</span>}</div>}
+        {town.pickup_address && <div className="rounded-2xl border border-hairline bg-surface-raised p-4 text-sm"><span className="block text-xs font-semibold uppercase tracking-wider text-ink-faint">Pickup location</span><p className="mt-1">{town.pickup_address}</p>{town.maps_url && <a href={town.maps_url} target="_blank" rel="noreferrer" className="mt-2 inline-block font-semibold text-[var(--color-brand-700)]">Open in Google Maps →</a>}</div>}
 
         {vehicle.price_tiers.length > 0 && (
           <div className="rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft">
@@ -143,6 +145,8 @@ export default async function VehicleDetailPage({
             townSlug={townSlug}
             pricePerDay={vehicle.price_per_day}
             priceTiers={vehicle.price_tiers}
+            deliveryFee={town.delivery_fee ?? 0}
+            collectionFee={town.collection_fee ?? 0}
             locale={locale}
           />
           <Link

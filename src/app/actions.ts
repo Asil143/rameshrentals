@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { LOCALE_COOKIE, type Locale } from "@/lib/i18n/dictionary";
 import type { FulfillmentMethod, PriceTier } from "@/types/database";
+import { sendBookingWhatsApp } from "@/lib/notifications";
 
 export async function setLanguage(locale: Locale) {
   const cookieStore = await cookies();
@@ -22,7 +23,7 @@ export async function signOut() {
   revalidatePath("/", "layout");
 }
 
-export type CreateBookingResult = { ok: true } | { ok: false; error: string };
+export type CreateBookingResult = { ok: true; bookingId: string } | { ok: false; error: string };
 
 export async function createBooking(formData: FormData): Promise<CreateBookingResult> {
   const vehicleId = formData.get("vehicle_id") as string;
@@ -33,9 +34,14 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
   const endDate = formData.get("end_date") as string;
   const acceptedPolicy = formData.get("accept_policy") === "on";
   const fulfillmentMethod = formData.get("fulfillment_method") as FulfillmentMethod;
+  const pickupTime = formData.get("pickup_time") as string;
+  const returnTime = formData.get("return_time") as string;
+  const deliveryAddress = ((formData.get("delivery_address") as string) ?? "").trim();
+  const returnMethod = formData.get("return_method") as "location_return" | "doorstep_collection";
+  const customerNotes = ((formData.get("customer_notes") as string) ?? "").trim();
 
   const honeypot = formData.get("website");
-  if (honeypot) return { ok: true };
+  if (honeypot) return { ok: true, bookingId: "" };
 
   if (!vehicleId || !customerName || !customerPhone || !startDate || !endDate) {
     return { ok: false, error: "Please fill in all fields." };
@@ -46,6 +52,16 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
   if (fulfillmentMethod !== "doorstep_delivery" && fulfillmentMethod !== "location_pickup") {
     return { ok: false, error: "Choose delivery or location pickup." };
   }
+  if (!/^\d{2}:\d{2}$/.test(pickupTime) || !/^\d{2}:\d{2}$/.test(returnTime)) {
+    return { ok: false, error: "Choose pickup and return times." };
+  }
+  if ((fulfillmentMethod === "doorstep_delivery" || returnMethod === "doorstep_collection") && deliveryAddress.length < 10) {
+    return { ok: false, error: "Enter a complete delivery address." };
+  }
+  if (returnMethod !== "location_return" && returnMethod !== "doorstep_collection") {
+    return { ok: false, error: "Choose a return method." };
+  }
+  if (customerNotes.length > 500) return { ok: false, error: "Notes must be under 500 characters." };
   if (customerName.length < 2 || customerName.length > 100) {
     return { ok: false, error: "Enter a name between 2 and 100 characters." };
   }
@@ -74,7 +90,7 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.rpc("create_booking_request_v2", {
+  const { data, error } = await supabase.rpc("create_booking_request_v3", {
     p_vehicle_id: vehicleId,
     p_customer_name: customerName,
     p_customer_phone: customerPhone,
@@ -82,6 +98,11 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
     p_end: endDate,
     p_accept_policy: acceptedPolicy,
     p_fulfillment_method: fulfillmentMethod,
+    p_pickup_time: pickupTime,
+    p_return_time: returnTime,
+    p_delivery_address: deliveryAddress,
+    p_return_method: returnMethod,
+    p_customer_notes: customerNotes,
   });
 
   if (error) {
@@ -97,8 +118,27 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
     }
     return { ok: false, error: "We couldn't create the booking. Please try again." };
   }
+  if (!data) return { ok: false, error: "We couldn't create the booking. Please try again." };
 
   revalidatePath(`/${townSlug}/vehicles/${vehicleId}`);
+  revalidatePath("/bookings");
+  const reference = `RR-${data.replaceAll("-", "").slice(0, 10).toUpperCase()}`;
+  await sendBookingWhatsApp(customerPhone, process.env.WHATSAPP_BOOKING_RECEIVED_TEMPLATE ?? "booking_received", [customerName, reference]);
+  return { ok: true, bookingId: data };
+}
+
+export async function cancelOwnBooking(bookingId: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("customer_cancel_booking", { p_booking_id: bookingId });
+  if (error || !data) return { ok: false, error: "This booking can no longer be cancelled." };
+  revalidatePath("/bookings");
+  return { ok: true };
+}
+
+export async function rescheduleOwnBooking(bookingId: string, startDate: string, endDate: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("customer_reschedule_booking", { p_booking_id: bookingId, p_start: startDate, p_end: endDate });
+  if (error || !data) return { ok: false, error: "Those dates aren't available or this booking can't be changed." };
   revalidatePath("/bookings");
   return { ok: true };
 }
@@ -123,7 +163,7 @@ async function requireAdmin() {
 
 export async function updateBookingStatus(
   bookingId: string,
-  status: "confirmed" | "completed" | "cancelled"
+  status: "confirmed" | "ready" | "picked_up" | "returned" | "completed" | "cancelled"
 ): Promise<ActionResult> {
   const { supabase, ok } = await requireAdmin();
   if (!ok) return { ok: false, error: "Not authorized." };
@@ -138,7 +178,39 @@ export async function updateBookingStatus(
     return { ok: false, error: "Couldn't update the booking. Please try again." };
   }
 
+  const { data: booking } = await supabase.from("bookings").select("customer_phone, reference").eq("id", bookingId).single();
+  if (booking) await sendBookingWhatsApp(booking.customer_phone, process.env.WHATSAPP_STATUS_TEMPLATE ?? "booking_status_update", [booking.reference, status.replaceAll("_", " ")]);
+
   revalidatePath("/admin");
+  return { ok: true };
+}
+
+export async function updateBookingOperations(formData: FormData): Promise<ActionResult> {
+  const { supabase, ok } = await requireAdmin();
+  if (!ok) return { ok: false, error: "Not authorized." };
+  const bookingId = String(formData.get("booking_id"));
+  const paymentStatus = String(formData.get("payment_status"));
+  const depositStatus = String(formData.get("deposit_status"));
+  const allowedPayments = ["unpaid", "part_paid", "paid", "refunded"];
+  const allowedDeposits = ["not_collected", "held", "partially_refunded", "refunded", "forfeited"];
+  if (!allowedPayments.includes(paymentStatus) || !allowedDeposits.includes(depositStatus)) return { ok: false, error: "Invalid payment status." };
+  const { error } = await supabase.from("bookings").update({ payment_status: paymentStatus as "unpaid", deposit_status: depositStatus as "not_collected" }).eq("id", bookingId);
+  if (error) return { ok: false, error: "Couldn't update payment details." };
+
+  const stage = String(formData.get("inspection_stage"));
+  if (stage === "handover" || stage === "return") {
+    const odometer = Number(formData.get("odometer_km"));
+    const fuelLevel = String(formData.get("fuel_level"));
+    const notes = String(formData.get("inspection_notes") ?? "").trim();
+    const { data: { user } } = await supabase.auth.getUser();
+    const { error: inspectionError } = await supabase.from("booking_inspections").upsert({
+      booking_id: bookingId, stage, odometer_km: Number.isFinite(odometer) && odometer >= 0 ? odometer : null,
+      fuel_level: (fuelLevel || null) as "empty" | null, notes: notes || null, created_by: user?.id ?? null,
+    }, { onConflict: "booking_id,stage" });
+    if (inspectionError) return { ok: false, error: "Payment updated, but inspection couldn't be saved." };
+  }
+  revalidatePath("/admin");
+  revalidatePath("/bookings");
   return { ok: true };
 }
 
@@ -163,6 +235,44 @@ export async function updateVehicleStatus(
   return { ok: true };
 }
 
+export async function updateVehicleDetails(formData: FormData): Promise<ActionResult> {
+  const { supabase, ok } = await requireAdmin();
+  if (!ok) return { ok: false, error: "Not authorized." };
+  const vehicleId = String(formData.get("vehicle_id"));
+  const values = {
+    fuel_type: (String(formData.get("fuel_type") || "") || null) as "petrol" | null,
+    transmission: (String(formData.get("transmission") || "") || null) as "manual" | null,
+    seats: Number(formData.get("seats")) || null,
+    included_km_per_day: Number(formData.get("included_km_per_day")) || null,
+    extra_km_rate: Number(formData.get("extra_km_rate")) || null,
+    helmet_count: Number(formData.get("helmet_count")) || 0,
+    luggage_capacity: String(formData.get("luggage_capacity") || "").trim() || null,
+    last_inspected_at: String(formData.get("last_inspected_at") || "") || null,
+  };
+  const { error } = await supabase.from("vehicles").update(values).eq("id", vehicleId);
+  if (error) return { ok: false, error: "Couldn't update vehicle details." };
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+export async function updateTownOperations(formData: FormData): Promise<ActionResult> {
+  const { supabase, ok } = await requireAdmin();
+  if (!ok) return { ok: false, error: "Not authorized." };
+  const townId = String(formData.get("town_id"));
+  const { error } = await supabase.from("towns").update({
+    pickup_address: String(formData.get("pickup_address") || "").trim() || null,
+    maps_url: String(formData.get("maps_url") || "").trim() || null,
+    delivery_fee: Math.max(0, Number(formData.get("delivery_fee")) || 0),
+    collection_fee: Math.max(0, Number(formData.get("collection_fee")) || 0),
+    delivery_radius_km: Math.max(0, Number(formData.get("delivery_radius_km")) || 0),
+    opening_time: String(formData.get("opening_time") || "08:00"),
+    closing_time: String(formData.get("closing_time") || "20:00"),
+  }).eq("id", townId);
+  if (error) return { ok: false, error: "Couldn't update town operations." };
+  revalidatePath("/admin"); revalidatePath("/", "layout");
+  return { ok: true };
+}
+
 export async function addVehicle(formData: FormData): Promise<ActionResult> {
   const { supabase, ok } = await requireAdmin();
   if (!ok) return { ok: false, error: "Not authorized." };
@@ -176,6 +286,12 @@ export async function addVehicle(formData: FormData): Promise<ActionResult> {
   const pricePerDay = Number(formData.get("price_per_day"));
   const photoUrl = (formData.get("photo_url") as string)?.trim();
   const photoUrl2 = (formData.get("photo_url_2") as string)?.trim();
+  const fuelType = String(formData.get("fuel_type") || "") || null;
+  const transmission = String(formData.get("transmission") || "") || null;
+  const seats = Number(formData.get("seats")) || null;
+  const includedKm = Number(formData.get("included_km_per_day")) || null;
+  const extraKmRate = Number(formData.get("extra_km_rate")) || null;
+  const helmetCount = Number(formData.get("helmet_count")) || 0;
 
   if (!townId || !make || !model || !year || !registrationNo || !pricePerDay) {
     return { ok: false, error: "Please fill in all fields." };
@@ -233,6 +349,13 @@ export async function addVehicle(formData: FormData): Promise<ActionResult> {
     price_tiers: priceTiers,
     photos: photoUrls,
     status: "available",
+    fuel_type: fuelType as "petrol" | null,
+    transmission: transmission as "manual" | null,
+    seats,
+    included_km_per_day: includedKm,
+    extra_km_rate: extraKmRate,
+    helmet_count: helmetCount,
+    last_inspected_at: new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(new Date()),
   });
 
   if (error) {

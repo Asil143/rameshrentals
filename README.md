@@ -18,7 +18,7 @@ Bike & car rental MVP for Addanki, Ongole, Markapur, Darsi, Martur and beyond. N
 2. Paste and run the contents of [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql). This creates the `towns`, `owners`, `vehicles`, `bookings`, `profiles` tables and their Row Level Security policies.
 3. Paste and run [`supabase/migrations/0002_pricing_tiers.sql`](supabase/migrations/0002_pricing_tiers.sql). Adds `vehicles.price_tiers` (duration-based discount rates) and `bookings.estimated_total`.
 4. Paste and run [`supabase/seed.sql`](supabase/seed.sql) to add the five towns (Addanki active, the rest marked "coming soon") and a small demo fleet in Addanki.
-5. Run migrations [`0003_availability_check.sql`](supabase/migrations/0003_availability_check.sql), [`0004_booked_ranges.sql`](supabase/migrations/0004_booked_ranges.sql), [`0005_security_hardening.sql`](supabase/migrations/0005_security_hardening.sql), and [`0006_booking_fulfillment.sql`](supabase/migrations/0006_booking_fulfillment.sql), in that order.
+5. Run migrations through [`0007_premium_operations.sql`](supabase/migrations/0007_premium_operations.sql), in filename order.
 6. Optionally run [`supabase/seed_price_tiers.sql`](supabase/seed_price_tiers.sql) to give the demo fleet example long-term discount rates.
 
 Existing projects must apply every unapplied migration through `0006`; the security migration closes public privilege-escalation and forged-booking paths, and `0006` stores the selected handover method.
@@ -60,6 +60,8 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000).
 
 Run `npm run check` to lint, execute unit tests, type-check, and create a production build.
+
+Optional Google Business and WhatsApp Cloud integrations use `NEXT_PUBLIC_GOOGLE_BUSINESS_URL`, `NEXT_PUBLIC_GOOGLE_REVIEW_URL`, `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_BOOKING_RECEIVED_TEMPLATE`, and `WHATSAPP_STATUS_TEMPLATE`. WhatsApp templates must be approved in Meta Business Manager.
 
 ## How it works
 

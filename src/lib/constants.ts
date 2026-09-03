@@ -15,3 +15,6 @@ export const TOWNS = [
 ] as const;
 
 export const DEFAULT_TOWN_SLUG = "addanki";
+
+export const GOOGLE_BUSINESS_URL = process.env.NEXT_PUBLIC_GOOGLE_BUSINESS_URL;
+export const GOOGLE_REVIEW_URL = process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL;

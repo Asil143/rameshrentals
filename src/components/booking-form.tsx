@@ -16,12 +16,16 @@ export function BookingForm({
   townSlug,
   pricePerDay,
   priceTiers,
+  deliveryFee,
+  collectionFee,
   locale = "en",
 }: {
   vehicleId: string;
   townSlug: string;
   pricePerDay: number;
   priceTiers: PriceTier[];
+  deliveryFee: number;
+  collectionFee: number;
   locale?: Locale;
 }) {
   const t = getDictionary(locale).bookingForm;
@@ -31,12 +35,15 @@ export function BookingForm({
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [availabilityReady, setAvailabilityReady] = useState(false);
+  const [fulfillmentMethod, setFulfillmentMethod] = useState<"location_pickup" | "doorstep_delivery">("location_pickup");
+  const [returnMethod, setReturnMethod] = useState<"location_return" | "doorstep_collection">("location_return");
   const handleAvailabilityChange = useCallback((ready: boolean) => setAvailabilityReady(ready), []);
 
   const days =
     startDate && endDate ? getBookingDays(startDate, endDate) : 0;
   const estimatedTotal =
     days > 0 ? getEstimatedTotal({ price_per_day: pricePerDay, price_tiers: priceTiers }, startDate, endDate) : 0;
+  const grandTotal = estimatedTotal + (fulfillmentMethod === "doorstep_delivery" ? deliveryFee : 0) + (returnMethod === "doorstep_collection" ? collectionFee : 0);
 
   function handleSubmit(formData: FormData) {
     setError(null);
@@ -65,7 +72,7 @@ export function BookingForm({
         <p>{t.successBody}</p>
         <dl className="mt-3 grid grid-cols-2 gap-2 border-t border-[var(--color-brand-500)]/20 pt-3">
           <div><dt className="text-xs opacity-70">Dates</dt><dd className="font-semibold">{startDate} → {endDate}</dd></div>
-          <div><dt className="text-xs opacity-70">Estimated total</dt><dd className="font-semibold">₹{estimatedTotal.toLocaleString("en-IN")}</dd></div>
+          <div><dt className="text-xs opacity-70">Estimated total</dt><dd className="font-semibold">₹{grandTotal.toLocaleString("en-IN")}</dd></div>
         </dl>
       </div>
     );
@@ -120,7 +127,7 @@ export function BookingForm({
             {t.estimateDays(days, Math.round(estimatedTotal / days))}
           </span>{" "}
           <span className="font-display font-semibold text-[var(--color-accent-600)]">
-            {t.estimateTotal(estimatedTotal.toLocaleString("en-IN"))}
+            {t.estimateTotal(grandTotal.toLocaleString("en-IN"))}
           </span>
         </div>
       )}
@@ -147,15 +154,35 @@ export function BookingForm({
         <legend className="mb-2 text-sm font-medium">{t.fulfillmentLegend}</legend>
         <div className="grid grid-cols-2 gap-2">
           <label className="flex cursor-pointer items-start gap-2 rounded-xl border border-hairline bg-[var(--color-surface)] p-3 text-sm transition has-[:checked]:border-[var(--color-brand-500)] has-[:checked]:bg-[var(--color-brand-500)]/8">
-            <input type="radio" name="fulfillment_method" value="location_pickup" defaultChecked className="mt-0.5 accent-[var(--color-brand-600)]" />
+            <input type="radio" name="fulfillment_method" value="location_pickup" checked={fulfillmentMethod === "location_pickup"} onChange={() => setFulfillmentMethod("location_pickup")} className="mt-0.5 accent-[var(--color-brand-600)]" />
             <span><strong className="block">{t.locationPickup}</strong><small className="text-ink-faint">{t.locationPickupHelp}</small></span>
           </label>
           <label className="flex cursor-pointer items-start gap-2 rounded-xl border border-hairline bg-[var(--color-surface)] p-3 text-sm transition has-[:checked]:border-[var(--color-brand-500)] has-[:checked]:bg-[var(--color-brand-500)]/8">
-            <input type="radio" name="fulfillment_method" value="doorstep_delivery" className="mt-0.5 accent-[var(--color-brand-600)]" />
+            <input type="radio" name="fulfillment_method" value="doorstep_delivery" checked={fulfillmentMethod === "doorstep_delivery"} onChange={() => setFulfillmentMethod("doorstep_delivery")} className="mt-0.5 accent-[var(--color-brand-600)]" />
             <span><strong className="block">{t.doorstepDelivery}</strong><small className="text-ink-faint">{t.doorstepDeliveryHelp}</small></span>
           </label>
         </div>
       </fieldset>
+
+      {(fulfillmentMethod === "doorstep_delivery" || returnMethod === "doorstep_collection") && (
+        <label className="flex flex-col gap-1.5 text-sm font-medium">Delivery / collection address
+          <textarea name="delivery_address" required rows={3} maxLength={300} placeholder="House, street, landmark and town" className={inputClass} />
+          <span className="text-xs font-normal text-ink-faint">Delivery fee: ₹{deliveryFee.toLocaleString("en-IN")}</span>
+        </label>
+      )}
+
+      <div className="grid grid-cols-2 gap-3">
+        <label className="flex flex-col gap-1.5 text-sm font-medium">Pickup time<input type="time" name="pickup_time" min="08:00" max="20:00" defaultValue="09:00" required className={inputClass} /></label>
+        <label className="flex flex-col gap-1.5 text-sm font-medium">Return time<input type="time" name="return_time" min="08:00" max="20:00" defaultValue="09:00" required className={inputClass} /></label>
+      </div>
+
+      <label className="flex flex-col gap-1.5 text-sm font-medium">Return method
+        <select name="return_method" value={returnMethod} onChange={(event) => setReturnMethod(event.target.value as typeof returnMethod)} className={inputClass}><option value="location_return">Return at location</option><option value="doorstep_collection">Collect from my address (+₹{collectionFee.toLocaleString("en-IN")})</option></select>
+      </label>
+
+      <label className="flex flex-col gap-1.5 text-sm font-medium">Notes <span className="font-normal text-ink-faint">(optional)</span>
+        <textarea name="customer_notes" rows={2} maxLength={500} placeholder="Landmark, special request, or trip notes" className={inputClass} />
+      </label>
 
       <label className="flex items-start gap-2 text-xs text-ink-soft">
         <input type="checkbox" name="accept_policy" required className="mt-0.5 h-4 w-4 accent-[var(--color-brand-600)]" />

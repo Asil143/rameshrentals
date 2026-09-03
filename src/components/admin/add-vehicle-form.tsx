@@ -98,6 +98,13 @@ export function AddVehicleForm({ towns }: { towns: Town[] }) {
         Photos must be paths under /public/vehicles. Add a second for a mini gallery on the vehicle page.
       </p>
 
+      <label className="flex flex-col gap-1.5 text-sm font-medium">Fuel<select name="fuel_type" className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5"><option value="petrol">Petrol</option><option value="diesel">Diesel</option><option value="electric">Electric</option><option value="cng">CNG</option></select></label>
+      <label className="flex flex-col gap-1.5 text-sm font-medium">Transmission<select name="transmission" className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5"><option value="manual">Manual</option><option value="automatic">Automatic</option><option value="gearless">Gearless</option></select></label>
+      <label className="flex flex-col gap-1.5 text-sm font-medium">Seats<input name="seats" type="number" min="1" max="12" className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5" /></label>
+      <label className="flex flex-col gap-1.5 text-sm font-medium">Included km/day<input name="included_km_per_day" type="number" min="1" className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5" /></label>
+      <label className="flex flex-col gap-1.5 text-sm font-medium">Extra km rate (₹)<input name="extra_km_rate" type="number" min="0" className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5" /></label>
+      <label className="flex flex-col gap-1.5 text-sm font-medium">Helmets included<input name="helmet_count" type="number" min="0" max="4" defaultValue="0" className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5" /></label>
+
       <div className="sm:col-span-2 lg:col-span-3">
         <p className="mb-2 text-sm font-medium">Long-term discount rates (optional)</p>
         <div className="grid grid-cols-3 gap-3">

@@ -17,7 +17,7 @@ export function BookingActions({
   function set(next: BookingStatus) {
     setMessage(null);
     startTransition(async () => {
-      const result = await updateBookingStatus(bookingId, next as "confirmed" | "completed" | "cancelled");
+      const result = await updateBookingStatus(bookingId, next as "confirmed" | "ready" | "picked_up" | "returned" | "completed" | "cancelled");
       setMessage(result.ok ? "Updated" : result.error);
     });
   }
@@ -52,13 +52,21 @@ export function BookingActions({
     return (
       <div className="flex items-center gap-2"><button
         disabled={isPending}
-        onClick={() => set("completed")}
+        onClick={() => set("ready")}
         className="rounded-full border border-hairline px-3.5 py-1.5 text-xs font-semibold text-ink-soft transition hover:border-[var(--color-border-strong)] disabled:opacity-60"
       >
-        Mark completed
+        Mark ready
       </button>{feedback}</div>
     );
   }
+
+  const nextByStatus: Partial<Record<BookingStatus, { status: BookingStatus; label: string }>> = {
+    ready: { status: "picked_up", label: "Mark picked up" },
+    picked_up: { status: "returned", label: "Mark returned" },
+    returned: { status: "completed", label: "Complete rental" },
+  };
+  const next = nextByStatus[status];
+  if (next) return <div className="flex items-center gap-2"><button disabled={isPending} onClick={() => set(next.status)} className="rounded-full border border-hairline px-3.5 py-1.5 text-xs font-semibold text-ink-soft">{next.label}</button>{feedback}</div>;
 
   return null;
 }

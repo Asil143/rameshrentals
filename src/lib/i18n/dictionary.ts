@@ -126,6 +126,9 @@ type Dictionary = {
     status: {
       pending: string;
       confirmed: string;
+      ready: string;
+      picked_up: string;
+      returned: string;
       completed: string;
       cancelled: string;
     };
@@ -312,6 +315,9 @@ const en: Dictionary = {
     status: {
       pending: "Pending",
       confirmed: "Confirmed",
+      ready: "Ready",
+      picked_up: "Picked up",
+      returned: "Returned",
       completed: "Completed",
       cancelled: "Cancelled",
     },
@@ -499,6 +505,9 @@ const te: Dictionary = {
     status: {
       pending: "పెండింగ్‌లో ఉంది",
       confirmed: "నిర్ధారించబడింది",
+      ready: "సిద్ధంగా ఉంది",
+      picked_up: "తీసుకున్నారు",
+      returned: "తిరిగి ఇచ్చారు",
       completed: "పూర్తయింది",
       cancelled: "రద్దు చేయబడింది",
     },

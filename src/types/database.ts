@@ -1,6 +1,6 @@
 export type VehicleType = "bike" | "car";
 export type VehicleStatus = "available" | "booked" | "maintenance";
-export type BookingStatus = "pending" | "confirmed" | "completed" | "cancelled";
+export type BookingStatus = "pending" | "confirmed" | "ready" | "picked_up" | "returned" | "completed" | "cancelled";
 export type FulfillmentMethod = "doorstep_delivery" | "location_pickup";
 export type OwnerType = "platform" | "individual";
 
@@ -14,6 +14,13 @@ export type Town = {
   slug: string;
   state: string;
   active: boolean;
+  pickup_address: string | null;
+  maps_url: string | null;
+  delivery_fee: number;
+  collection_fee: number;
+  delivery_radius_km: number;
+  opening_time: string;
+  closing_time: string;
 };
 
 export type Owner = {
@@ -47,6 +54,14 @@ export type Vehicle = {
   photos: string[];
   status: VehicleStatus;
   created_at: string;
+  fuel_type: "petrol" | "diesel" | "electric" | "cng" | null;
+  transmission: "manual" | "automatic" | "gearless" | null;
+  seats: number | null;
+  included_km_per_day: number | null;
+  extra_km_rate: number | null;
+  helmet_count: number;
+  last_inspected_at: string | null;
+  luggage_capacity: string | null;
 };
 
 export type Booking = {
@@ -62,6 +77,30 @@ export type Booking = {
   created_at: string;
   privacy_accepted_at: string | null;
   fulfillment_method: FulfillmentMethod;
+  reference: string;
+  pickup_time: string | null;
+  return_time: string | null;
+  delivery_address: string | null;
+  return_method: "location_return" | "doorstep_collection";
+  delivery_fee: number;
+  collection_fee: number;
+  extras_total: number;
+  deposit_amount: number;
+  payment_status: "unpaid" | "part_paid" | "paid" | "refunded";
+  deposit_status: "not_collected" | "held" | "partially_refunded" | "refunded" | "forfeited";
+  customer_notes: string | null;
+};
+
+export type BookingInspection = {
+  id: string;
+  booking_id: string;
+  stage: "handover" | "return";
+  odometer_km: number | null;
+  fuel_level: "empty" | "quarter" | "half" | "three_quarters" | "full" | "electric" | null;
+  notes: string | null;
+  photo_paths: string[];
+  created_by: string | null;
+  created_at: string;
 };
 
 export type Profile = {
@@ -150,6 +189,12 @@ export type Database = {
         Update: Partial<Profile>;
         Relationships: GenericRelationship[];
       };
+      booking_inspections: {
+        Row: BookingInspection;
+        Insert: Partial<BookingInspection> & Pick<BookingInspection, "booking_id" | "stage">;
+        Update: Partial<BookingInspection>;
+        Relationships: GenericRelationship[];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -184,6 +229,18 @@ export type Database = {
         };
         Returns: string;
       };
+      create_booking_request_v3: {
+        Args: {
+          p_vehicle_id: string; p_customer_name: string; p_customer_phone: string;
+          p_start: string; p_end: string; p_accept_policy: boolean;
+          p_fulfillment_method: FulfillmentMethod; p_pickup_time: string; p_return_time: string;
+          p_delivery_address: string; p_return_method: "location_return" | "doorstep_collection";
+          p_customer_notes: string;
+        };
+        Returns: string;
+      };
+      customer_cancel_booking: { Args: { p_booking_id: string }; Returns: boolean };
+      customer_reschedule_booking: { Args: { p_booking_id: string; p_start: string; p_end: string }; Returns: boolean };
     };
   };
 };
