@@ -43,6 +43,12 @@ export async function getActiveTowns() {
   return data ?? [];
 }
 
+export async function getAllTowns() {
+  const supabase = await createClient();
+  const { data } = await supabase.from("towns").select("*").order("name");
+  return data ?? [];
+}
+
 export async function getAllAvailableVehicleUrls() {
   const supabase = await createClient();
   const { data } = await supabase

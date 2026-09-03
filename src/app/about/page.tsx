@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { whatsappGeneralLink } from "@/lib/whatsapp";
-import { SITE_NAME, TOWNS } from "@/lib/constants";
+import { SITE_NAME } from "@/lib/constants";
+import { getAllTowns } from "@/lib/queries";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
 
@@ -13,8 +14,9 @@ export const metadata: Metadata = {
 
 export default async function AboutPage() {
   const locale = await getLocale();
+  const towns = await getAllTowns();
   const t = getDictionary(locale).about;
-  const townList = TOWNS.map((tn) => tn.name).join(", ");
+  const townList = towns.map((tn) => tn.name).join(", ");
 
   return (
     <div>

@@ -1,5 +1,5 @@
-const CACHE_NAME = "ramesh-rentals-shell-v1";
-const APP_SHELL = ["/", "/manifest.json", "/icons/icon-192.png", "/icons/icon-512.png"];
+const CACHE_NAME = "ramesh-rentals-static-v2";
+const APP_SHELL = ["/offline.html", "/manifest.json", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -26,12 +26,28 @@ self.addEventListener("fetch", (event) => {
 
   if (event.request.mode === "navigate") {
     event.respondWith(
-      fetch(event.request).catch(() => caches.match("/"))
+      fetch(event.request).catch(() => caches.match("/offline.html"))
     );
     return;
   }
 
+  const url = new URL(event.request.url);
+  const isCacheableStatic =
+    url.origin === self.location.origin &&
+    (url.pathname.startsWith("/_next/static/") ||
+      url.pathname.startsWith("/vehicles/") ||
+      url.pathname.startsWith("/icons/"));
+
+  if (!isCacheableStatic) return;
+
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    caches.open(CACHE_NAME).then(async (cache) => {
+      const cached = await cache.match(event.request);
+      const refresh = fetch(event.request).then((response) => {
+        if (response.ok) cache.put(event.request, response.clone());
+        return response;
+      });
+      return cached || refresh;
+    })
   );
 });

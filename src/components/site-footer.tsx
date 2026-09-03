@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { SITE_NAME, TOWNS } from "@/lib/constants";
+import { SITE_NAME } from "@/lib/constants";
+import { getAllTowns } from "@/lib/queries";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
 
 export async function SiteFooter() {
   const locale = await getLocale();
+  const towns = await getAllTowns();
   const t = getDictionary(locale).footer;
 
   return (
@@ -26,7 +28,7 @@ export async function SiteFooter() {
               {t.whereWeOperate}
             </p>
             <ul className="flex flex-col gap-2 text-sm">
-              {TOWNS.map((town) => (
+              {towns.map((town) => (
                 <li key={town.slug}>
                   <Link
                     href={`/${town.slug}/vehicles`}
@@ -52,6 +54,7 @@ export async function SiteFooter() {
                   {t.aboutPolicies}
                 </Link>
               </li>
+              <li><Link href="/privacy" className="text-ink-soft hover:text-[var(--color-brand-700)] hover:underline dark:hover:text-[var(--color-brand-400)]">{t.privacyPolicy}</Link></li>
             </ul>
           </div>
 

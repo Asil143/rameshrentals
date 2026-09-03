@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { VehicleCard } from "@/components/vehicle-card";
 import { WhatsAppButton } from "@/components/whatsapp-button";
-import { getTownBySlug, getVehiclesForTown } from "@/lib/queries";
+import { getAllTowns, getTownBySlug, getVehiclesForTown } from "@/lib/queries";
 import { whatsappGeneralLink } from "@/lib/whatsapp";
-import { DEFAULT_TOWN_SLUG, SITE_NAME, SITE_URL, TOWNS, WHATSAPP_NUMBER } from "@/lib/constants";
+import { DEFAULT_TOWN_SLUG, SITE_NAME, SITE_URL, WHATSAPP_NUMBER } from "@/lib/constants";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { toJsonLdScript } from "@/lib/json-ld";
@@ -36,14 +36,14 @@ const FEATURE_ICONS = [
 ];
 
 export default async function Home() {
-  const town = await getTownBySlug(DEFAULT_TOWN_SLUG);
+  const [town, towns] = await Promise.all([getTownBySlug(DEFAULT_TOWN_SLUG), getAllTowns()]);
   const vehicles = town ? await getVehiclesForTown(town.id) : [];
-  const activeTownCount = TOWNS.length;
+  const activeTownCount = towns.filter((item) => item.active).length;
 
   const locale = await getLocale();
   const t = getDictionary(locale).home;
   const townName = town?.name ?? "Addanki";
-  const townList = TOWNS.map((tn) => tn.name).join(", ");
+  const townList = towns.map((tn) => tn.name).join(", ");
 
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
@@ -51,7 +51,7 @@ export default async function Home() {
     name: SITE_NAME,
     url: SITE_URL,
     telephone: `+${WHATSAPP_NUMBER}`,
-    areaServed: TOWNS.map((tn) => ({ "@type": "City", name: tn.name })),
+    areaServed: towns.map((tn) => ({ "@type": "City", name: tn.name })),
   };
 
   return (
@@ -179,7 +179,7 @@ export default async function Home() {
         </p>
         <h2 className="font-display mb-6 text-2xl font-bold sm:text-3xl">{t.whereWeOperate}</h2>
         <div className="flex flex-wrap gap-3">
-          {TOWNS.map((tn) => (
+          {towns.map((tn) => (
             <Link
               key={tn.slug}
               href={`/${tn.slug}/vehicles`}

@@ -4,7 +4,7 @@ import { TownSelector } from "@/components/town-selector";
 import { VehicleCard } from "@/components/vehicle-card";
 import { VehicleTypeToggle } from "@/components/vehicle-type-toggle";
 import { WhatsAppButton } from "@/components/whatsapp-button";
-import { getTownBySlug, getVehiclesForTown } from "@/lib/queries";
+import { getAllTowns, getTownBySlug, getVehiclesForTown } from "@/lib/queries";
 import { whatsappGeneralLink } from "@/lib/whatsapp";
 import { SITE_NAME } from "@/lib/constants";
 import type { VehicleType } from "@/types/database";
@@ -23,6 +23,7 @@ export async function generateMetadata({
   return {
     title: `Bike & Car Rentals in ${townName} | ${SITE_NAME}`,
     description: `Rent bikes and cars in ${townName} — doorstep delivery, pay at pickup, book online or on WhatsApp.`,
+    alternates: { canonical: `/${townSlug}/vehicles` },
   };
 }
 
@@ -36,7 +37,7 @@ export default async function VehiclesPage({
   const { town: townSlug } = await params;
   const { type } = await searchParams;
 
-  const town = await getTownBySlug(townSlug);
+  const [town, towns] = await Promise.all([getTownBySlug(townSlug), getAllTowns()]);
   if (!town) {
     notFound();
   }
@@ -79,7 +80,7 @@ export default async function VehiclesPage({
           <h1 className="font-display text-2xl font-bold sm:text-3xl">{t.vehiclesIn(town.name)}</h1>
         </div>
         <div className="flex items-center gap-3">
-          <TownSelector currentSlug={townSlug} />
+          <TownSelector currentSlug={townSlug} towns={towns} />
         </div>
       </div>
 

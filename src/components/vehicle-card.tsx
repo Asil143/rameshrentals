@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Vehicle } from "@/types/database";
 import { getDictionary, type Locale } from "@/lib/i18n/dictionary";
 
@@ -25,10 +26,11 @@ export function VehicleCard({
     >
       <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-gradient-to-br from-[var(--color-brand-50)] to-[var(--color-brand-100)] text-6xl dark:from-[var(--color-brand-900)] dark:to-[var(--color-brand-800)]">
         {vehicle.photos[0] ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={vehicle.photos[0]}
             alt={`${vehicle.make} ${vehicle.model}`}
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (

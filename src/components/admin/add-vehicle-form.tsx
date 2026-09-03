@@ -8,13 +8,16 @@ export function AddVehicleForm({ towns }: { towns: Town[] }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   function handleSubmit(formData: FormData) {
     setError(null);
+    setSuccess(false);
     startTransition(async () => {
       const result = await addVehicle(formData);
       if (result.ok) {
         formRef.current?.reset();
+        setSuccess(true);
       } else {
         setError(result.error);
       }
@@ -76,7 +79,7 @@ export function AddVehicleForm({ towns }: { towns: Town[] }) {
         <input
           name="photo_url"
           type="text"
-          placeholder="/vehicles/your-photo.jpg or https://…"
+          placeholder="/vehicles/your-photo.jpg"
           className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-brand-500)]/20"
         />
       </label>
@@ -86,13 +89,13 @@ export function AddVehicleForm({ towns }: { towns: Town[] }) {
         <input
           name="photo_url_2"
           type="text"
-          placeholder="/vehicles/your-photo-2.jpg or https://…"
+          placeholder="/vehicles/your-photo-2.jpg"
           className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-brand-500)]/20"
         />
       </label>
 
       <p className="text-xs text-ink-faint sm:col-span-2 lg:col-span-3">
-        Photos: a path under /public/vehicles (deployed with the site) or any public image URL. Add a second for a mini gallery on the vehicle page.
+        Photos must be paths under /public/vehicles. Add a second for a mini gallery on the vehicle page.
       </p>
 
       <div className="sm:col-span-2 lg:col-span-3">
@@ -126,7 +129,8 @@ export function AddVehicleForm({ towns }: { towns: Town[] }) {
         </button>
       </div>
 
-      {error && <p className="text-sm text-red-600 sm:col-span-2 lg:col-span-3">{error}</p>}
+      {error && <p role="alert" className="text-sm text-red-600 sm:col-span-2 lg:col-span-3">{error}</p>}
+      {success && <p role="status" className="text-sm text-emerald-700 sm:col-span-2 lg:col-span-3">Vehicle added.</p>}
     </form>
   );
 }

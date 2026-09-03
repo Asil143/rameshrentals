@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { SITE_NAME } from "@/lib/constants";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
+import { getLocale } from "@/lib/i18n/get-locale";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +34,7 @@ const notoSansTelugu = Noto_Sans_Telugu({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://rameshrentals.com"),
   title: `${SITE_NAME} — Bike & Car Rentals`,
   description:
     "Bike and car rentals in Addanki, Ongole, Markapur, Darsi, Martur and more — book online or on WhatsApp.",
@@ -50,10 +52,11 @@ export const viewport: Viewport = {
   themeColor: "#059669",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const locale = await getLocale();
   return (
     <html
-      lang="en"
+      lang={locale === "te" ? "te" : "en"}
       className={`${geistSans.variable} ${geistMono.variable} ${sora.variable} ${notoSansTelugu.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">

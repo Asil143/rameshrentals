@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useCallback, useState, useTransition } from "react";
+import Link from "next/link";
 import { createBooking } from "@/app/actions";
 import { AvailabilityCalendar } from "@/components/availability-calendar";
 import { getBookingDays, getEstimatedTotal } from "@/lib/pricing";
@@ -29,6 +30,8 @@ export function BookingForm({
   const [success, setSuccess] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [availabilityReady, setAvailabilityReady] = useState(false);
+  const handleAvailabilityChange = useCallback((ready: boolean) => setAvailabilityReady(ready), []);
 
   const days =
     startDate && endDate ? getBookingDays(startDate, endDate) : 0;
@@ -39,6 +42,10 @@ export function BookingForm({
     setError(null);
     if (!startDate || !endDate) {
       setError(t.selectDatesError);
+      return;
+    }
+    if (!availabilityReady) {
+      setError("Availability is still loading. Please try again in a moment.");
       return;
     }
     startTransition(async () => {
@@ -66,6 +73,14 @@ export function BookingForm({
       <input type="hidden" name="town_slug" value={townSlug} />
       <input type="hidden" name="start_date" value={startDate} />
       <input type="hidden" name="end_date" value={endDate} />
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="absolute -left-[10000px] h-px w-px opacity-0"
+      />
 
       <div className="flex flex-col gap-1.5 text-sm font-medium">
         <div className="grid grid-cols-2 gap-3 text-xs text-ink-soft">
@@ -84,6 +99,7 @@ export function BookingForm({
             setStartDate(s);
             setEndDate(e);
           }}
+          onAvailabilityChange={handleAvailabilityChange}
           locale={locale}
         />
       </div>
@@ -117,11 +133,16 @@ export function BookingForm({
         />
       </label>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      <label className="flex items-start gap-2 text-xs text-ink-soft">
+        <input type="checkbox" name="accept_policy" required className="mt-0.5 h-4 w-4 accent-[var(--color-brand-600)]" />
+        <span>{t.acceptPrefix} <Link href="/about#policy" className="underline">{t.bookingPolicy}</Link> {t.and} <Link href="/privacy" className="underline">{t.privacyPolicy}</Link>.</span>
+      </label>
+
+      {error && <p role="alert" aria-live="polite" className="text-sm text-red-600">{error}</p>}
 
       <button
         type="submit"
-        disabled={isPending}
+        disabled={isPending || !availabilityReady}
         className="mt-1 rounded-full bg-gradient-to-br from-[var(--color-brand-500)] to-[var(--color-brand-700)] px-5 py-3 font-display font-semibold text-white shadow-soft transition-all hover:shadow-brand disabled:opacity-60 active:scale-[0.98]"
       >
         {isPending ? t.submitting : t.submit}

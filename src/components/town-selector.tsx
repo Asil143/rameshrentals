@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { TOWNS } from "@/lib/constants";
+import type { Town } from "@/types/database";
 
-export function TownSelector({ currentSlug }: { currentSlug: string }) {
+export function TownSelector({ currentSlug, towns }: { currentSlug: string; towns: Town[] }) {
   const router = useRouter();
 
   return (
@@ -13,7 +13,7 @@ export function TownSelector({ currentSlug }: { currentSlug: string }) {
       className="rounded-full border border-hairline bg-surface-raised px-4 py-2 text-sm font-medium shadow-soft transition-colors hover:border-[var(--color-brand-500)]"
       aria-label="Select town"
     >
-      {TOWNS.map((town) => (
+      {towns.map((town) => (
         <option key={town.slug} value={town.slug}>
           {town.name}
         </option>

@@ -18,9 +18,10 @@ Bike & car rental MVP for Addanki, Ongole, Markapur, Darsi, Martur and beyond. N
 2. Paste and run the contents of [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql). This creates the `towns`, `owners`, `vehicles`, `bookings`, `profiles` tables and their Row Level Security policies.
 3. Paste and run [`supabase/migrations/0002_pricing_tiers.sql`](supabase/migrations/0002_pricing_tiers.sql). Adds `vehicles.price_tiers` (duration-based discount rates) and `bookings.estimated_total`.
 4. Paste and run [`supabase/seed.sql`](supabase/seed.sql) to add the five towns (Addanki active, the rest marked "coming soon") and a small demo fleet in Addanki.
-5. Optionally run [`supabase/seed_price_tiers.sql`](supabase/seed_price_tiers.sql) to give the demo fleet example long-term discount rates.
+5. Run migrations [`0003_availability_check.sql`](supabase/migrations/0003_availability_check.sql), [`0004_booked_ranges.sql`](supabase/migrations/0004_booked_ranges.sql), and [`0005_security_hardening.sql`](supabase/migrations/0005_security_hardening.sql), in that order.
+6. Optionally run [`supabase/seed_price_tiers.sql`](supabase/seed_price_tiers.sql) to give the demo fleet example long-term discount rates.
 
-If you already ran `0001_init.sql` and `seed.sql` on a live project before pricing tiers existed, you only need to run `0002_pricing_tiers.sql` (and optionally `seed_price_tiers.sql`) to catch up — the other two are safe to skip since they'd just error on already-existing tables/rows.
+Existing projects must apply every unapplied migration through `0005`; the security migration closes public privilege-escalation and forged-booking paths.
 
 ## 3. Enable phone (OTP) login
 
@@ -30,6 +31,8 @@ Supabase Auth needs an SMS provider to send OTP codes — it does not send SMS i
 2. Enable it and connect an SMS provider (e.g. **MSG91** or **Twilio**) with your own account/credentials — required for OTPs to actually reach Indian phone numbers.
 
 Without this step, sign-up/login and admin access won't work, but browsing vehicles and submitting a booking request (which doesn't require login) will.
+
+Before launch, also configure Supabase Auth SMS rate limits and CAPTCHA protection for OTP abuse prevention.
 
 ## 4. Make yourself an admin
 
@@ -47,12 +50,16 @@ Edit `WHATSAPP_NUMBER` in [`src/lib/constants.ts`](src/lib/constants.ts) to your
 
 ## 6. Run locally
 
+Node.js 22 or later is required.
+
 ```bash
 npm install
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+Run `npm run check` to lint, execute unit tests, type-check, and create a production build.
 
 ## How it works
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 export function VehicleGallery({ photos, alt }: { photos: string[]; alt: string }) {
   const [active, setActive] = useState(0);
@@ -8,8 +9,7 @@ export function VehicleGallery({ photos, alt }: { photos: string[]; alt: string 
   return (
     <div className="flex flex-col gap-3">
       <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--color-brand-50)] to-[var(--color-brand-100)] shadow-soft dark:from-[var(--color-brand-900)] dark:to-[var(--color-brand-800)]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={photos[active]} alt={alt} className="h-full w-full object-cover" />
+        <Image src={photos[active]} alt={alt} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
       </div>
 
       {photos.length > 1 && (
@@ -26,8 +26,9 @@ export function VehicleGallery({ photos, alt }: { photos: string[]; alt: string 
                   : "border-transparent opacity-70 hover:opacity-100"
               }`}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={photo} alt="" className="h-full w-full object-cover" />
+              <span className="relative block h-full w-full">
+                <Image src={photo} alt="" fill sizes="80px" className="object-cover" />
+              </span>
             </button>
           ))}
         </div>

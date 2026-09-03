@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { updateBookingStatus } from "@/app/actions";
 import type { BookingStatus } from "@/types/database";
 
@@ -12,16 +12,23 @@ export function BookingActions({
   status: BookingStatus;
 }) {
   const [isPending, startTransition] = useTransition();
+  const [message, setMessage] = useState<string | null>(null);
 
   function set(next: BookingStatus) {
-    startTransition(() => {
-      void updateBookingStatus(bookingId, next as "confirmed" | "completed" | "cancelled");
+    setMessage(null);
+    startTransition(async () => {
+      const result = await updateBookingStatus(bookingId, next as "confirmed" | "completed" | "cancelled");
+      setMessage(result.ok ? "Updated" : result.error);
     });
   }
 
+  const feedback = message && (
+    <span role="status" aria-live="polite" className="text-xs text-ink-faint">{message}</span>
+  );
+
   if (status === "pending") {
     return (
-      <div className="flex gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           disabled={isPending}
           onClick={() => set("confirmed")}
@@ -36,19 +43,20 @@ export function BookingActions({
         >
           Cancel
         </button>
+        {feedback}
       </div>
     );
   }
 
   if (status === "confirmed") {
     return (
-      <button
+      <div className="flex items-center gap-2"><button
         disabled={isPending}
         onClick={() => set("completed")}
         className="rounded-full border border-hairline px-3.5 py-1.5 text-xs font-semibold text-ink-soft transition hover:border-[var(--color-border-strong)] disabled:opacity-60"
       >
         Mark completed
-      </button>
+      </button>{feedback}</div>
     );
   }
 

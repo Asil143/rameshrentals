@@ -26,12 +26,14 @@ export function AvailabilityCalendar({
   startDate,
   endDate,
   onChange,
+  onAvailabilityChange,
   locale = "en",
 }: {
   vehicleId: string;
   startDate: string;
   endDate: string;
   onChange: (start: string, end: string) => void;
+  onAvailabilityChange?: (ready: boolean) => void;
   locale?: Locale;
 }) {
   const t = getDictionary(locale).calendar;
@@ -39,6 +41,7 @@ export function AvailabilityCalendar({
 
   const [bookedDays, setBookedDays] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [viewMonth, setViewMonth] = useState(() => {
     const base = startDate ? parseDateStr(startDate) : new Date();
     return new Date(base.getFullYear(), base.getMonth(), 1);
@@ -49,8 +52,16 @@ export function AvailabilityCalendar({
     const supabase = createClient();
 
     async function load() {
-      const { data } = await supabase.rpc("vehicle_booked_ranges", { p_vehicle_id: vehicleId });
+      setLoading(true);
+      setLoadError(false);
+      onAvailabilityChange?.(false);
+      const { data, error } = await supabase.rpc("vehicle_booked_ranges", { p_vehicle_id: vehicleId });
       if (cancelled) return;
+      if (error) {
+        setLoadError(true);
+        setLoading(false);
+        return;
+      }
       if (data) {
         const days = new Set<string>();
         for (const range of data) {
@@ -64,13 +75,14 @@ export function AvailabilityCalendar({
         setBookedDays(days);
       }
       setLoading(false);
+      onAvailabilityChange?.(true);
     }
 
     void load();
     return () => {
       cancelled = true;
     };
-  }, [vehicleId]);
+  }, [vehicleId, onAvailabilityChange]);
 
   const today = startOfDay(new Date());
 
@@ -146,8 +158,9 @@ export function AvailabilityCalendar({
         <button
           type="button"
           aria-label={t.prevMonth}
+          disabled={viewMonth <= new Date(today.getFullYear(), today.getMonth(), 1)}
           onClick={() => setViewMonth((m) => new Date(m.getFullYear(), m.getMonth() - 1, 1))}
-          className="flex h-7 w-7 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-[var(--color-border)]"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-[var(--color-border)] disabled:opacity-30"
         >
           ‹
         </button>
@@ -156,7 +169,7 @@ export function AvailabilityCalendar({
           type="button"
           aria-label={t.nextMonth}
           onClick={() => setViewMonth((m) => new Date(m.getFullYear(), m.getMonth() + 1, 1))}
-          className="flex h-7 w-7 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-[var(--color-border)]"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-[var(--color-border)]"
         >
           ›
         </button>
@@ -168,7 +181,7 @@ export function AvailabilityCalendar({
         ))}
       </div>
 
-      <div className="mt-1 grid grid-cols-7 gap-1">
+      <div className="mt-1 grid grid-cols-7 gap-1" role="grid" aria-label={monthLabel}>
         {weeks.flat().map((d, i) => {
           if (!d) return <span key={i} />;
           const dStr = toDateStr(d);
@@ -184,6 +197,8 @@ export function AvailabilityCalendar({
               type="button"
               disabled={disabled}
               onClick={() => handleClick(d)}
+              aria-label={new Intl.DateTimeFormat(localeTag, { dateStyle: "full" }).format(d)}
+              aria-pressed={Boolean(selected || inRange)}
               className={`aspect-square rounded-lg text-xs font-medium transition-colors ${
                 disabled
                   ? "cursor-not-allowed text-ink-faint/40 line-through"
@@ -199,6 +214,12 @@ export function AvailabilityCalendar({
           );
         })}
       </div>
+
+      {loadError && (
+        <p role="alert" className="mt-3 text-xs text-red-600">
+          Availability could not be loaded. Refresh the page to try again.
+        </p>
+      )}
 
       <div className="mt-3 flex items-center justify-between gap-2 border-t border-hairline pt-2.5 text-[11px] text-ink-faint">
         <span>{t.helperText}</span>

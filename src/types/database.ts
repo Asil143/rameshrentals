@@ -59,6 +59,7 @@ export type Booking = {
   estimated_total: number | null;
   status: BookingStatus;
   created_at: string;
+  privacy_accepted_at: string | null;
 };
 
 export type Profile = {
@@ -157,6 +158,17 @@ export type Database = {
       vehicle_booked_ranges: {
         Args: { p_vehicle_id: string };
         Returns: { start_date: string; end_date: string }[];
+      };
+      create_booking_request: {
+        Args: {
+          p_vehicle_id: string;
+          p_customer_name: string;
+          p_customer_phone: string;
+          p_start: string;
+          p_end: string;
+          p_accept_policy: boolean;
+        };
+        Returns: string;
       };
     };
   };

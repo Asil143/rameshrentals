@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { getDictionary, type Locale } from "@/lib/i18n/dictionary";
@@ -18,6 +18,13 @@ export function LoginForm({ locale }: { locale: Locale }) {
   const [otp, setOtp] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = window.setInterval(() => setCooldown((value) => Math.max(0, value - 1)), 1000);
+    return () => window.clearInterval(timer);
+  }, [cooldown]);
 
   async function sendOtp(e: React.FormEvent) {
     e.preventDefault();
@@ -34,6 +41,7 @@ export function LoginForm({ locale }: { locale: Locale }) {
       return;
     }
     setStep("otp");
+    setCooldown(60);
   }
 
   async function verifyOtp(e: React.FormEvent) {
@@ -83,13 +91,13 @@ export function LoginForm({ locale }: { locale: Locale }) {
                 />
               </div>
             </label>
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && <p role="alert" aria-live="polite" className="text-sm text-red-600">{error}</p>}
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || cooldown > 0}
               className="rounded-full bg-gradient-to-br from-[var(--color-brand-500)] to-[var(--color-brand-700)] px-4 py-3 font-display font-semibold text-white shadow-soft transition-all hover:shadow-brand disabled:opacity-60 active:scale-[0.98]"
             >
-              {isLoading ? t.sendingCode : t.sendCode}
+              {isLoading ? t.sendingCode : cooldown > 0 ? `Try again in ${cooldown}s` : t.sendCode}
             </button>
           </form>
         ) : (
@@ -106,7 +114,7 @@ export function LoginForm({ locale }: { locale: Locale }) {
                 className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5 text-sm tracking-widest outline-none transition-colors focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-brand-500)]/20"
               />
             </label>
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && <p role="alert" aria-live="polite" className="text-sm text-red-600">{error}</p>}
             <button
               type="submit"
               disabled={isLoading}

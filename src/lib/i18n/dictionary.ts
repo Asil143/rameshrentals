@@ -7,6 +7,7 @@ type Dictionary = {
     admin: string;
     myBookings: string;
     login: string;
+    signOut: string;
   };
   home: {
     badge: (town: string) => string;
@@ -72,6 +73,10 @@ type Dictionary = {
     successTitle: string;
     successBody: string;
     payAtPickupNote: string;
+    acceptPrefix: string;
+    bookingPolicy: string;
+    and: string;
+    privacyPolicy: string;
   };
   login: {
     title: string;
@@ -94,6 +99,7 @@ type Dictionary = {
     account: string;
     myBookings: string;
     login: string;
+    privacyPolicy: string;
     copyright: (year: number, siteName: string) => string;
   };
   about: {
@@ -130,6 +136,7 @@ const en: Dictionary = {
     admin: "Admin",
     myBookings: "My Bookings",
     login: "Login",
+    signOut: "Sign out",
   },
   home: {
     badge: (town) => `Now open in ${town} · more towns coming soon`,
@@ -215,6 +222,10 @@ const en: Dictionary = {
     successBody:
       "We'll call you shortly to confirm. You can pay the deposit and rent at pickup.",
     payAtPickupNote: "No payment now — pay the deposit and rent in cash or UPI at pickup.",
+    acceptPrefix: "I agree to the",
+    bookingPolicy: "booking policy",
+    and: "and",
+    privacyPolicy: "privacy policy",
   },
   login: {
     title: "Log in",
@@ -238,6 +249,7 @@ const en: Dictionary = {
     account: "Account",
     myBookings: "My Bookings",
     login: "Login",
+    privacyPolicy: "Privacy policy",
     copyright: (year, siteName) => `© ${year} ${siteName}. All rights reserved.`,
   },
   about: {
@@ -307,6 +319,7 @@ const te: Dictionary = {
     admin: "అడ్మిన్",
     myBookings: "నా బుకింగ్‌లు",
     login: "లాగిన్",
+    signOut: "లాగ్ అవుట్",
   },
   home: {
     badge: (town) => `ఇప్పుడు ${town}‌లో అందుబాటులో · మరిన్ని పట్టణాలు త్వరలో`,
@@ -391,6 +404,10 @@ const te: Dictionary = {
     successTitle: "బుకింగ్ అభ్యర్థన పంపబడింది!",
     successBody: "మేము త్వరలో కాల్ చేసి కన్ఫర్మ్ చేస్తాం. మీరు పికప్‌లో డిపాజిట్ మరియు అద్దె చెల్లించవచ్చు.",
     payAtPickupNote: "ఇప్పుడే చెల్లింపు అవసరం లేదు — పికప్‌లో నగదు లేదా UPI ద్వారా డిపాజిట్ మరియు అద్దె చెల్లించండి.",
+    acceptPrefix: "నేను",
+    bookingPolicy: "బుకింగ్ పాలసీ",
+    and: "మరియు",
+    privacyPolicy: "గోప్యతా విధానం",
   },
   login: {
     title: "లాగిన్",
@@ -414,6 +431,7 @@ const te: Dictionary = {
     account: "ఖాతా",
     myBookings: "నా బుకింగ్‌లు",
     login: "లాగిన్",
+    privacyPolicy: "గోప్యతా విధానం",
     copyright: (year, siteName) => `© ${year} ${siteName}. అన్ని హక్కులు కలిగి ఉంది.`,
   },
   about: {

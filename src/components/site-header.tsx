@@ -4,6 +4,7 @@ import { SITE_NAME } from "@/lib/constants";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { LanguageToggle } from "@/components/language-toggle";
+import { SignOutButton } from "@/components/sign-out-button";
 
 export async function SiteHeader() {
   const supabase = await createClient();
@@ -44,12 +45,15 @@ export async function SiteHeader() {
             </Link>
           )}
           {user ? (
-            <Link
-              href="/bookings"
-              className="font-medium text-ink-soft transition-colors hover:text-[var(--color-brand-700)] dark:hover:text-[var(--color-brand-400)]"
-            >
-              {t.myBookings}
-            </Link>
+            <>
+              <Link
+                href="/bookings"
+                className="font-medium text-ink-soft transition-colors hover:text-[var(--color-brand-700)] dark:hover:text-[var(--color-brand-400)]"
+              >
+                {t.myBookings}
+              </Link>
+              <SignOutButton locale={locale} />
+            </>
           ) : (
             <Link
               href="/login"
