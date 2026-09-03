@@ -56,6 +56,9 @@ export default async function BookingsPage() {
                       · {t.estimatedPrefix} ₹{booking.estimated_total.toLocaleString("en-IN")}
                     </>
                   )}
+                  <span className="block text-xs text-ink-faint">
+                    {booking.fulfillment_method === "doorstep_delivery" ? "Doorstep delivery" : "Pickup at location"}
+                  </span>
                 </p>
               </div>
               <span

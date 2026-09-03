@@ -67,6 +67,9 @@ export default async function AdminPage() {
                     {booking.vehicles?.make} {booking.vehicles?.model} (
                     {booking.vehicles?.towns?.name}) · {booking.start_date} →{" "}
                     {booking.end_date}
+                    {booking.fulfillment_method && (
+                      <> · {booking.fulfillment_method === "doorstep_delivery" ? "Doorstep delivery" : "Location pickup"}</>
+                    )}
                     {booking.estimated_total != null && (
                       <> · est. ₹{booking.estimated_total.toLocaleString("en-IN")}</>
                     )}

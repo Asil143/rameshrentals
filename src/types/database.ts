@@ -1,6 +1,7 @@
 export type VehicleType = "bike" | "car";
 export type VehicleStatus = "available" | "booked" | "maintenance";
 export type BookingStatus = "pending" | "confirmed" | "completed" | "cancelled";
+export type FulfillmentMethod = "doorstep_delivery" | "location_pickup";
 export type OwnerType = "platform" | "individual";
 
 // NOTE: these row types must be `type` aliases, not `interface`s — only type
@@ -60,6 +61,7 @@ export type Booking = {
   status: BookingStatus;
   created_at: string;
   privacy_accepted_at: string | null;
+  fulfillment_method: FulfillmentMethod;
 };
 
 export type Profile = {
@@ -167,6 +169,18 @@ export type Database = {
           p_start: string;
           p_end: string;
           p_accept_policy: boolean;
+        };
+        Returns: string;
+      };
+      create_booking_request_v2: {
+        Args: {
+          p_vehicle_id: string;
+          p_customer_name: string;
+          p_customer_phone: string;
+          p_start: string;
+          p_end: string;
+          p_accept_policy: boolean;
+          p_fulfillment_method: FulfillmentMethod;
         };
         Returns: string;
       };

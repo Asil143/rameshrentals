@@ -77,6 +77,11 @@ type Dictionary = {
     bookingPolicy: string;
     and: string;
     privacyPolicy: string;
+    fulfillmentLegend: string;
+    locationPickup: string;
+    locationPickupHelp: string;
+    doorstepDelivery: string;
+    doorstepDeliveryHelp: string;
   };
   login: {
     title: string;
@@ -157,8 +162,8 @@ const en: Dictionary = {
     whySiteName: (siteName) => `Why ${siteName}?`,
     features: [
       {
-        title: "Doorstep delivery",
-        body: "We drop the bike or car at your home, hostel, or hotel — no need to travel to a pickup point.",
+        title: "Delivery or pickup",
+        body: "Choose doorstep delivery to your home, hostel, or hotel, or collect the vehicle directly from our location.",
       },
       {
         title: "Pay at pickup",
@@ -226,6 +231,11 @@ const en: Dictionary = {
     bookingPolicy: "booking policy",
     and: "and",
     privacyPolicy: "privacy policy",
+    fulfillmentLegend: "How would you like the vehicle?",
+    locationPickup: "Pickup at location",
+    locationPickupHelp: "Collect it from us",
+    doorstepDelivery: "Doorstep delivery",
+    doorstepDeliveryHelp: "We bring it to you",
   },
   login: {
     title: "Log in",
@@ -242,7 +252,7 @@ const en: Dictionary = {
   },
   footer: {
     blurb:
-      "Organized bike & car rentals for towns the big platforms skip. Doorstep delivery, pay at pickup, book on WhatsApp.",
+      "Organized bike & car rentals for towns the big platforms skip. Choose delivery or location pickup, pay at handover, or book on WhatsApp.",
     whereWeOperate: "Where we operate",
     company: "Company",
     aboutPolicies: "About & policies",
@@ -340,8 +350,8 @@ const te: Dictionary = {
     whySiteName: (siteName) => `${siteName} ఎందుకు?`,
     features: [
       {
-        title: "డోర్‌స్టెప్ డెలివరీ",
-        body: "మీ ఇల్లు, హాస్టల్ లేదా హోటల్‌కే బైక్ లేదా కారు తీసుకొస్తాం — పికప్ పాయింట్‌కు వెళ్లాల్సిన అవసరం లేదు.",
+        title: "డెలివరీ లేదా పికప్",
+        body: "మీ ఇల్లు, హాస్టల్ లేదా హోటల్‌కు డోర్‌స్టెప్ డెలివరీ ఎంచుకోండి లేదా మా లొకేషన్‌లో నేరుగా వాహనాన్ని తీసుకోండి.",
       },
       {
         title: "పికప్‌లో చెల్లింపు",
@@ -408,6 +418,11 @@ const te: Dictionary = {
     bookingPolicy: "బుకింగ్ పాలసీ",
     and: "మరియు",
     privacyPolicy: "గోప్యతా విధానం",
+    fulfillmentLegend: "మీకు వాహనం ఎలా కావాలి?",
+    locationPickup: "లొకేషన్‌లో పికప్",
+    locationPickupHelp: "మా వద్ద నుంచి తీసుకోండి",
+    doorstepDelivery: "డోర్‌స్టెప్ డెలివరీ",
+    doorstepDeliveryHelp: "మేము మీ వద్దకు తీసుకొస్తాం",
   },
   login: {
     title: "లాగిన్",

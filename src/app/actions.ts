@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { LOCALE_COOKIE, type Locale } from "@/lib/i18n/dictionary";
-import type { PriceTier } from "@/types/database";
+import type { FulfillmentMethod, PriceTier } from "@/types/database";
 
 export async function setLanguage(locale: Locale) {
   const cookieStore = await cookies();
@@ -32,6 +32,7 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
   const startDate = formData.get("start_date") as string;
   const endDate = formData.get("end_date") as string;
   const acceptedPolicy = formData.get("accept_policy") === "on";
+  const fulfillmentMethod = formData.get("fulfillment_method") as FulfillmentMethod;
 
   const honeypot = formData.get("website");
   if (honeypot) return { ok: true };
@@ -41,6 +42,9 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
   }
   if (!acceptedPolicy) {
     return { ok: false, error: "Please accept the booking and privacy policies." };
+  }
+  if (fulfillmentMethod !== "doorstep_delivery" && fulfillmentMethod !== "location_pickup") {
+    return { ok: false, error: "Choose delivery or location pickup." };
   }
   if (customerName.length < 2 || customerName.length > 100) {
     return { ok: false, error: "Enter a name between 2 and 100 characters." };
@@ -70,13 +74,14 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.rpc("create_booking_request", {
+  const { error } = await supabase.rpc("create_booking_request_v2", {
     p_vehicle_id: vehicleId,
     p_customer_name: customerName,
     p_customer_phone: customerPhone,
     p_start: startDate,
     p_end: endDate,
     p_accept_policy: acceptedPolicy,
+    p_fulfillment_method: fulfillmentMethod,
   });
 
   if (error) {

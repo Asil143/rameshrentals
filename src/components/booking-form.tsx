@@ -143,6 +143,20 @@ export function BookingForm({
         />
       </label>
 
+      <fieldset>
+        <legend className="mb-2 text-sm font-medium">{t.fulfillmentLegend}</legend>
+        <div className="grid grid-cols-2 gap-2">
+          <label className="flex cursor-pointer items-start gap-2 rounded-xl border border-hairline bg-[var(--color-surface)] p-3 text-sm transition has-[:checked]:border-[var(--color-brand-500)] has-[:checked]:bg-[var(--color-brand-500)]/8">
+            <input type="radio" name="fulfillment_method" value="location_pickup" defaultChecked className="mt-0.5 accent-[var(--color-brand-600)]" />
+            <span><strong className="block">{t.locationPickup}</strong><small className="text-ink-faint">{t.locationPickupHelp}</small></span>
+          </label>
+          <label className="flex cursor-pointer items-start gap-2 rounded-xl border border-hairline bg-[var(--color-surface)] p-3 text-sm transition has-[:checked]:border-[var(--color-brand-500)] has-[:checked]:bg-[var(--color-brand-500)]/8">
+            <input type="radio" name="fulfillment_method" value="doorstep_delivery" className="mt-0.5 accent-[var(--color-brand-600)]" />
+            <span><strong className="block">{t.doorstepDelivery}</strong><small className="text-ink-faint">{t.doorstepDeliveryHelp}</small></span>
+          </label>
+        </div>
+      </fieldset>
+
       <label className="flex items-start gap-2 text-xs text-ink-soft">
         <input type="checkbox" name="accept_policy" required className="mt-0.5 h-4 w-4 accent-[var(--color-brand-600)]" />
         <span>{t.acceptPrefix} <Link href="/about#policy" className="underline">{t.bookingPolicy}</Link> {t.and} <Link href="/privacy" className="underline">{t.privacyPolicy}</Link>.</span>

@@ -22,7 +22,7 @@ export async function generateMetadata({
 
   return {
     title: `Bike & Car Rentals in ${townName} | ${SITE_NAME}`,
-    description: `Rent bikes and cars in ${townName} — doorstep delivery, pay at pickup, book online or on WhatsApp.`,
+    description: `Rent bikes and cars in ${townName} — doorstep delivery or location pickup, pay at handover, book online or on WhatsApp.`,
     alternates: { canonical: `/${townSlug}/vehicles` },
   };
 }

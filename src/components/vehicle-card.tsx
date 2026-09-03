@@ -47,7 +47,7 @@ export function VehicleCard({
         </h3>
         <p className="text-sm text-ink-faint">{vehicle.year}</p>
         <div className="mt-2 flex flex-wrap gap-1.5 text-[11px] font-medium text-ink-soft">
-          <span className="rounded-md bg-[var(--color-brand-500)]/8 px-2 py-1">Doorstep delivery</span>
+          <span className="rounded-md bg-[var(--color-brand-500)]/8 px-2 py-1">Delivery or pickup</span>
           <span className="rounded-md bg-[var(--color-brand-500)]/8 px-2 py-1">₹{vehicle.type === "bike" ? "1,000" : "5,000"} deposit</span>
         </div>
         <div className="mt-2 flex items-baseline gap-1">

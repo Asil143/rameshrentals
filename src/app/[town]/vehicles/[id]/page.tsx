@@ -27,7 +27,7 @@ export async function generateMetadata({
   }
 
   const title = `${vehicle.make} ${vehicle.model} rental in ${town.name} | ${SITE_NAME}`;
-  const description = `Rent the ${vehicle.make} ${vehicle.model} in ${town.name} from ₹${vehicle.price_per_day}/day. Doorstep delivery, pay at pickup.`;
+  const description = `Rent the ${vehicle.make} ${vehicle.model} in ${town.name} from ₹${vehicle.price_per_day}/day. Choose doorstep delivery or location pickup.`;
   const imageUrl = vehicle.photos[0] ? `${SITE_URL}${vehicle.photos[0]}` : undefined;
 
   return {
@@ -113,7 +113,7 @@ export default async function VehicleDetailPage({
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Vehicle</span><strong className="capitalize">{vehicle.type}</strong></div>
           <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Model year</span><strong>{vehicle.year}</strong></div>
-          <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Delivery</span><strong>Doorstep</strong></div>
+          <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Handover</span><strong>Delivery or pickup</strong></div>
           <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Refundable deposit</span><strong>₹{vehicle.type === "bike" ? "1,000" : "5,000"}</strong></div>
         </div>
 
