@@ -62,7 +62,11 @@ export function BookingForm({
     return (
       <div className="rounded-xl border border-[var(--color-brand-500)]/25 bg-[var(--color-brand-500)]/10 p-4 text-sm text-[var(--color-brand-800)] dark:text-[var(--color-brand-100)]">
         <p className="mb-0.5 font-display font-semibold">{t.successTitle}</p>
-        {t.successBody}
+        <p>{t.successBody}</p>
+        <dl className="mt-3 grid grid-cols-2 gap-2 border-t border-[var(--color-brand-500)]/20 pt-3">
+          <div><dt className="text-xs opacity-70">Dates</dt><dd className="font-semibold">{startDate} → {endDate}</dd></div>
+          <div><dt className="text-xs opacity-70">Estimated total</dt><dd className="font-semibold">₹{estimatedTotal.toLocaleString("en-IN")}</dd></div>
+        </dl>
       </div>
     );
   }
@@ -81,6 +85,12 @@ export function BookingForm({
         aria-hidden="true"
         className="absolute -left-[10000px] h-px w-px opacity-0"
       />
+
+      <ol className="grid grid-cols-3 gap-2 text-center text-[10px] font-semibold uppercase tracking-wide text-ink-faint" aria-label="Booking steps">
+        <li className="rounded-lg bg-[var(--color-brand-500)]/10 px-2 py-2 text-[var(--color-brand-700)]">1 · Dates</li>
+        <li className="rounded-lg bg-[var(--color-brand-500)]/10 px-2 py-2">2 · Details</li>
+        <li className="rounded-lg bg-[var(--color-brand-500)]/10 px-2 py-2">3 · Confirm</li>
+      </ol>
 
       <div className="flex flex-col gap-1.5 text-sm font-medium">
         <div className="grid grid-cols-2 gap-3 text-xs text-ink-soft">

@@ -91,7 +91,7 @@ export default async function VehiclesPage({
       {vehicles.length === 0 ? (
         <p className="py-16 text-center text-ink-soft">{t.empty}</p>
       ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
           {vehicles.map((vehicle) => (
             <VehicleCard key={vehicle.id} vehicle={vehicle} townSlug={townSlug} locale={locale} />
           ))}

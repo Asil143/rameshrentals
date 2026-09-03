@@ -57,8 +57,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={locale === "te" ? "te" : "en"}
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${sora.variable} ${notoSansTelugu.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}` }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <SiteHeader />
         <main className="flex flex-1 flex-col">{children}</main>

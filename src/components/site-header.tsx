@@ -5,6 +5,8 @@ import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { LanguageToggle } from "@/components/language-toggle";
 import { SignOutButton } from "@/components/sign-out-button";
+import { ThemeToggle } from "@/components/theme-toggle";
+import Image from "next/image";
 
 export async function SiteHeader() {
   const supabase = await createClient();
@@ -29,13 +31,12 @@ export async function SiteHeader() {
     <header className="sticky top-0 z-20 border-b border-hairline bg-[var(--color-surface)]/80 backdrop-blur-lg backdrop-saturate-150">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6">
         <Link href="/" className="group flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--color-brand-500)] to-[var(--color-brand-700)] text-base font-bold text-white shadow-soft transition-transform group-hover:scale-105">
-            R
-          </span>
-          <span className="font-display text-lg font-bold tracking-tight">{SITE_NAME}</span>
+          <Image src="/brand-icon.png" alt="" width={38} height={38} className="rounded-xl shadow-soft transition-transform group-hover:scale-105" />
+          <span className="hidden font-display text-lg font-bold tracking-tight min-[520px]:inline">{SITE_NAME}</span>
         </Link>
-        <nav className="flex items-center gap-3 text-sm sm:gap-5">
+        <nav className="flex items-center gap-2 text-sm sm:gap-4">
           <LanguageToggle locale={locale} />
+          <ThemeToggle />
           {isAdmin && (
             <Link
               href="/admin"

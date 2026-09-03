@@ -1,27 +1,27 @@
 @import "tailwindcss";
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  /* brand: deep, rich emerald */
-  --color-brand-50: #eafbf3;
-  --color-brand-100: #cef5e0;
-  --color-brand-400: #22c58d;
-  --color-brand-500: #0ea56f;
-  --color-brand-600: #08825a;
-  --color-brand-700: #076647;
-  --color-brand-800: #06503a;
-  --color-brand-900: #053f2f;
+  --color-brand-50: #edf8f2;
+  --color-brand-100: #d5eee1;
+  --color-brand-400: #35a97b;
+  --color-brand-500: #168b61;
+  --color-brand-600: #087a55;
+  --color-brand-700: #086044;
+  --color-brand-800: #123c2d;
+  --color-brand-900: #0b2c21;
 
   /* accent: warm gold, used sparingly for premium highlights */
   --color-accent-300: #fbd889;
-  --color-accent-400: #f6c453;
-  --color-accent-500: #eeac1f;
+  --color-accent-400: #f4b740;
+  --color-accent-500: #e9a51f;
   --color-accent-600: #cf8f10;
 
-  --color-surface: #faf9f6;
+  --color-surface: #fcfaf5;
   --color-surface-raised: #ffffff;
   --color-ink: #0b1f17;
   --color-ink-soft: rgba(11, 31, 23, 0.64);
-  --color-ink-faint: rgba(11, 31, 23, 0.4);
+  --color-ink-faint: rgba(11, 31, 23, 0.58);
   --color-border: rgba(11, 31, 23, 0.09);
   --color-border-strong: rgba(11, 31, 23, 0.16);
 
@@ -42,7 +42,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --color-surface: #071510;
     --color-surface-raised: #0d221a;
     --color-ink: #eef7f1;
@@ -60,11 +60,31 @@
   }
 }
 
+:root[data-theme="dark"] {
+  --color-surface: #09150f;
+  --color-surface-raised: #10231a;
+  --color-ink: #eef7f1;
+  --color-ink-soft: rgba(238, 247, 241, 0.74);
+  --color-ink-faint: rgba(238, 247, 241, 0.58);
+  --color-border: rgba(238, 247, 241, 0.11);
+  --color-border-strong: rgba(238, 247, 241, 0.2);
+  --background: var(--color-surface);
+  --foreground: var(--color-ink);
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), var(--font-telugu), Arial, Helvetica, sans-serif;
 }
+
+button, a, select, input { -webkit-tap-highlight-color: transparent; }
+
+::selection { background: var(--color-accent-400); color: #14211a; }
+
+.theme-icon-dark { display: none; }
+:root[data-theme="dark"] .theme-icon-dark { display: inline; }
+:root[data-theme="dark"] .theme-icon-light { display: none; }
 
 .font-display {
   font-family: var(--font-display), var(--font-telugu), var(--font-geist-sans), sans-serif;

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { SITE_NAME } from "@/lib/constants";
+import { SITE_NAME, WHATSAPP_NUMBER } from "@/lib/constants";
+import Image from "next/image";
 import { getAllTowns } from "@/lib/queries";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
@@ -15,12 +16,11 @@ export async function SiteFooter() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="mb-3 flex items-center gap-2.5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--color-brand-500)] to-[var(--color-brand-700)] text-sm font-bold text-white">
-                R
-              </span>
+              <Image src="/brand-icon.png" alt="" width={34} height={34} className="rounded-lg" />
               <span className="font-display text-base font-bold">{SITE_NAME}</span>
             </div>
             <p className="max-w-xs text-sm leading-relaxed text-ink-soft">{t.blurb}</p>
+            <a href={`tel:+${WHATSAPP_NUMBER}`} className="mt-4 inline-block text-sm font-semibold text-[var(--color-brand-700)] dark:text-[var(--color-brand-400)]">+91 97271 78763</a>
           </div>
 
           <div>

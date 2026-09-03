@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { VehicleCard } from "@/components/vehicle-card";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { getAllTowns, getTownBySlug, getVehiclesForTown } from "@/lib/queries";
@@ -7,6 +8,7 @@ import { DEFAULT_TOWN_SLUG, SITE_NAME, SITE_URL, WHATSAPP_NUMBER } from "@/lib/c
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { toJsonLdScript } from "@/lib/json-ld";
+import { TownSelector } from "@/components/town-selector";
 
 const FEATURE_ICONS = [
   <path
@@ -41,7 +43,8 @@ export default async function Home() {
   const activeTownCount = towns.filter((item) => item.active).length;
 
   const locale = await getLocale();
-  const t = getDictionary(locale).home;
+  const dictionary = getDictionary(locale);
+  const t = dictionary.home;
   const townName = town?.name ?? "Addanki";
   const townList = towns.map((tn) => tn.name).join(", ");
 
@@ -60,36 +63,39 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: toJsonLdScript(localBusinessJsonLd) }}
       />
-      <section className="relative overflow-hidden mesh-hero text-white">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.08),transparent_60%)]" />
-        <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-7 px-4 py-20 text-center sm:py-28">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-medium tracking-wide text-white/90 backdrop-blur-sm">
-            {t.badge(townName)}
-          </span>
-          <h1 className="font-display max-w-3xl text-4xl font-bold leading-[1.08] tracking-tight sm:text-6xl">
-            {t.heroLine1}{" "}
-            <span className="bg-gradient-to-r from-[var(--color-accent-300)] to-[var(--color-accent-500)] bg-clip-text text-transparent">
-              {t.heroLine2}
+      <section className="relative overflow-hidden bg-[var(--color-brand-900)] text-white">
+        <div className="pointer-events-none absolute inset-0 opacity-50 [background-image:radial-gradient(circle_at_15%_15%,rgba(53,169,123,.4),transparent_35%),radial-gradient(circle_at_90%_10%,rgba(244,183,64,.22),transparent_32%)]" />
+        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.05fr_.95fr] lg:py-24">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-semibold tracking-wide text-white/90 backdrop-blur-sm">
+              <span className="h-2 w-2 rounded-full bg-[var(--color-accent-400)]" /> {t.badge(townName)}
             </span>
-          </h1>
-          <p className="max-w-2xl text-balance text-base text-white/75 sm:text-lg">
-            {t.subtitle(SITE_NAME, townList)}
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <Link
-              href={`/${DEFAULT_TOWN_SLUG}/vehicles`}
-              className="rounded-full bg-white px-6 py-3.5 font-semibold text-[var(--color-brand-800)] shadow-lift transition-all hover:brightness-95 active:scale-[0.98]"
-            >
-              {t.browseCta(townName)}
-            </Link>
-            <WhatsAppButton
-              href={whatsappGeneralLink(town?.name, locale)}
-              label={t.bookViaWhatsapp}
-              className="shadow-lift hover:brightness-105 active:scale-[0.98]"
-            />
+            <h1 className="font-display mt-6 max-w-2xl text-4xl font-bold leading-[1.04] tracking-tight sm:text-6xl">
+              {t.heroLine1} <span className="text-[var(--color-accent-400)]">{t.heroLine2}</span>
+            </h1>
+            <p className="mt-5 max-w-xl text-balance text-base leading-relaxed text-white/75 sm:text-lg">{t.subtitle(SITE_NAME, townList)}</p>
+            <div className="mt-7 max-w-md rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur-md">
+              <label className="mb-2 block px-1 text-xs font-semibold uppercase tracking-[.14em] text-white/65">Where do you need a vehicle?</label>
+              <TownSelector currentSlug={DEFAULT_TOWN_SLUG} towns={towns} prominent />
+            </div>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <Link href={`/${DEFAULT_TOWN_SLUG}/vehicles`} className="rounded-xl bg-[var(--color-accent-400)] px-6 py-3.5 font-semibold text-[var(--color-brand-900)] shadow-lift transition hover:-translate-y-0.5 hover:bg-[var(--color-accent-300)]">{t.browseCta(townName)}</Link>
+              <WhatsAppButton href={whatsappGeneralLink(town?.name, locale)} label={t.bookViaWhatsapp} className="shadow-lift" />
+            </div>
           </div>
 
-          <dl className="mt-8 grid w-full max-w-2xl grid-cols-3 gap-4 border-t border-white/15 pt-8">
+          <div className="relative mx-auto w-full max-w-xl">
+            <div className="absolute -inset-4 rotate-3 rounded-[2rem] border border-white/10 bg-white/5" />
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[1.75rem] border border-white/15 bg-white/5 shadow-2xl">
+              <Image src="/vehicles/maruti-suzuki-ertiga.webp" alt="Maruti Suzuki Ertiga available from Ramesh Rentals" fill preload sizes="(max-width: 1024px) 100vw, 45vw" className="object-cover" />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6 pt-20">
+                <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-accent-300)]">Real local fleet</p>
+                <p className="mt-1 font-display text-xl font-semibold">Clean, inspected, ready to go.</p>
+              </div>
+            </div>
+          </div>
+
+          <dl className="grid grid-cols-3 gap-4 border-t border-white/15 pt-7 lg:col-span-2">
             <div>
               <dt className="sr-only">{t.statTowns}</dt>
               <dd className="font-display text-2xl font-bold sm:text-3xl">{activeTownCount}</dd>
@@ -106,6 +112,32 @@ export default async function Home() {
               <dd className="text-xs text-white/60 sm:text-sm">{t.statPayAtPickup}</dd>
             </div>
           </dl>
+        </div>
+      </section>
+
+      <section className="border-b border-hairline bg-surface-raised">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-px px-4 py-4 sm:grid-cols-4 sm:px-6">
+          {t.features.map((feature, index) => (
+            <div key={feature.title} className="flex items-center gap-3 px-3 py-3 text-sm font-semibold">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-500)]/10 text-[var(--color-brand-700)]">{index + 1}</span>
+              {feature.title}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pt-16 sm:px-6">
+        <div className="grid gap-5 md:grid-cols-2">
+          <Link href={`/${DEFAULT_TOWN_SLUG}/vehicles?type=bike`} className="group relative min-h-64 overflow-hidden rounded-3xl bg-[var(--color-brand-900)] shadow-soft">
+            <Image src="/vehicles/royal-enfield-classic-350-side.webp" alt="Browse rental bikes" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover opacity-75 transition duration-500 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-6 text-white"><p className="text-sm text-white/70">Easy local travel</p><h2 className="font-display text-3xl font-bold">{dictionary.listing.typeBikes}</h2><span className="mt-3 inline-block font-semibold text-[var(--color-accent-300)]">Browse bikes →</span></div>
+          </Link>
+          <Link href={`/${DEFAULT_TOWN_SLUG}/vehicles?type=car`} className="group relative min-h-64 overflow-hidden rounded-3xl bg-[var(--color-brand-900)] shadow-soft">
+            <Image src="/vehicles/maruti-suzuki-swift-angle.webp" alt="Browse rental cars" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover opacity-75 transition duration-500 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-6 text-white"><p className="text-sm text-white/70">Comfort for every trip</p><h2 className="font-display text-3xl font-bold">{dictionary.listing.typeCars}</h2><span className="mt-3 inline-block font-semibold text-[var(--color-accent-300)]">Browse cars →</span></div>
+          </Link>
         </div>
       </section>
 
@@ -127,7 +159,7 @@ export default async function Home() {
               {t.viewAll}
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
             {vehicles.slice(0, 8).map((vehicle) => (
               <VehicleCard key={vehicle.id} vehicle={vehicle} townSlug={DEFAULT_TOWN_SLUG} locale={locale} />
             ))}
@@ -170,6 +202,22 @@ export default async function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <div className="mb-9 max-w-xl">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-600)]">Simple from start to finish</p>
+          <h2 className="font-display text-3xl font-bold">On the road in three steps</h2>
+        </div>
+        <div className="grid gap-5 md:grid-cols-3">
+          {dictionary.about.steps.map((step, index) => (
+            <div key={step.title} className="relative rounded-2xl border border-hairline bg-surface-raised p-6 shadow-soft">
+              <span className="font-display text-5xl font-extrabold text-[var(--color-brand-500)]/15">0{index + 1}</span>
+              <h3 className="font-display mt-2 text-lg font-semibold">{step.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-ink-soft">{step.body}</p>
+            </div>
+          ))}
         </div>
       </section>
 

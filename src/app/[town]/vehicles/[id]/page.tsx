@@ -85,7 +85,7 @@ export default async function VehicleDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: toJsonLdScript(productJsonLd) }}
       />
-    <div className="mx-auto grid max-w-5xl gap-10 px-4 py-10 sm:px-6 md:grid-cols-2">
+    <div className="mx-auto grid max-w-5xl gap-10 px-4 py-10 pb-28 sm:px-6 md:grid-cols-2 md:pb-10">
       {vehicle.photos.length > 0 ? (
         <VehicleGallery photos={vehicle.photos} alt={`${vehicle.make} ${vehicle.model}`} />
       ) : (
@@ -94,7 +94,7 @@ export default async function VehicleDetailPage({
         </div>
       )}
 
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-5 md:self-start">
         <div>
           <span className="mb-1 inline-block text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-600)] dark:text-[var(--color-brand-400)]">
             {vehicle.type} · {town.name}
@@ -108,6 +108,13 @@ export default async function VehicleDetailPage({
         <div className="flex items-baseline gap-1.5">
           <span className="font-display text-3xl font-extrabold">₹{vehicle.price_per_day}</span>
           <span className="text-ink-faint">{t.perDay}</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Vehicle</span><strong className="capitalize">{vehicle.type}</strong></div>
+          <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Model year</span><strong>{vehicle.year}</strong></div>
+          <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Delivery</span><strong>Doorstep</strong></div>
+          <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Refundable deposit</span><strong>₹{vehicle.type === "bike" ? "1,000" : "5,000"}</strong></div>
         </div>
 
         {vehicle.price_tiers.length > 0 && (
@@ -129,7 +136,7 @@ export default async function VehicleDetailPage({
           </div>
         )}
 
-        <div className="rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft sm:p-6">
+        <div id="booking" className="scroll-mt-24 rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft sm:p-6">
           <h2 className="mb-4 font-display font-semibold">{t.requestThisBooking}</h2>
           <BookingForm
             vehicleId={vehicle.id}
@@ -154,6 +161,10 @@ export default async function VehicleDetailPage({
           />
         </div>
       </div>
+    </div>
+    <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between border-t border-hairline bg-[var(--color-surface)]/95 px-4 py-3 shadow-[0_-8px_30px_rgba(0,0,0,.12)] backdrop-blur md:hidden">
+      <div><span className="block text-xs text-ink-faint">From</span><strong className="font-display text-xl">₹{vehicle.price_per_day}<span className="text-xs font-normal text-ink-faint">/day</span></strong></div>
+      <a href="#booking" className="rounded-xl bg-[var(--color-accent-400)] px-5 py-3 font-semibold text-[var(--color-brand-900)]">Check availability</a>
     </div>
     </>
   );
