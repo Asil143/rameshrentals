@@ -10,18 +10,18 @@ export const metadata: Metadata = {
 
 const concepts = [
   {
-    title: "Exterior street view",
+    title: "3D daylight exterior",
     description:
-      "A bold roadside facade with a covered display, clear branding, and a dedicated pickup and return entrance.",
-    src: "/concepts/exterior-concept.png",
-    alt: "Exterior concept for the Ramesh Rentals vehicle hub",
+      "A street-level architectural render of the proposed dark steel hub, illuminated brand fascia, vehicle bays, and customer forecourt.",
+    src: "/concepts/rental-hub-day.png",
+    alt: "Daylight 3D architectural render of the Ramesh Rentals vehicle hub",
   },
   {
-    title: "Interior operations",
+    title: "Cinematic night exterior",
     description:
-      "A practical interior with separate bike and car zones, a central inspection lane, and a secure key office.",
-    src: "/concepts/interior-concept.png",
-    alt: "Interior operations concept for the Ramesh Rentals vehicle hub",
+      "A dramatic evening render showing the glowing roadside identity, illuminated parking lanes, office volume, and secure open frontage.",
+    src: "/concepts/rental-hub-night.png",
+    alt: "Night-time 3D architectural render of the Ramesh Rentals vehicle hub",
   },
   {
     title: "Illustrative floor plan",
@@ -44,13 +44,39 @@ export default function ConceptsPage() {
             See the shed ideas
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/75 sm:text-base">
-            Three early concepts for a secure, customer-friendly home for the
-            Ramesh Rentals fleet. Open or download any image below.
+            A cinematic 3D preview and architectural concepts for a secure,
+            customer-friendly home for the Ramesh Rentals fleet.
           </p>
         </div>
       </section>
 
       <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+        <div className="mb-10 overflow-hidden rounded-3xl border border-white/10 bg-black shadow-lift">
+          <div className="relative aspect-video">
+            <video
+              className="h-full w-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+              controls
+              preload="metadata"
+              poster="/concepts/rental-hub-day.png"
+              aria-label="Animated day-to-night preview of the Ramesh Rentals vehicle hub"
+            >
+              <source src="/concepts/rental-hub-hero.mp4" type="video/mp4" />
+            </video>
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-5 pb-5 pt-16 text-white sm:px-8 sm:pb-7">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-accent-300)]">
+                Cinematic preview
+              </p>
+              <h2 className="mt-1 font-display text-xl font-bold sm:text-3xl">
+                From daylight to a glowing night landmark
+              </h2>
+            </div>
+          </div>
+        </div>
+
         <div className="grid gap-8">
           {concepts.map((concept, index) => (
             <article
