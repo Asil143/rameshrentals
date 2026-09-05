@@ -54,6 +54,14 @@ export async function SiteFooter() {
                   {t.aboutPolicies}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/concepts"
+                  className="text-ink-soft transition-colors hover:text-[var(--color-brand-700)] hover:underline dark:hover:text-[var(--color-brand-400)]"
+                >
+                  Shed concepts
+                </Link>
+              </li>
               <li><Link href="/privacy" className="text-ink-soft hover:text-[var(--color-brand-700)] hover:underline dark:hover:text-[var(--color-brand-400)]">{t.privacyPolicy}</Link></li>
             </ul>
           </div>

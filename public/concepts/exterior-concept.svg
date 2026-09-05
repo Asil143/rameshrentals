@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#80cfff"/><stop offset="1" stop-color="#eef9ff"/></linearGradient>
+    <linearGradient id="road" x2="0" y2="1"><stop stop-color="#59616b"/><stop offset="1" stop-color="#242a31"/></linearGradient>
+    <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#343b44"/><stop offset="1" stop-color="#171c22"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-opacity=".25"/></filter>
+  </defs>
+  <rect width="1600" height="650" fill="url(#sky)"/><circle cx="1320" cy="145" r="68" fill="#fff6bd"/>
+  <path d="M0 550L160 470 300 545 470 455 660 540 840 475 1010 548 1230 450 1600 555V700H0Z" fill="#8db270"/>
+  <rect y="650" width="1600" height="350" fill="url(#road)"/><path d="M0 820H1600" stroke="#f4cd45" stroke-width="16" stroke-dasharray="105 70"/>
+  <g filter="url(#shadow)">
+    <path d="M180 310L1390 310 1480 420 275 420Z" fill="#20262d"/><path d="M275 420H1480V745H275Z" fill="url(#wall)"/>
+    <path d="M180 310H1390L1480 420H275Z" fill="#69727c"/><g stroke="#f0a900" stroke-width="10" opacity=".75"><path d="M275 420L180 310"/><path d="M520 420L430 310"/><path d="M770 420L680 310"/><path d="M1020 420L930 310"/><path d="M1270 420L1180 310"/></g>
+    <rect x="410" y="368" width="820" height="105" rx="8" fill="#f5b800"/><text x="820" y="438" text-anchor="middle" font-family="Arial,sans-serif" font-size="64" font-weight="900" fill="#171c22" letter-spacing="5">RAMESH RENTALS</text>
+    <rect x="320" y="500" width="690" height="245" rx="5" fill="#e8f2f5"/><rect x="1045" y="500" width="380" height="245" rx="5" fill="#b8e5f2" opacity=".9"/>
+    <path d="M320 500H1010M550 500V745M780 500V745" stroke="#303841" stroke-width="14"/><path d="M1045 500H1425M1235 500V745" stroke="#303841" stroke-width="14"/>
+    <rect x="1080" y="535" width="310" height="62" rx="6" fill="#18202a"/><text x="1235" y="576" text-anchor="middle" fill="white" font-size="26" font-family="Arial" font-weight="700">PICKUP • RETURN</text>
+  </g>
+  <g transform="translate(365 615)"><circle cx="50" cy="95" r="35" fill="#181b1f"/><circle cx="210" cy="95" r="35" fill="#181b1f"/><path d="M50 90L95 30H180L225 90Z" fill="#f5b800"/><rect x="83" y="42" width="105" height="35" rx="15" fill="#d7f2ff"/></g>
+  <g transform="translate(700 625)"><circle cx="20" cy="80" r="25" fill="#14171b"/><circle cx="130" cy="80" r="25" fill="#14171b"/><path d="M20 75L65 42 130 75H80L55 5" fill="none" stroke="#f5b800" stroke-width="14" stroke-linejoin="round"/><circle cx="54" cy="5" r="10" fill="#222"/></g>
+  <g fill="#ffffff" font-family="Arial"><text x="110" y="90" font-size="26" font-weight="700">CONCEPT 01 · STREET VIEW</text><text x="110" y="128" font-size="21">Modern, secure and expandable rental hub</text></g>
+  <g transform="translate(80 500)"><rect x="0" y="85" width="26" height="160" fill="#71552f"/><circle cx="12" cy="55" r="75" fill="#397b45"/><circle cx="70" cy="100" r="55" fill="#4e9655"/><circle cx="-45" cy="115" r="48" fill="#4c8e50"/></g>
+</svg>
