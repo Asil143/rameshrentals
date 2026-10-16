@@ -24,7 +24,7 @@ export type UiText = {
   totalForDays: (total: string, days: number) => string;
   whatsIncluded: string;
   depositReturned: (amount: string) => string;
-  kmPerDay: (km: number, extra: string | null) => string;
+  unlimitedKm: string;
   fuelPolicy: string;
   checkedOn: (date: string) => string;
   beforeYouBook: string;
@@ -42,7 +42,6 @@ export type UiText = {
   deliveryBody: (radiusKm: number, fee: string | null, collection: string | null) => string;
   documentsBody: string;
   seatsCount: (n: number) => string;
-  kmIncluded: (km: number) => string;
   helmets: (n: number) => string;
 
   // Vehicle list filters
@@ -189,6 +188,7 @@ export type UiText = {
   faqPayA: string;
   faqHoursQ: string;
   faqDocsQ: string;
+  faqKmQ: string;
   faqCancelQ: string;
   faqHoursA: (open: string, close: string) => string;
 
@@ -236,7 +236,7 @@ export const uiEn: UiText = {
   totalForDays: (total, days) => `${total} for ${days} day${days === 1 ? "" : "s"}`,
   whatsIncluded: "What's included",
   depositReturned: (amount) => `${amount} refundable deposit — returned when the vehicle comes back in the same condition`,
-  kmPerDay: (km, extra) => `${km} km per day included${extra ? `, then ${extra}/km` : ""}`,
+  unlimitedKm: "Unlimited km — drive as far as you need, no extra charge",
   fuelPolicy: "Fuel not included — return it with the same fuel level you received",
   checkedOn: (date) => `Inspected and cleaned on ${date}`,
   beforeYouBook: "Good to know",
@@ -258,7 +258,6 @@ export const uiEn: UiText = {
     (fee ? "." : ". We confirm any delivery charge when we call you."),
   documentsBody: "Your original driving licence and Aadhaar card. Photocopies alone aren't accepted.",
   seatsCount: (n) => `${n} seats`,
-  kmIncluded: (km) => `${km} km/day included`,
   helmets: (n) => `${n} helmet${n === 1 ? "" : "s"}`,
 
   search: "Search",
@@ -405,6 +404,7 @@ export const uiEn: UiText = {
   faqPayA: "No. Book without paying. Pay the rent and a refundable deposit (₹1,000 for bikes, ₹5,000 for cars) in cash or UPI at pickup.",
   faqHoursQ: "What are your pickup and return timings?",
   faqDocsQ: "What documents do I need?",
+  faqKmQ: "Is there a kilometre limit?",
   faqCancelQ: "Can I cancel my booking?",
   faqHoursA: (open, close) => `Pickup and return any time between ${open} and ${close}.`,
   reviewsTitle: "Reviews",
@@ -448,7 +448,7 @@ export const uiTe: UiText = {
   totalForDays: (total, days) => `${days} రోజులకు ${total}`,
   whatsIncluded: "ఏమేమి ఉన్నాయి",
   depositReturned: (amount) => `${amount} తిరిగి ఇచ్చే డిపాజిట్ — వాహనం అదే స్థితిలో తిరిగి వచ్చినప్పుడు తిరిగి ఇస్తాం`,
-  kmPerDay: (km, extra) => `రోజుకు ${km} కి.మీ. కలిపి${extra ? `, ఆ తర్వాత కి.మీ.కు ${extra}` : ""}`,
+  unlimitedKm: "అపరిమిత కి.మీ. — ఎంత దూరమైనా వెళ్లండి, అదనపు ఛార్జీ లేదు",
   fuelPolicy: "ఇంధనం కలపలేదు — ఇచ్చినప్పుడు ఉన్న ఇంధన స్థాయితో తిరిగి ఇవ్వండి",
   checkedOn: (date) => `${date}న తనిఖీ చేసి శుభ్రం చేశాం`,
   beforeYouBook: "తెలుసుకోవలసినవి",
@@ -470,7 +470,6 @@ export const uiTe: UiText = {
     (fee ? "." : ". డెలివరీ ఛార్జీ ఉంటే కాల్ చేసినప్పుడు చెబుతాం."),
   documentsBody: "మీ ఒరిజినల్ డ్రైవింగ్ లైసెన్స్ మరియు ఆధార్ కార్డు. కేవలం జిరాక్స్ కాపీలు అంగీకరించబడవు.",
   seatsCount: (n) => `${n} సీట్లు`,
-  kmIncluded: (km) => `రోజుకు ${km} కి.మీ. కలిపి`,
   helmets: (n) => `${n} హెల్మెట్${n === 1 ? "" : "లు"}`,
 
   search: "వెతకండి",
@@ -617,6 +616,7 @@ export const uiTe: UiText = {
   faqPayA: "అవసరం లేదు. చెల్లించకుండానే బుక్ చేయండి. అద్దె మరియు తిరిగి ఇచ్చే డిపాజిట్ (బైకులకు ₹1,000, కార్లకు ₹5,000) పికప్ సమయంలో నగదు లేదా UPI ద్వారా చెల్లించండి.",
   faqHoursQ: "పికప్ మరియు రిటర్న్ సమయాలు ఏమిటి?",
   faqDocsQ: "ఏ పత్రాలు అవసరం?",
+  faqKmQ: "కిలోమీటర్ పరిమితి ఉందా?",
   faqCancelQ: "బుకింగ్ రద్దు చేయవచ్చా?",
   faqHoursA: (open, close) => `${open} నుండి ${close} మధ్య ఎప్పుడైనా పికప్ మరియు రిటర్న్ చేయవచ్చు.`,
   reviewsTitle: "రివ్యూలు",

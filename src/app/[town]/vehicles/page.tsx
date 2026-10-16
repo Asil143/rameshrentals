@@ -99,6 +99,7 @@ export default async function VehiclesPage({
   const faqs = [
     { q: u.faqPriceQ(town.name), a: u.faqPriceA(cheapest("bike"), cheapest("car")) },
     { q: u.faqDeliveryQ(town.name), a: u.faqDeliveryA(Number(town.delivery_fee) > 0 ? formatRupees(town.delivery_fee) : null) },
+    { q: u.faqKmQ, a: u.unlimitedKm },
     { q: u.faqPayQ, a: u.faqPayA },
     { q: u.faqDocsQ, a: u.documentsBody },
     { q: u.faqCancelQ, a: u.cancellationBody },

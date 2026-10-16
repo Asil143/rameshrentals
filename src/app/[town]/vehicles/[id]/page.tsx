@@ -148,7 +148,7 @@ export default async function VehicleDetailPage({
           <ul className="space-y-2.5 text-sm">
             {[
               u.depositReturned(formatRupees(vehicle.type === "bike" ? 1000 : 5000)),
-              vehicle.included_km_per_day ? u.kmPerDay(vehicle.included_km_per_day, vehicle.extra_km_rate ? formatRupees(vehicle.extra_km_rate) : null) : null,
+              u.unlimitedKm,
               vehicle.helmet_count > 0 ? u.helmets(vehicle.helmet_count) : null,
               u.fuelPolicy,
               vehicle.last_inspected_at ? u.checkedOn(formatLongDate(vehicle.last_inspected_at, u.dateLocale)) : null,

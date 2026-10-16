@@ -250,8 +250,6 @@ export async function updateVehicleDetails(formData: FormData): Promise<ActionRe
     fuel_type: (String(formData.get("fuel_type") || "") || null) as "petrol" | null,
     transmission: (String(formData.get("transmission") || "") || null) as "manual" | null,
     seats: Number(formData.get("seats")) || null,
-    included_km_per_day: Number(formData.get("included_km_per_day")) || null,
-    extra_km_rate: Number(formData.get("extra_km_rate")) || null,
     helmet_count: Number(formData.get("helmet_count")) || 0,
     luggage_capacity: String(formData.get("luggage_capacity") || "").trim() || null,
     last_inspected_at: String(formData.get("last_inspected_at") || "") || null,
@@ -297,8 +295,6 @@ export async function addVehicle(formData: FormData): Promise<ActionResult> {
   const fuelType = String(formData.get("fuel_type") || "") || null;
   const transmission = String(formData.get("transmission") || "") || null;
   const seats = Number(formData.get("seats")) || null;
-  const includedKm = Number(formData.get("included_km_per_day")) || null;
-  const extraKmRate = Number(formData.get("extra_km_rate")) || null;
   const helmetCount = Number(formData.get("helmet_count")) || 0;
 
   if (!townId || !make || !model || !year || !registrationNo || !pricePerDay) {
@@ -375,8 +371,6 @@ export async function addVehicle(formData: FormData): Promise<ActionResult> {
     fuel_type: fuelType as "petrol" | null,
     transmission: transmission as "manual" | null,
     seats,
-    included_km_per_day: includedKm,
-    extra_km_rate: extraKmRate,
     helmet_count: helmetCount,
     last_inspected_at: new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(new Date()),
   });
