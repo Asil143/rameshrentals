@@ -175,6 +175,20 @@ export type UiText = {
   hubVideoLabel: string;
   hubVideoCaption: string;
 
+  // Town page FAQ (SEO)
+  townIntro: (town: string, count: number) => string;
+  faqTitle: (town: string) => string;
+  faqPriceQ: (town: string) => string;
+  faqPriceA: (bike: string | null, car: string | null) => string;
+  faqDeliveryQ: (town: string) => string;
+  faqDeliveryA: (fee: string | null) => string;
+  faqPayQ: string;
+  faqPayA: string;
+  faqHoursQ: string;
+  faqDocsQ: string;
+  faqCancelQ: string;
+  faqHoursA: (open: string, close: string) => string;
+
   // Vehicle reviews
   reviewsTitle: string;
   ratingSummary: (average: string, count: number) => string;
@@ -370,6 +384,18 @@ export const uiEn: UiText = {
   hubVideoLabel: "3D walkthrough: from Road 1 through the gate, past the handover bay, fleet board, bike and car parking, to the wash and service bays, ending with an overhead view of the whole hub",
   hubSiteAlt: "Map of the block: the hub sits on Road 1 between junction J2 (with Road 3) and junction J1 (with Road 2)",
 
+  townIntro: (town, count) => `Rent a bike, scooter or car in ${town} by the day — ${count} vehicle${count === 1 ? "" : "s"} available, no login needed, pay at pickup and cancel free before your trip.`,
+  faqTitle: (town) => `Renting in ${town}: common questions`,
+  faqPriceQ: (town) => `How much does it cost to rent a bike or car in ${town}?`,
+  faqPriceA: (bike, car) => [bike && `Bikes and scooters start from ${bike}/day`, car && `cars from ${car}/day`].filter(Boolean).join(", ") + ". Longer rentals get a lower daily rate.",
+  faqDeliveryQ: (town) => `Can you deliver the vehicle to my home in ${town}?`,
+  faqDeliveryA: (fee) => `Yes — choose doorstep delivery when you book${fee ? `. Delivery costs ${fee}` : ""}. You can also collect it from our location.`,
+  faqPayQ: "Do I need to pay online?",
+  faqPayA: "No. Book without paying. Pay the rent and a refundable deposit (₹1,000 for bikes, ₹5,000 for cars) in cash or UPI at pickup.",
+  faqHoursQ: "What are your pickup and return timings?",
+  faqDocsQ: "What documents do I need?",
+  faqCancelQ: "Can I cancel my booking?",
+  faqHoursA: (open, close) => `Pickup and return any time between ${open} and ${close}.`,
   reviewsTitle: "Reviews",
   ratingSummary: (average, count) => `★ ${average} · ${count} review${count === 1 ? "" : "s"}`,
   noReviewsYet: "No reviews yet — be the first after your trip.",
@@ -562,6 +588,18 @@ export const uiTe: UiText = {
   hubVideoLabel: "3D నడక: రోడ్ 1 నుండి గేటు ద్వారా, అందజేత బే, ఫ్లీట్ బోర్డు, బైక్ మరియు కార్ పార్కింగ్ దాటి, వాష్ మరియు సర్వీస్ బేల వరకు, చివరగా మొత్తం హబ్ పై నుండి",
   hubSiteAlt: "బ్లాక్ మ్యాప్: హబ్ రోడ్ 1 మీద, J2 (రోడ్ 3 జంక్షన్) మరియు J1 (రోడ్ 2 జంక్షన్) మధ్య ఉంది",
 
+  townIntro: (town, count) => `${town}లో బైక్, స్కూటర్ లేదా కార్‌ను రోజువారీగా అద్దెకు తీసుకోండి — ${count} వాహనాలు అందుబాటులో ఉన్నాయి, లాగిన్ అవసరం లేదు, పికప్‌లో చెల్లించండి, ప్రయాణానికి ముందు ఉచితంగా రద్దు చేయండి.`,
+  faqTitle: (town) => `${town}లో అద్దె: సాధారణ ప్రశ్నలు`,
+  faqPriceQ: (town) => `${town}లో బైక్ లేదా కార్ అద్దె ఎంత?`,
+  faqPriceA: (bike, car) => [bike && `బైకులు, స్కూటర్లు రోజుకు ${bike} నుండి`, car && `కార్లు రోజుకు ${car} నుండి`].filter(Boolean).join(", ") + ". ఎక్కువ రోజులకు రోజువారీ ధర తగ్గుతుంది.",
+  faqDeliveryQ: (town) => `${town}లో వాహనాన్ని మా ఇంటికి తెచ్చి ఇస్తారా?`,
+  faqDeliveryA: (fee) => `అవును — బుక్ చేసేటప్పుడు ఇంటి వద్దకు డెలివరీ ఎంచుకోండి${fee ? `. డెలివరీ ఛార్జీ ${fee}` : ""}. మా ప్రదేశం నుండి కూడా తీసుకోవచ్చు.`,
+  faqPayQ: "ఆన్‌లైన్‌లో చెల్లించాలా?",
+  faqPayA: "అవసరం లేదు. చెల్లించకుండానే బుక్ చేయండి. అద్దె మరియు తిరిగి ఇచ్చే డిపాజిట్ (బైకులకు ₹1,000, కార్లకు ₹5,000) పికప్ సమయంలో నగదు లేదా UPI ద్వారా చెల్లించండి.",
+  faqHoursQ: "పికప్ మరియు రిటర్న్ సమయాలు ఏమిటి?",
+  faqDocsQ: "ఏ పత్రాలు అవసరం?",
+  faqCancelQ: "బుకింగ్ రద్దు చేయవచ్చా?",
+  faqHoursA: (open, close) => `${open} నుండి ${close} మధ్య ఎప్పుడైనా పికప్ మరియు రిటర్న్ చేయవచ్చు.`,
   reviewsTitle: "రివ్యూలు",
   ratingSummary: (average, count) => `★ ${average} · ${count} రివ్యూలు`,
   noReviewsYet: "ఇంకా రివ్యూలు లేవు — మీ ప్రయాణం తర్వాత మొదటి రివ్యూ ఇవ్వండి.",

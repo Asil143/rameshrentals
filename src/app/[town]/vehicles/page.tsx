@@ -12,7 +12,9 @@ import { SITE_NAME } from "@/lib/constants";
 import type { VehicleType } from "@/types/database";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
-import { formatShortDate, parseDateRange } from "@/lib/format";
+import { formatShortDate, formatTime, parseDateRange } from "@/lib/format";
+import { formatRupees } from "@/lib/pricing";
+import { toJsonLdScript } from "@/lib/json-ld";
 
 export async function generateMetadata({
   params,
@@ -87,6 +89,21 @@ export default async function VehiclesPage({
 
   const dateRange = parseDateRange(search.start_date, search.end_date);
   const ratings = await getVehicleRatings(vehicles.map((vehicle) => vehicle.id));
+  // FAQ answers come from this town's real data: prices, fees and opening hours.
+  const allTownVehicles = dateRange || vehicleType || search.q ? await getVehiclesForTown(town.id) : vehicles;
+  const cheapest = (type: VehicleType) => {
+    const prices = allTownVehicles.filter((vehicle) => vehicle.type === type).map((vehicle) => Number(vehicle.price_per_day));
+    return prices.length ? formatRupees(Math.min(...prices)) : null;
+  };
+  const faqs = [
+    { q: u.faqPriceQ(town.name), a: u.faqPriceA(cheapest("bike"), cheapest("car")) },
+    { q: u.faqDeliveryQ(town.name), a: u.faqDeliveryA(Number(town.delivery_fee) > 0 ? formatRupees(town.delivery_fee) : null) },
+    { q: u.faqPayQ, a: u.faqPayA },
+    { q: u.faqDocsQ, a: u.documentsBody },
+    { q: u.faqCancelQ, a: u.cancellationBody },
+    { q: u.faqHoursQ, a: u.faqHoursA(formatTime(town.opening_time, u.dateLocale), formatTime(town.closing_time, u.dateLocale)) },
+  ];
+
   const moreFilterCount = [search.max_price, search.seats, search.fuel, search.transmission, search.sort && search.sort !== "price_asc" ? search.sort : ""]
     .filter(Boolean).length;
 
@@ -180,6 +197,32 @@ export default async function VehiclesPage({
           ))}
         </div>
       )}
+
+      <section className="mt-16 max-w-3xl">
+        <p className="text-ink-soft">{u.townIntro(town.name, vehicles.length)}</p>
+        <h2 className="font-display mt-8 text-2xl font-bold">{u.faqTitle(town.name)}</h2>
+        <div className="mt-4 flex flex-col gap-2.5">
+          {faqs.map((faq) => (
+            <details key={faq.q} className="group rounded-2xl border border-hairline bg-surface-raised px-5 py-4 shadow-soft">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-semibold [&::-webkit-details-marker]:hidden">
+                {faq.q}
+                <span aria-hidden className="text-ink-faint transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <p className="mt-2 text-sm leading-relaxed text-ink-soft">{faq.a}</p>
+            </details>
+          ))}
+        </div>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: toJsonLdScript({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: faqs.map((faq) => ({ "@type": "Question", name: faq.q, acceptedAnswer: { "@type": "Answer", text: faq.a } })),
+            }),
+          }}
+        />
+      </section>
     </div>
   );
 }
