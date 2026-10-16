@@ -11,7 +11,7 @@ import { getDictionary } from "@/lib/i18n/dictionary";
 import { SITE_NAME, SITE_URL } from "@/lib/constants";
 import { toJsonLdScript } from "@/lib/json-ld";
 import type { Metadata } from "next";
-import { parseDateRange } from "@/lib/format";
+import { formatLongDate, parseDateRange } from "@/lib/format";
 
 const PLACEHOLDER_IMAGE = { bike: "🏍️", car: "🚗" } as const;
 
@@ -125,8 +125,28 @@ export default async function VehicleDetailPage({
           <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">{u.handover}</span><strong>{u.deliveryOrPickup}</strong></div>
           <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">{u.refundableDeposit}</span><strong>{formatRupees(vehicle.type === "bike" ? 1000 : 5000)}</strong></div>
         </div>
-        {(vehicle.fuel_type || vehicle.transmission || vehicle.included_km_per_day) && <div className="flex flex-wrap gap-2 text-xs text-ink-soft">{vehicle.fuel_type && <span className="rounded-full border border-hairline px-3 py-1.5 ">{u.fuels[vehicle.fuel_type]}</span>}{vehicle.transmission && <span className="rounded-full border border-hairline px-3 py-1.5 ">{u.gears[vehicle.transmission]}</span>}{vehicle.seats && <span className="rounded-full border border-hairline px-3 py-1.5">{u.seatsCount(vehicle.seats)}</span>}{vehicle.included_km_per_day && <span className="rounded-full border border-hairline px-3 py-1.5">{u.kmIncluded(vehicle.included_km_per_day)}</span>}{vehicle.helmet_count > 0 && <span className="rounded-full border border-hairline px-3 py-1.5">{u.helmets(vehicle.helmet_count)}</span>}</div>}
+        {(vehicle.fuel_type || vehicle.transmission || vehicle.seats) && <div className="flex flex-wrap gap-2 text-xs text-ink-soft">{vehicle.fuel_type && <span className="rounded-full border border-hairline px-3 py-1.5 ">{u.fuels[vehicle.fuel_type]}</span>}{vehicle.transmission && <span className="rounded-full border border-hairline px-3 py-1.5 ">{u.gears[vehicle.transmission]}</span>}{vehicle.seats && <span className="rounded-full border border-hairline px-3 py-1.5">{u.seatsCount(vehicle.seats)}</span>}</div>}
         {town.pickup_address && <div className="rounded-2xl border border-hairline bg-surface-raised p-4 text-sm"><span className="block text-xs font-semibold uppercase tracking-wider text-ink-faint">{u.pickupLocation}</span><p className="mt-1">{town.pickup_address}</p>{town.maps_url && <a href={town.maps_url} target="_blank" rel="noreferrer" className="mt-2 inline-block font-semibold text-[var(--color-brand-700)]">Open in Google Maps →</a>}</div>}
+
+        <section className="rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft">
+          <h2 className="mb-3 font-display text-sm font-semibold">{u.whatsIncluded}</h2>
+          <ul className="space-y-2.5 text-sm">
+            {[
+              u.depositReturned(formatRupees(vehicle.type === "bike" ? 1000 : 5000)),
+              vehicle.included_km_per_day ? u.kmPerDay(vehicle.included_km_per_day, vehicle.extra_km_rate ? formatRupees(vehicle.extra_km_rate) : null) : null,
+              vehicle.helmet_count > 0 ? u.helmets(vehicle.helmet_count) : null,
+              u.fuelPolicy,
+              vehicle.last_inspected_at ? u.checkedOn(formatLongDate(vehicle.last_inspected_at, u.dateLocale)) : null,
+            ]
+              .filter((item): item is string => Boolean(item))
+              .map((item) => (
+                <li key={item} className="flex gap-2.5">
+                  <span aria-hidden className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-500)]/15 text-xs font-bold text-[var(--color-brand-700)] dark:text-[var(--color-brand-400)]">✓</span>
+                  <span className="text-ink-soft">{item}</span>
+                </li>
+              ))}
+          </ul>
+        </section>
 
         {vehicle.price_tiers.length > 0 && (
           <div className="rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft">

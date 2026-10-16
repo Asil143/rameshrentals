@@ -22,6 +22,11 @@ export type UiText = {
   perDayShort: string;
   checkAvailability: string;
   totalForDays: (total: string, days: number) => string;
+  whatsIncluded: string;
+  depositReturned: (amount: string) => string;
+  kmPerDay: (km: number, extra: string | null) => string;
+  fuelPolicy: string;
+  checkedOn: (date: string) => string;
   seatsCount: (n: number) => string;
   kmIncluded: (km: number) => string;
   helmets: (n: number) => string;
@@ -182,6 +187,11 @@ export const uiEn: UiText = {
   perDayShort: "/day",
   checkAvailability: "Check availability",
   totalForDays: (total, days) => `${total} for ${days} day${days === 1 ? "" : "s"}`,
+  whatsIncluded: "What's included",
+  depositReturned: (amount) => `${amount} refundable deposit — returned when the vehicle comes back in the same condition`,
+  kmPerDay: (km, extra) => `${km} km per day included${extra ? `, then ${extra}/km` : ""}`,
+  fuelPolicy: "Fuel not included — return it with the same fuel level you received",
+  checkedOn: (date) => `Inspected and cleaned on ${date}`,
   seatsCount: (n) => `${n} seats`,
   kmIncluded: (km) => `${km} km/day included`,
   helmets: (n) => `${n} helmet${n === 1 ? "" : "s"}`,
@@ -342,6 +352,11 @@ export const uiTe: UiText = {
   perDayShort: "/రోజు",
   checkAvailability: "అందుబాటు చూడండి",
   totalForDays: (total, days) => `${days} రోజులకు ${total}`,
+  whatsIncluded: "ఏమేమి ఉన్నాయి",
+  depositReturned: (amount) => `${amount} తిరిగి ఇచ్చే డిపాజిట్ — వాహనం అదే స్థితిలో తిరిగి వచ్చినప్పుడు తిరిగి ఇస్తాం`,
+  kmPerDay: (km, extra) => `రోజుకు ${km} కి.మీ. కలిపి${extra ? `, ఆ తర్వాత కి.మీ.కు ${extra}` : ""}`,
+  fuelPolicy: "ఇంధనం కలపలేదు — ఇచ్చినప్పుడు ఉన్న ఇంధన స్థాయితో తిరిగి ఇవ్వండి",
+  checkedOn: (date) => `${date}న తనిఖీ చేసి శుభ్రం చేశాం`,
   seatsCount: (n) => `${n} సీట్లు`,
   kmIncluded: (km) => `రోజుకు ${km} కి.మీ. కలిపి`,
   helmets: (n) => `${n} హెల్మెట్${n === 1 ? "" : "లు"}`,
