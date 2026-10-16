@@ -27,6 +27,11 @@ export type UiText = {
   kmPerDay: (km: number, extra: string | null) => string;
   fuelPolicy: string;
   checkedOn: (date: string) => string;
+  beforeYouBook: string;
+  cancellationTitle: string;
+  cancellationBody: string;
+  documentsTitle: string;
+  documentsBody: string;
   seatsCount: (n: number) => string;
   kmIncluded: (km: number) => string;
   helmets: (n: number) => string;
@@ -192,6 +197,11 @@ export const uiEn: UiText = {
   kmPerDay: (km, extra) => `${km} km per day included${extra ? `, then ${extra}/km` : ""}`,
   fuelPolicy: "Fuel not included — return it with the same fuel level you received",
   checkedOn: (date) => `Inspected and cleaned on ${date}`,
+  beforeYouBook: "Good to know",
+  cancellationTitle: "Free cancellation",
+  cancellationBody: "Cancel any time before pickup — just message us on WhatsApp or call. No cancellation fee.",
+  documentsTitle: "Bring at pickup",
+  documentsBody: "Your original driving licence and Aadhaar card. Photocopies alone aren't accepted.",
   seatsCount: (n) => `${n} seats`,
   kmIncluded: (km) => `${km} km/day included`,
   helmets: (n) => `${n} helmet${n === 1 ? "" : "s"}`,
@@ -357,6 +367,11 @@ export const uiTe: UiText = {
   kmPerDay: (km, extra) => `రోజుకు ${km} కి.మీ. కలిపి${extra ? `, ఆ తర్వాత కి.మీ.కు ${extra}` : ""}`,
   fuelPolicy: "ఇంధనం కలపలేదు — ఇచ్చినప్పుడు ఉన్న ఇంధన స్థాయితో తిరిగి ఇవ్వండి",
   checkedOn: (date) => `${date}న తనిఖీ చేసి శుభ్రం చేశాం`,
+  beforeYouBook: "తెలుసుకోవలసినవి",
+  cancellationTitle: "ఉచిత రద్దు",
+  cancellationBody: "పికప్‌కు ముందు ఎప్పుడైనా రద్దు చేయవచ్చు — వాట్సాప్‌లో మెసేజ్ చేయండి లేదా కాల్ చేయండి. రద్దు ఛార్జీ లేదు.",
+  documentsTitle: "పికప్ సమయంలో తీసుకురండి",
+  documentsBody: "మీ ఒరిజినల్ డ్రైవింగ్ లైసెన్స్ మరియు ఆధార్ కార్డు. కేవలం జిరాక్స్ కాపీలు అంగీకరించబడవు.",
   seatsCount: (n) => `${n} సీట్లు`,
   kmIncluded: (km) => `రోజుకు ${km} కి.మీ. కలిపి`,
   helmets: (n) => `${n} హెల్మెట్${n === 1 ? "" : "లు"}`,

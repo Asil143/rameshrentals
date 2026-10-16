@@ -148,6 +148,21 @@ export default async function VehicleDetailPage({
           </ul>
         </section>
 
+        <section aria-label={u.beforeYouBook} className="grid gap-3 sm:grid-cols-2">
+          {[
+            { icon: "↺", title: u.cancellationTitle, body: u.cancellationBody },
+            { icon: "🪪", title: u.documentsTitle, body: u.documentsBody },
+          ].map((item) => (
+            <div key={item.title} className="rounded-2xl border border-hairline bg-surface-raised p-4 text-sm">
+              <p className="flex items-center gap-2 font-display font-semibold">
+                <span aria-hidden className="text-[var(--color-brand-600)]">{item.icon}</span>
+                {item.title}
+              </p>
+              <p className="mt-1 text-ink-soft">{item.body}</p>
+            </div>
+          ))}
+        </section>
+
         {vehicle.price_tiers.length > 0 && (
           <div className="rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft">
             <h2 className="mb-3 text-sm font-display font-semibold">{t.longerYouRent}</h2>
