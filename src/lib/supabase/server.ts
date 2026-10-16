@@ -1,4 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
+import { DB_SCHEMA } from "./schema";
 import { cookies } from "next/headers";
 import type { Database } from "@/types/database";
 
@@ -9,6 +10,7 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      db: { schema: DB_SCHEMA },
       cookies: {
         getAll() {
           return cookieStore.getAll();

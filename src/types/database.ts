@@ -145,7 +145,7 @@ type GenericRelationship = {
 };
 
 export type Database = {
-  public: {
+  rameshrentals: {
     Tables: {
       towns: {
         Row: Town;
