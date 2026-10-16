@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { BookingForm } from "@/components/booking-form";
 import { VehicleGallery } from "@/components/vehicle-gallery";
 import { WhatsAppButton } from "@/components/whatsapp-button";
-import { getTownBySlug, getVehicleById } from "@/lib/queries";
+import { getTownBySlug, getVehicleById, getVehicleRatings, getVehicleReviews } from "@/lib/queries";
 import { whatsappBookingLink } from "@/lib/whatsapp";
 import { getPricingRows, formatRupees } from "@/lib/pricing";
 import { getLocale } from "@/lib/i18n/get-locale";
@@ -11,7 +11,7 @@ import { getDictionary } from "@/lib/i18n/dictionary";
 import { SITE_NAME, SITE_URL } from "@/lib/constants";
 import { toJsonLdScript } from "@/lib/json-ld";
 import type { Metadata } from "next";
-import { formatLongDate, parseDateRange } from "@/lib/format";
+import { formatLongDate, formatShortDate, parseDateRange } from "@/lib/format";
 
 const PLACEHOLDER_IMAGE = { bike: "🏍️", car: "🚗" } as const;
 
@@ -63,6 +63,8 @@ export default async function VehicleDetailPage({
     notFound();
   }
 
+  const [ratings, reviews] = await Promise.all([getVehicleRatings([vehicle.id]), getVehicleReviews(vehicle.id)]);
+  const rating = ratings.get(vehicle.id);
   const locale = await getLocale();
   const t = getDictionary(locale).vehicleDetail;
   const u = getDictionary(locale).ui;
@@ -111,7 +113,14 @@ export default async function VehicleDetailPage({
           <h1 className="font-display text-3xl font-bold">
             {vehicle.make} {vehicle.model}
           </h1>
-          <p className="text-ink-faint">{vehicle.year}</p>
+          <p className="text-ink-faint">
+            {vehicle.year}
+            {rating && (
+              <a href="#reviews" className="ml-2 font-semibold text-[var(--color-brand-700)] hover:underline dark:text-[var(--color-brand-400)]">
+                {u.ratingSummary(rating.average.toFixed(1), rating.review_count)}
+              </a>
+            )}
+          </p>
         </div>
 
         <div className="flex items-baseline gap-1.5">
@@ -161,6 +170,32 @@ export default async function VehicleDetailPage({
               <p className="mt-1 text-ink-soft">{item.body}</p>
             </div>
           ))}
+        </section>
+
+        <section id="reviews" className="scroll-mt-24 rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft">
+          <h2 className="font-display text-sm font-semibold">
+            {u.reviewsTitle}
+            {rating && <span className="ml-2 font-normal text-ink-soft">{u.ratingSummary(rating.average.toFixed(1), rating.review_count)}</span>}
+          </h2>
+          {reviews.length === 0 ? (
+            <p className="mt-2 text-sm text-ink-soft">{u.noReviewsYet}</p>
+          ) : (
+            <ul className="mt-3 space-y-3">
+              {reviews.map((review) => (
+                <li key={review.id} className="border-t border-hairline pt-3 text-sm first:border-t-0 first:pt-0">
+                  <p className="font-semibold">
+                    <span className="text-[var(--color-accent-500)]" aria-label={u.starsLabel(review.rating)}>
+                      {"★".repeat(review.rating)}
+                      <span className="text-[var(--color-border-strong)]">{"★".repeat(5 - review.rating)}</span>
+                    </span>{" "}
+                    {review.reviewer_name}
+                    <span className="ml-2 text-xs font-normal text-ink-faint">{formatShortDate(review.created_at.slice(0, 10), u.dateLocale)}</span>
+                  </p>
+                  {review.comment && <p className="mt-1 text-ink-soft">{review.comment}</p>}
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
 
         {vehicle.price_tiers.length > 0 && (

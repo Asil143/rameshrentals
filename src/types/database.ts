@@ -95,6 +95,19 @@ export type Booking = {
   payment_due_at: string | null;
 };
 
+export type VehicleReview = {
+  id: string;
+  booking_id: string;
+  vehicle_id: string;
+  reviewer_name: string;
+  rating: number;
+  comment: string | null;
+  hidden: boolean;
+  created_at: string;
+};
+
+export type VehicleRating = { vehicle_id: string; average: number; review_count: number };
+
 /** Non-personal booking details a guest can see (see public_booking_summary). */
 export type BookingSummary = Pick<
   Booking,
@@ -246,8 +259,19 @@ export type Database = {
         Update: Partial<Testimonial>;
         Relationships: GenericRelationship[];
       };
+      vehicle_reviews: {
+        Row: VehicleReview;
+        Insert: never;
+        Update: Pick<VehicleReview, "hidden">;
+        Relationships: GenericRelationship[];
+      };
     };
-    Views: Record<string, never>;
+    Views: {
+      vehicle_rating_summary: {
+        Row: VehicleRating;
+        Relationships: GenericRelationship[];
+      };
+    };
     Functions: {
       vehicle_has_overlap: {
         Args: { p_vehicle_id: string; p_start: string; p_end: string };
@@ -292,6 +316,14 @@ export type Database = {
       };
       customer_cancel_booking: { Args: { p_booking_id: string }; Returns: boolean };
       customer_reschedule_booking: { Args: { p_booking_id: string; p_start: string; p_end: string }; Returns: boolean };
+      review_booking_info: {
+        Args: { p_booking_id: string };
+        Returns: { vehicle_make: string; vehicle_model: string; eligible: boolean; already_reviewed: boolean }[];
+      };
+      submit_vehicle_review: {
+        Args: { p_booking_id: string; p_rating: number; p_comment: string };
+        Returns: boolean;
+      };
       public_booking_summary: {
         Args: { p_booking_id?: string; p_reference?: string; p_phone?: string };
         Returns: BookingSummary[];

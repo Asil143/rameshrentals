@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Testimonial, Vehicle, VehicleType } from "@/types/database";
+import type { Testimonial, Vehicle, VehicleRating, VehicleType } from "@/types/database";
 
 export type VehicleFilters = {
   type?: VehicleType;
@@ -145,5 +145,31 @@ export async function lookupBooking(reference: string, phone: string) {
 export async function getBookingSummary(args: { p_booking_id?: string; p_reference?: string; p_phone?: string }) {
   const supabase = await createClient();
   const { data } = await supabase.rpc("public_booking_summary", args);
+  return data?.[0] ?? null;
+}
+
+/** Average rating and review count per vehicle, keyed by vehicle id. */
+export async function getVehicleRatings(vehicleIds: string[]) {
+  if (vehicleIds.length === 0) return new Map<string, VehicleRating>();
+  const supabase = await createClient();
+  const { data } = await supabase.from("vehicle_rating_summary").select("*").in("vehicle_id", vehicleIds);
+  return new Map((data ?? []).map((row) => [row.vehicle_id, { ...row, average: Number(row.average) }]));
+}
+
+export async function getVehicleReviews(vehicleId: string, limit = 6) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("vehicle_reviews")
+    .select("id, reviewer_name, rating, comment, created_at")
+    .eq("vehicle_id", vehicleId)
+    .eq("hidden", false)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  return data ?? [];
+}
+
+export async function getReviewBookingInfo(bookingId: string) {
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("review_booking_info", { p_booking_id: bookingId });
   return data?.[0] ?? null;
 }

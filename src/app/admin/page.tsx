@@ -8,6 +8,8 @@ import { VehicleDetailsForm } from "@/components/admin/vehicle-details-form";
 import { TownOperationsForm } from "@/components/admin/town-operations-form";
 import { MaintenanceBlockForm } from "@/components/admin/maintenance-block-form";
 import { TestimonialForm } from "@/components/admin/testimonial-form";
+import { ReviewRequest } from "@/components/admin/review-request";
+import { ReviewVisibility } from "@/components/admin/review-visibility";
 import Link from "next/link";
 import Form from "next/form";
 import type { BookingStatus } from "@/types/database";
@@ -77,7 +79,7 @@ export default async function AdminPage({
     if (term) bookingsQuery = bookingsQuery.or(`reference.ilike.%${term}%,customer_name.ilike.%${term}%,customer_phone.ilike.%${term}%`);
   }
 
-  const [{ data: bookings }, { data: allBookings }, { data: vehicles }, { data: towns }, { data: maintenanceBlocks }] = await Promise.all([
+  const [{ data: bookings }, { data: allBookings }, { data: vehicles }, { data: towns }, { data: maintenanceBlocks }, { data: vehicleReviews }] = await Promise.all([
     bookingsQuery,
     // Unfiltered, for the stat cards and tab badge.
     supabase.from("bookings").select("status, start_date, end_date"),
@@ -87,6 +89,7 @@ export default async function AdminPage({
       .order("created_at", { ascending: false }),
     supabase.from("towns").select("*").eq("active", true).order("name"),
     supabase.from("vehicle_maintenance_blocks").select("*").order("start_date", { ascending: true }).limit(12),
+    supabase.from("vehicle_reviews").select("*").order("created_at", { ascending: false }).limit(50),
   ]);
 
   const visibleBookings = filters.town && bookings
@@ -192,6 +195,11 @@ export default async function AdminPage({
                     </span>
                     {booking.customer_notes && <p className="mt-1 text-xs italic text-ink-soft">“{booking.customer_notes}”</p>}
                     <BookingOperationsForm booking={booking} />
+                    {(booking.status === "returned" || booking.status === "completed") && (
+                      <div className="mt-3">
+                        <ReviewRequest bookingId={booking.id} phone={booking.customer_phone} name={booking.customer_name} vehicle={`${booking.vehicles?.make} ${booking.vehicles?.model}`} />
+                      </div>
+                    )}
                   </div>
                   <BookingActions bookingId={booking.id} status={booking.status} />
                 </div>
@@ -265,7 +273,28 @@ export default async function AdminPage({
 
       {tab === "reviews" && (
         <section className="flex flex-col gap-4">
-          <p className="text-sm text-ink-soft">Active reviews appear on the home page.</p>
+          <h2 className="font-display font-semibold">Vehicle reviews</h2>
+          <p className="text-sm text-ink-soft">Customers leave these from the link you send with &ldquo;Ask for review&rdquo; on a returned booking. Hidden reviews don&apos;t appear on the site.</p>
+          {(vehicleReviews?.length ?? 0) === 0 ? (
+            <p className="rounded-2xl border border-hairline bg-surface-raised p-5 text-sm text-ink-soft">No vehicle reviews yet.</p>
+          ) : (
+            <ul className="flex flex-col gap-2.5">
+              {vehicleReviews?.map((review) => (
+                <li key={review.id} className={`flex items-start justify-between gap-3 rounded-2xl border border-hairline bg-surface-raised p-4 text-sm ${review.hidden ? "opacity-60" : ""}`}>
+                  <div>
+                    <p className="font-semibold">
+                      <span className="text-[var(--color-accent-500)]">{"★".repeat(review.rating)}</span> {review.reviewer_name} · {vehicleNames.get(review.vehicle_id) ?? "Vehicle"}
+                      <span className="ml-2 text-xs font-normal text-ink-faint">{formatShortDate(review.created_at.slice(0, 10))}</span>
+                    </p>
+                    {review.comment && <p className="mt-1 text-ink-soft">{review.comment}</p>}
+                  </div>
+                  <ReviewVisibility reviewId={review.id} hidden={review.hidden} />
+                </li>
+              ))}
+            </ul>
+          )}
+          <h2 className="mt-4 font-display font-semibold">Home page testimonials</h2>
+          <p className="text-sm text-ink-soft">Active testimonials appear on the home page.</p>
           <TestimonialForm towns={towns ?? []} />
         </section>
       )}

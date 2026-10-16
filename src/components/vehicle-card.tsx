@@ -15,6 +15,7 @@ export function VehicleCard({
   locale = "en",
   eager = false,
   dates,
+  rating,
 }: {
   vehicle: Vehicle;
   townSlug: string;
@@ -23,6 +24,7 @@ export function VehicleCard({
   eager?: boolean;
   /** Chosen pickup/return dates: show the trip total and carry the dates to the vehicle page. */
   dates?: { start: string; end: string } | null;
+  rating?: { average: number; review_count: number };
 }) {
   const t = getDictionary(locale).vehicleCard;
   const days = dates ? getBookingDays(dates.start, dates.end) : 0;
@@ -50,6 +52,11 @@ export function VehicleCard({
         <span className="absolute left-2.5 top-2.5 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur-sm">
           {u.vehicleType[vehicle.type]}
         </span>
+        {rating && (
+          <span className="absolute bottom-2.5 left-2.5 rounded-full bg-[var(--color-brand-800)] px-2 py-0.5 text-[11px] font-semibold text-white">
+            ★ {rating.average.toFixed(1)} <span className="font-normal text-white/75">({rating.review_count})</span>
+          </span>
+        )}
         <span className="absolute right-2.5 top-2.5 hidden rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold sm:inline text-[var(--color-brand-800)]">{u.available}</span>
       </div>
       <div className="flex flex-1 flex-col gap-0.5 p-3 sm:gap-1 sm:p-4">

@@ -3,7 +3,7 @@ import Image from "next/image";
 import { VehicleCard } from "@/components/vehicle-card";
 import { HeroSearch } from "@/components/hero-search";
 import { WhatsAppButton } from "@/components/whatsapp-button";
-import { getAllTowns, getTestimonials, getTownBySlug, getVehiclesForTown } from "@/lib/queries";
+import { getAllTowns, getTestimonials, getTownBySlug, getVehicleRatings, getVehiclesForTown } from "@/lib/queries";
 import { whatsappGeneralLink } from "@/lib/whatsapp";
 import { DEFAULT_TOWN_SLUG, GOOGLE_BUSINESS_URL, GOOGLE_REVIEW_URL, SITE_NAME, SITE_URL, WHATSAPP_NUMBER } from "@/lib/constants";
 import { getLocale } from "@/lib/i18n/get-locale";
@@ -40,6 +40,7 @@ const FEATURE_ICONS = [
 export default async function Home() {
   const [town, towns, testimonials] = await Promise.all([getTownBySlug(DEFAULT_TOWN_SLUG), getAllTowns(), getTestimonials()]);
   const vehicles = town ? await getVehiclesForTown(town.id) : [];
+  const ratings = await getVehicleRatings(vehicles.map((vehicle) => vehicle.id));
   const activeTownCount = towns.filter((item) => item.active).length;
 
   const locale = await getLocale();
@@ -160,7 +161,7 @@ export default async function Home() {
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
             {vehicles.slice(0, 8).map((vehicle) => (
-              <VehicleCard key={vehicle.id} vehicle={vehicle} townSlug={DEFAULT_TOWN_SLUG} locale={locale} />
+              <VehicleCard key={vehicle.id} vehicle={vehicle} townSlug={DEFAULT_TOWN_SLUG} locale={locale} rating={ratings.get(vehicle.id)} />
             ))}
           </div>
           <Link

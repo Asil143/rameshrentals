@@ -427,3 +427,28 @@ export async function addTestimonial(formData: FormData): Promise<ActionResult> 
   revalidatePath("/admin");
   return { ok: true };
 }
+
+export async function submitReview(bookingId: string, rating: number, comment: string): Promise<ActionResult> {
+  if (!/^[0-9a-f-]{36}$/i.test(bookingId) || !Number.isInteger(rating) || rating < 1 || rating > 5) {
+    return { ok: false, error: "invalid" };
+  }
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("submit_vehicle_review", {
+    p_booking_id: bookingId,
+    p_rating: rating,
+    p_comment: comment.slice(0, 600),
+  });
+  if (error || !data) return { ok: false, error: "failed" };
+  revalidatePath("/[town]/vehicles", "layout");
+  return { ok: true };
+}
+
+export async function setReviewHidden(reviewId: string, hidden: boolean): Promise<ActionResult> {
+  const { supabase, ok } = await requireAdmin();
+  if (!ok) return { ok: false, error: "Not authorized." };
+  const { error } = await supabase.from("vehicle_reviews").update({ hidden }).eq("id", reviewId);
+  if (error) return { ok: false, error: "Couldn't update the review." };
+  revalidatePath("/admin");
+  revalidatePath("/[town]/vehicles", "layout");
+  return { ok: true };
+}

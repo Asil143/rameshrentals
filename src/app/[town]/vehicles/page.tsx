@@ -6,7 +6,7 @@ import { TownSelector } from "@/components/town-selector";
 import { VehicleCard } from "@/components/vehicle-card";
 import { VehicleTypeToggle } from "@/components/vehicle-type-toggle";
 import { WhatsAppButton } from "@/components/whatsapp-button";
-import { getAllTowns, getTownBySlug, getVehiclesForTown } from "@/lib/queries";
+import { getAllTowns, getTownBySlug, getVehicleRatings, getVehiclesForTown } from "@/lib/queries";
 import { whatsappGeneralLink } from "@/lib/whatsapp";
 import { SITE_NAME } from "@/lib/constants";
 import type { VehicleType } from "@/types/database";
@@ -86,6 +86,7 @@ export default async function VehiclesPage({
   });
 
   const dateRange = parseDateRange(search.start_date, search.end_date);
+  const ratings = await getVehicleRatings(vehicles.map((vehicle) => vehicle.id));
   const moreFilterCount = [search.max_price, search.seats, search.fuel, search.transmission, search.sort && search.sort !== "price_asc" ? search.sort : ""]
     .filter(Boolean).length;
 
@@ -175,7 +176,7 @@ export default async function VehiclesPage({
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
           {vehicles.map((vehicle, index) => (
-            <VehicleCard key={vehicle.id} vehicle={vehicle} townSlug={townSlug} locale={locale} eager={index < 2} dates={dateRange} />
+            <VehicleCard key={vehicle.id} vehicle={vehicle} townSlug={townSlug} locale={locale} eager={index < 2} dates={dateRange} rating={ratings.get(vehicle.id)} />
           ))}
         </div>
       )}

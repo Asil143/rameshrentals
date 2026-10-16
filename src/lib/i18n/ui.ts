@@ -175,6 +175,22 @@ export type UiText = {
   hubVideoLabel: string;
   hubVideoCaption: string;
 
+  // Vehicle reviews
+  reviewsTitle: string;
+  ratingSummary: (average: string, count: number) => string;
+  noReviewsYet: string;
+  reviewPageTitle: (vehicle: string) => string;
+  reviewIntro: string;
+  yourRating: string;
+  commentLabel: string;
+  submitReview: string;
+  reviewThanks: string;
+  reviewAlready: string;
+  reviewNotYet: string;
+  reviewChooseRating: string;
+  reviewFailed: string;
+  starsLabel: (n: number) => string;
+
   // Header, 404
   menu: string;
   status: string;
@@ -354,6 +370,20 @@ export const uiEn: UiText = {
   hubVideoLabel: "3D walkthrough: from Road 1 through the gate, past the handover bay, fleet board, bike and car parking, to the wash and service bays, ending with an overhead view of the whole hub",
   hubSiteAlt: "Map of the block: the hub sits on Road 1 between junction J2 (with Road 3) and junction J1 (with Road 2)",
 
+  reviewsTitle: "Reviews",
+  ratingSummary: (average, count) => `★ ${average} · ${count} review${count === 1 ? "" : "s"}`,
+  noReviewsYet: "No reviews yet — be the first after your trip.",
+  reviewPageTitle: (vehicle) => `How was your ${vehicle}?`,
+  reviewIntro: "Your rating helps other customers in your town choose. Only your first name is shown.",
+  yourRating: "Your rating",
+  commentLabel: "Tell us more (optional)",
+  submitReview: "Submit review",
+  reviewThanks: "Thank you! Your review is now live.",
+  reviewAlready: "This booking has already been reviewed. Thank you!",
+  reviewNotYet: "You can review this booking after you return the vehicle.",
+  reviewChooseRating: "Choose a star rating.",
+  reviewFailed: "We couldn't save your review. Please try again.",
+  starsLabel: (n) => `${n} star${n === 1 ? "" : "s"}`,
   menu: "Menu",
   status: "Status",
   owner: "Owner",
@@ -532,6 +562,20 @@ export const uiTe: UiText = {
   hubVideoLabel: "3D నడక: రోడ్ 1 నుండి గేటు ద్వారా, అందజేత బే, ఫ్లీట్ బోర్డు, బైక్ మరియు కార్ పార్కింగ్ దాటి, వాష్ మరియు సర్వీస్ బేల వరకు, చివరగా మొత్తం హబ్ పై నుండి",
   hubSiteAlt: "బ్లాక్ మ్యాప్: హబ్ రోడ్ 1 మీద, J2 (రోడ్ 3 జంక్షన్) మరియు J1 (రోడ్ 2 జంక్షన్) మధ్య ఉంది",
 
+  reviewsTitle: "రివ్యూలు",
+  ratingSummary: (average, count) => `★ ${average} · ${count} రివ్యూలు`,
+  noReviewsYet: "ఇంకా రివ్యూలు లేవు — మీ ప్రయాణం తర్వాత మొదటి రివ్యూ ఇవ్వండి.",
+  reviewPageTitle: (vehicle) => `మీ ${vehicle} ప్రయాణం ఎలా ఉంది?`,
+  reviewIntro: "మీ రేటింగ్ మీ ఊరిలోని ఇతర కస్టమర్లకు సహాయపడుతుంది. మీ మొదటి పేరు మాత్రమే చూపిస్తాం.",
+  yourRating: "మీ రేటింగ్",
+  commentLabel: "మరిన్ని వివరాలు (ఐచ్ఛికం)",
+  submitReview: "రివ్యూ పంపండి",
+  reviewThanks: "ధన్యవాదాలు! మీ రివ్యూ ప్రచురించబడింది.",
+  reviewAlready: "ఈ బుకింగ్‌కు ఇప్పటికే రివ్యూ ఇచ్చారు. ధన్యవాదాలు!",
+  reviewNotYet: "వాహనం తిరిగి ఇచ్చిన తర్వాత ఈ బుకింగ్‌కు రివ్యూ ఇవ్వవచ్చు.",
+  reviewChooseRating: "స్టార్ రేటింగ్ ఎంచుకోండి.",
+  reviewFailed: "మీ రివ్యూ సేవ్ కాలేదు. మళ్లీ ప్రయత్నించండి.",
+  starsLabel: (n) => `${n} స్టార్లు`,
   menu: "మెనూ",
   status: "స్టేటస్",
   owner: "యజమాని",
