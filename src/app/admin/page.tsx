@@ -189,6 +189,7 @@ export default async function AdminPage({
                       {booking.vehicles?.make} {booking.vehicles?.model} · {booking.vehicles?.towns?.name} · {formatShortDate(booking.start_date)} → {formatShortDate(booking.end_date)}
                       {" · "}{booking.fulfillment_method === "doorstep_delivery" ? "Doorstep delivery" : "Location pickup"}
                       {booking.estimated_total != null && <> · {formatRupees(booking.estimated_total)}</>}
+                      {booking.protection_selected && <> · incl. damage protection {formatRupees(booking.protection_fee)}</>}
                     </p>
                     <span className="text-xs font-medium capitalize text-ink-faint">
                       Payment {booking.payment_status.replaceAll("_", " ")} · deposit {booking.deposit_status.replaceAll("_", " ")}

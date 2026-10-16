@@ -2,15 +2,17 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BookingSummaryCard } from "@/components/booking-summary";
 import { WhatsAppButton } from "@/components/whatsapp-button";
-import { getBookingSummary } from "@/lib/queries";
+import { getBookingSummary, getTownBySlug } from "@/lib/queries";
 import { whatsappGeneralLink } from "@/lib/whatsapp";
 import { getLocale } from "@/lib/i18n/get-locale";
+import { AdvancePayment } from "@/components/advance-payment";
 import { getDictionary } from "@/lib/i18n/dictionary";
 
 export default async function BookingConfirmedPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const booking = /^[0-9a-f-]{36}$/i.test(id) ? await getBookingSummary({ p_booking_id: id }) : null;
   if (!booking) notFound();
+  const town = await getTownBySlug(booking.town_slug);
   const locale = await getLocale();
   const u = getDictionary(locale).ui;
 
@@ -32,11 +34,7 @@ export default async function BookingConfirmedPage({ params }: { params: Promise
 
       <BookingSummaryCard booking={booking} u={u} />
 
-      {booking.payment_link && (
-        <a href={booking.payment_link} className="mt-5 flex justify-center rounded-xl bg-[var(--color-accent-400)] px-5 py-3 font-semibold text-[var(--color-brand-900)]">
-          {u.payAdvance}
-        </a>
-      )}
+      <AdvancePayment booking={booking} town={town} u={u} />
 
       <section className="mt-10">
         <h2 className="font-display mb-4 text-xl font-bold">{u.whatNext}</h2>

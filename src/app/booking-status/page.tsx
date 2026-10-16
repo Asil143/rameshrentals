@@ -2,9 +2,10 @@ import Form from "next/form";
 import Link from "next/link";
 import { BookingSummaryCard } from "@/components/booking-summary";
 import { WhatsAppButton } from "@/components/whatsapp-button";
-import { lookupBooking } from "@/lib/queries";
+import { getTownBySlug, lookupBooking } from "@/lib/queries";
 import { whatsappGeneralLink } from "@/lib/whatsapp";
 import { getLocale } from "@/lib/i18n/get-locale";
+import { AdvancePayment } from "@/components/advance-payment";
 import { getDictionary } from "@/lib/i18n/dictionary";
 
 const inputClass =
@@ -17,6 +18,7 @@ export default async function BookingStatusPage({
 }) {
   const { reference = "", phone = "" } = await searchParams;
   const booking = reference && phone ? await lookupBooking(reference, phone) : null;
+  const town = booking ? await getTownBySlug(booking.town_slug) : null;
   const locale = await getLocale();
   const u = getDictionary(locale).ui;
 
@@ -49,11 +51,7 @@ export default async function BookingStatusPage({
         <section className="mt-8">
           <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-600)]">{booking.reference}</p>
           <BookingSummaryCard booking={booking} u={u} />
-          {booking.payment_link && (
-            <a href={booking.payment_link} className="mt-5 flex justify-center rounded-xl bg-[var(--color-accent-400)] px-5 py-3 font-semibold text-[var(--color-brand-900)]">
-              {u.payAdvance}
-            </a>
-          )}
+          <AdvancePayment booking={booking} town={town} u={u} />
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <WhatsAppButton href={whatsappGeneralLink(booking.town_name, locale)} label={u.messageWhatsApp} className="justify-center" />
             <Link href={`/${booking.town_slug}/vehicles`} className="flex items-center justify-center px-5 py-3 text-sm font-semibold text-ink-soft hover:underline">

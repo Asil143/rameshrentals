@@ -21,6 +21,11 @@ export type Town = {
   delivery_radius_km: number;
   opening_time: string;
   closing_time: string;
+  upi_id: string | null;
+  upi_payee_name: string | null;
+  protection_fee_bike: number;
+  protection_fee_car: number;
+  protection_terms: string | null;
 };
 
 export type Owner = {
@@ -93,6 +98,8 @@ export type Booking = {
   payment_link: string | null;
   payment_reference: string | null;
   payment_due_at: string | null;
+  protection_selected: boolean;
+  protection_fee: number;
 };
 
 export type VehicleReview = {
@@ -113,6 +120,7 @@ export type BookingSummary = Pick<
   Booking,
   | "reference" | "status" | "payment_status" | "start_date" | "end_date" | "pickup_time" | "return_time"
   | "fulfillment_method" | "return_method" | "estimated_total" | "deposit_amount" | "advance_amount" | "payment_link"
+  | "protection_fee"
 > & {
   vehicle_make: string;
   vehicle_model: string;
@@ -311,6 +319,16 @@ export type Database = {
           p_fulfillment_method: FulfillmentMethod; p_pickup_time: string; p_return_time: string;
           p_delivery_address: string; p_return_method: "location_return" | "doorstep_collection";
           p_customer_notes: string;
+        };
+        Returns: string;
+      };
+      create_booking_request_v4: {
+        Args: {
+          p_vehicle_id: string; p_customer_name: string; p_customer_phone: string;
+          p_start: string; p_end: string; p_accept_policy: boolean;
+          p_fulfillment_method: FulfillmentMethod; p_pickup_time: string; p_return_time: string;
+          p_delivery_address: string; p_return_method: "location_return" | "doorstep_collection";
+          p_customer_notes: string; p_protection: boolean;
         };
         Returns: string;
       };

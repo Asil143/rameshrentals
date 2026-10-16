@@ -15,12 +15,14 @@ export default async function InvoicePage({ params }: { params: Promise<{ id: st
     .single();
   if (!booking) notFound();
 
-  const rental = Math.max(0, Number(booking.estimated_total ?? 0) - Number(booking.delivery_fee) - Number(booking.collection_fee) - Number(booking.extras_total));
+  const protectionFee = Number(booking.protection_fee) || 0;
+  const rental = Math.max(0, Number(booking.estimated_total ?? 0) - Number(booking.delivery_fee) - Number(booking.collection_fee) - Number(booking.extras_total) - protectionFee);
   const lines = [
     { label: "Rental", amount: rental },
     { label: "Doorstep delivery", amount: Number(booking.delivery_fee) },
     { label: "Return collection", amount: Number(booking.collection_fee) },
     { label: "Extras", amount: Number(booking.extras_total) },
+    { label: "Damage protection", amount: protectionFee },
   ].filter((line, index) => index === 0 || line.amount > 0);
   const contactPhone = `+${WHATSAPP_NUMBER.slice(0, 2)} ${WHATSAPP_NUMBER.slice(2, 7)} ${WHATSAPP_NUMBER.slice(7)}`;
   const town = booking.vehicles?.towns;

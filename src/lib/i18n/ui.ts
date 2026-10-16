@@ -29,6 +29,9 @@ export type UiText = {
   checkedOn: (date: string) => string;
   beforeYouBook: string;
   viewBreakup: string;
+  protectionTitle: string;
+  protectionPrice: (price: string) => string;
+  protectionLine: (days: number, rate: string) => string;
   hideBreakup: string;
   rentLine: (days: number, rate: string) => string;
   totalRent: string;
@@ -95,6 +98,11 @@ export type UiText = {
   paymentStatus: { unpaid: string; part_paid: string; paid: string; refunded: string };
   advanceDue: (amount: string) => string;
   payAdvance: string;
+  upiTitle: (amount: string) => string;
+  upiOpenApp: string;
+  upiScan: string;
+  upiId: (id: string) => string;
+  upiNote: (reference: string) => string;
   requestReceived: string;
   requestReceivedBody: string;
   yourReference: string;
@@ -241,6 +249,9 @@ export const uiEn: UiText = {
   checkedOn: (date) => `Inspected and cleaned on ${date}`,
   beforeYouBook: "Good to know",
   viewBreakup: "View breakup",
+  protectionTitle: "Add damage protection",
+  protectionPrice: (price) => `+${price}/day`,
+  protectionLine: (days, rate) => `Damage protection: ${days} day${days === 1 ? "" : "s"} × ${rate}`,
   hideBreakup: "Hide breakup",
   rentLine: (days, rate) => `Rent: ${days} day${days === 1 ? "" : "s"} × ${rate}`,
   totalRent: "Total rent",
@@ -308,6 +319,11 @@ export const uiEn: UiText = {
   paymentStatus: { unpaid: "Unpaid", part_paid: "Part paid", paid: "Paid", refunded: "Refunded" },
   advanceDue: (amount) => `Advance due ${amount}`,
   payAdvance: "Pay advance online",
+  upiTitle: (amount) => `Pay your ${amount} advance by UPI`,
+  upiOpenApp: "Open UPI app",
+  upiScan: "Or scan with any UPI app — GPay, PhonePe, Paytm, BHIM.",
+  upiId: (id) => `UPI ID: ${id}`,
+  upiNote: (reference) => `The amount and your reference ${reference} are filled in for you. We'll confirm on WhatsApp once it arrives.`,
   requestReceived: "Booking request received",
   requestReceivedBody: "Nothing to pay yet. Save your reference — you'll need it with your phone number to check the status.",
   yourReference: "Your reference",
@@ -453,6 +469,9 @@ export const uiTe: UiText = {
   checkedOn: (date) => `${date}న తనిఖీ చేసి శుభ్రం చేశాం`,
   beforeYouBook: "తెలుసుకోవలసినవి",
   viewBreakup: "వివరాలు చూడండి",
+  protectionTitle: "డ్యామేజ్ ప్రొటెక్షన్ జోడించండి",
+  protectionPrice: (price) => `+రోజుకు ${price}`,
+  protectionLine: (days, rate) => `డ్యామేజ్ ప్రొటెక్షన్: ${days} రోజులు × ${rate}`,
   hideBreakup: "వివరాలు దాచండి",
   rentLine: (days, rate) => `అద్దె: ${days} రోజులు × ${rate}`,
   totalRent: "మొత్తం అద్దె",
@@ -520,6 +539,11 @@ export const uiTe: UiText = {
   paymentStatus: { unpaid: "చెల్లించలేదు", part_paid: "పాక్షికంగా చెల్లించారు", paid: "చెల్లించారు", refunded: "తిరిగి చెల్లించారు" },
   advanceDue: (amount) => `ముందస్తు చెల్లింపు ${amount}`,
   payAdvance: "ముందస్తు మొత్తం ఆన్‌లైన్‌లో చెల్లించండి",
+  upiTitle: (amount) => `మీ ${amount} ముందస్తు మొత్తాన్ని UPI ద్వారా చెల్లించండి`,
+  upiOpenApp: "UPI యాప్ తెరవండి",
+  upiScan: "లేదా ఏ UPI యాప్‌తోనైనా స్కాన్ చేయండి — GPay, PhonePe, Paytm, BHIM.",
+  upiId: (id) => `UPI ID: ${id}`,
+  upiNote: (reference) => `మొత్తం మరియు మీ రిఫరెన్స్ ${reference} ముందే నింపబడ్డాయి. డబ్బు అందిన తర్వాత వాట్సాప్‌లో నిర్ధారిస్తాం.`,
   requestReceived: "బుకింగ్ అభ్యర్థన అందింది",
   requestReceivedBody: "ఇప్పుడు ఏమీ చెల్లించనవసరం లేదు. మీ రిఫరెన్స్‌ను దాచుకోండి — స్టేటస్ చూడటానికి మీ ఫోన్ నంబర్‌తో పాటు ఇది అవసరం.",
   yourReference: "మీ రిఫరెన్స్",

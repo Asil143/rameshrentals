@@ -245,6 +245,8 @@ export default async function VehicleDetailPage({
             initialStart={dateRange?.start}
             initialEnd={dateRange?.end}
             depositAmount={vehicle.type === "bike" ? 1000 : 5000}
+            protectionPerDay={Number(vehicle.type === "bike" ? town.protection_fee_bike : town.protection_fee_car) || 0}
+            protectionTerms={town.protection_terms}
           />
           <Link
             href="/about#policy"

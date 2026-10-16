@@ -23,6 +23,8 @@ export function BookingForm({
   initialStart = "",
   initialEnd = "",
   depositAmount,
+  protectionPerDay = 0,
+  protectionTerms = null,
 }: {
   vehicleId: string;
   townSlug: string;
@@ -36,6 +38,9 @@ export function BookingForm({
   initialEnd?: string;
   /** Refundable deposit collected at pickup. */
   depositAmount: number;
+  /** Optional damage protection; offered only when both a fee and terms are set. */
+  protectionPerDay?: number;
+  protectionTerms?: string | null;
 }) {
   const t = getDictionary(locale).bookingForm;
   const u = getDictionary(locale).ui;
@@ -44,6 +49,8 @@ export function BookingForm({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [showBreakup, setShowBreakup] = useState(false);
+  const [protection, setProtection] = useState(false);
+  const protectionOffered = protectionPerDay > 0 && Boolean(protectionTerms);
   const [startDate, setStartDate] = useState(initialStart);
   const [endDate, setEndDate] = useState(initialEnd);
   const [availabilityReady, setAvailabilityReady] = useState(false);
@@ -57,7 +64,8 @@ export function BookingForm({
     days > 0 ? getEstimatedTotal({ price_per_day: pricePerDay, price_tiers: priceTiers }, startDate, endDate) : 0;
   const deliveryCharge = fulfillmentMethod === "doorstep_delivery" ? deliveryFee : 0;
   const collectionCharge = returnMethod === "doorstep_collection" ? collectionFee : 0;
-  const grandTotal = estimatedTotal + deliveryCharge + collectionCharge;
+  const protectionCharge = protection && protectionOffered ? days * protectionPerDay : 0;
+  const grandTotal = estimatedTotal + deliveryCharge + collectionCharge + protectionCharge;
 
   const breakdown = days > 0 && (
     <div className="rounded-xl bg-[var(--color-accent-400)]/12 px-4 py-3 text-sm">
@@ -66,6 +74,7 @@ export function BookingForm({
           { label: u.rentLine(days, formatRupees(Math.round(estimatedTotal / days))), value: estimatedTotal },
           ...(deliveryCharge > 0 ? [{ label: t.doorstepDelivery, value: deliveryCharge }] : []),
           ...(collectionCharge > 0 ? [{ label: u.collectedFromYou, value: collectionCharge }] : []),
+          ...(protectionCharge > 0 ? [{ label: u.protectionLine(days, formatRupees(protectionPerDay)), value: protectionCharge }] : []),
         ].map((row) => (
           <div key={row.label} className="flex justify-between gap-3">
             <dt className="text-ink-soft">{row.label}</dt>
@@ -212,6 +221,18 @@ export function BookingForm({
       <label className="flex flex-col gap-1.5 text-sm font-medium">{u.returnMethod}
         <select name="return_method" value={returnMethod} onChange={(event) => setReturnMethod(event.target.value as typeof returnMethod)} className={inputClass}><option value="location_return">{u.returnAtLocation}</option><option value="doorstep_collection">{u.collectFromMe(formatRupees(collectionFee))}</option></select>
       </label>
+
+      {protectionOffered && (
+        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-hairline bg-[var(--color-surface)] p-3 text-sm transition has-[:checked]:border-[var(--color-brand-500)] has-[:checked]:bg-[var(--color-brand-500)]/8">
+          <input type="checkbox" name="protection" checked={protection} onChange={(event) => setProtection(event.target.checked)} className="mt-0.5 h-4 w-4 accent-[var(--color-brand-600)]" />
+          <span>
+            <strong className="block">
+              {u.protectionTitle} <span className="font-normal text-ink-soft">{u.protectionPrice(formatRupees(protectionPerDay))}</span>
+            </strong>
+            <small className="text-ink-faint">{protectionTerms}</small>
+          </span>
+        </label>
+      )}
 
       <label className="flex flex-col gap-1.5 text-sm font-medium">{u.notes} <span className="font-normal text-ink-faint">{u.optional}</span>
         <textarea name="customer_notes" rows={2} maxLength={500} placeholder={u.notesPlaceholder} className={inputClass} />

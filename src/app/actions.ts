@@ -39,6 +39,7 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
   const deliveryAddress = ((formData.get("delivery_address") as string) ?? "").trim();
   const returnMethod = formData.get("return_method") as "location_return" | "doorstep_collection";
   const customerNotes = ((formData.get("customer_notes") as string) ?? "").trim();
+  const protection = formData.get("protection") === "on";
 
   const honeypot = formData.get("website");
   if (honeypot) return { ok: true, bookingId: "" };
@@ -90,7 +91,7 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc("create_booking_request_v3", {
+  const bookingArgs = {
     p_vehicle_id: vehicleId,
     p_customer_name: customerName,
     p_customer_phone: customerPhone,
@@ -103,7 +104,12 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
     p_delivery_address: deliveryAddress,
     p_return_method: returnMethod,
     p_customer_notes: customerNotes,
-  });
+  };
+  let { data, error } = await supabase.rpc("create_booking_request_v4", { ...bookingArgs, p_protection: protection });
+  // Until migration 0012 is applied, v4 doesn't exist: keep taking bookings with v3.
+  if (error?.code === "PGRST202") {
+    ({ data, error } = await supabase.rpc("create_booking_request_v3", bookingArgs));
+  }
 
   if (error) {
     console.error("Booking request failed", { code: error.code });
@@ -272,8 +278,13 @@ export async function updateTownOperations(formData: FormData): Promise<ActionRe
     delivery_radius_km: Math.max(0, Number(formData.get("delivery_radius_km")) || 0),
     opening_time: String(formData.get("opening_time") || "08:00"),
     closing_time: String(formData.get("closing_time") || "20:00"),
+    upi_id: String(formData.get("upi_id") || "").trim() || null,
+    upi_payee_name: String(formData.get("upi_payee_name") || "").trim() || null,
+    protection_fee_bike: Math.max(0, Number(formData.get("protection_fee_bike")) || 0),
+    protection_fee_car: Math.max(0, Number(formData.get("protection_fee_car")) || 0),
+    protection_terms: String(formData.get("protection_terms") || "").trim().slice(0, 600) || null,
   }).eq("id", townId);
-  if (error) return { ok: false, error: "Couldn't update town operations." };
+  if (error) return { ok: false, error: error.message.includes("upi_id") ? "That UPI ID doesn't look right (e.g. name@okaxis)." : "Couldn't update town operations." };
   revalidatePath("/admin"); revalidatePath("/", "layout");
   return { ok: true };
 }
