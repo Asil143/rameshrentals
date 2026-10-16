@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { getDictionary, type Locale } from "@/lib/i18n/dictionary";
+import { staffLoginEmail } from "@/lib/staff-login";
 
 const inputClass =
   "flex-1 rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-brand-500)]/20";
@@ -13,7 +14,9 @@ export function LoginForm({ locale }: { locale: Locale }) {
   const router = useRouter();
   const supabase = createClient();
 
+  const [mode, setMode] = useState<"customer" | "staff">("customer");
   const [step, setStep] = useState<"phone" | "otp">("phone");
+  const [pin, setPin] = useState("");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +40,8 @@ export function LoginForm({ locale }: { locale: Locale }) {
     const { error } = await supabase.auth.signInWithOtp({ phone: `+91${phone}` });
     setIsLoading(false);
     if (error) {
-      setError(error.message);
+      // No SMS provider configured yet — see staff login below.
+      setError(/unsupported phone provider/i.test(error.message) ? t.customerLoginUnavailable : error.message);
       return;
     }
     setStep("otp");
@@ -62,6 +66,42 @@ export function LoginForm({ locale }: { locale: Locale }) {
     router.refresh();
   }
 
+  async function staffSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    if (!/^\d{10}$/.test(phone)) {
+      setError(t.invalidPhone);
+      return;
+    }
+    setIsLoading(true);
+    const { data, error } = await supabase.auth.signInWithPassword({ email: staffLoginEmail(phone), password: pin });
+    if (error || !data.user) {
+      setIsLoading(false);
+      setError(t.wrongPin);
+      return;
+    }
+    const { data: profile } = await supabase.from("profiles").select("is_admin, owner_id").eq("id", data.user.id).single();
+    if (!profile?.is_admin && !profile?.owner_id) {
+      await supabase.auth.signOut();
+      setIsLoading(false);
+      setError(t.notStaff);
+      return;
+    }
+    router.push(profile.is_admin ? "/admin" : "/owner");
+    router.refresh();
+  }
+
+  function switchMode(next: "customer" | "staff") {
+    setMode(next);
+    setStep("phone");
+    setError(null);
+  }
+
+  const tabClass = (active: boolean) =>
+    `flex-1 rounded-full px-3 py-2 text-sm font-semibold transition-colors ${
+      active ? "bg-[var(--color-brand-600)] text-white shadow-soft" : "text-ink-soft hover:text-[var(--color-ink)]"
+    }`;
+
   return (
     <div className="flex flex-1 items-center justify-center px-4 py-16">
       <div className="w-full max-w-sm rounded-2xl border border-hairline bg-surface-raised p-7 shadow-soft">
@@ -69,9 +109,63 @@ export function LoginForm({ locale }: { locale: Locale }) {
           R
         </span>
         <h1 className="font-display text-2xl font-bold">{t.title}</h1>
-        <p className="mb-6 mt-1 text-sm text-ink-soft">{t.subtitle}</p>
+        <p className="mb-5 mt-1 text-sm text-ink-soft">{mode === "staff" ? t.staffSubtitle : t.subtitle}</p>
 
-        {step === "phone" ? (
+        <div role="tablist" className="mb-6 flex gap-1 rounded-full border border-hairline bg-[var(--color-surface)] p-1">
+          <button type="button" role="tab" aria-selected={mode === "customer"} onClick={() => switchMode("customer")} className={tabClass(mode === "customer")}>
+            {t.customerTab}
+          </button>
+          <button type="button" role="tab" aria-selected={mode === "staff"} onClick={() => switchMode("staff")} className={tabClass(mode === "staff")}>
+            {t.staffTab}
+          </button>
+        </div>
+
+        {mode === "staff" ? (
+          <form onSubmit={staffSignIn} className="flex flex-col gap-4">
+            <label className="flex flex-col gap-1.5 text-sm font-medium">
+              {t.phoneNumber}
+              <div className="flex items-center gap-2">
+                <span className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5 text-sm text-ink-soft">
+                  +91
+                </span>
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  autoComplete="username"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  pattern="\d{10}"
+                  maxLength={10}
+                  placeholder={t.phonePlaceholder}
+                  required
+                  className={inputClass}
+                />
+              </div>
+            </label>
+            <label className="flex flex-col gap-1.5 text-sm font-medium">
+              {t.pin}
+              <input
+                type="password"
+                inputMode="numeric"
+                autoComplete="current-password"
+                value={pin}
+                onChange={(e) => setPin(e.target.value)}
+                minLength={6}
+                placeholder={t.pinPlaceholder}
+                required
+                className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5 text-sm tracking-widest outline-none transition-colors focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-brand-500)]/20"
+              />
+            </label>
+            {error && <p role="alert" aria-live="polite" className="text-sm text-red-600">{error}</p>}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="rounded-full bg-gradient-to-br from-[var(--color-brand-500)] to-[var(--color-brand-700)] px-4 py-3 font-display font-semibold text-white shadow-soft transition-all hover:shadow-brand disabled:opacity-60 active:scale-[0.98]"
+            >
+              {isLoading ? t.verifying : t.staffLogin}
+            </button>
+          </form>
+        ) : step === "phone" ? (
           <form onSubmit={sendOtp} className="flex flex-col gap-4">
             <label className="flex flex-col gap-1.5 text-sm font-medium">
               {t.phoneNumber}

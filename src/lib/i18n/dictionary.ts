@@ -95,6 +95,15 @@ type Dictionary = {
     verify: string;
     verifying: string;
     changePhone: string;
+    customerTab: string;
+    staffTab: string;
+    staffSubtitle: string;
+    pin: string;
+    pinPlaceholder: string;
+    staffLogin: string;
+    wrongPin: string;
+    notStaff: string;
+    customerLoginUnavailable: string;
   };
   footer: {
     blurb: string;
@@ -252,6 +261,15 @@ const en: Dictionary = {
     verify: "Verify & log in",
     verifying: "Verifying…",
     changePhone: "Change phone number",
+    customerTab: "Customer",
+    staffTab: "Staff",
+    staffSubtitle: "For admins and vehicle owners — log in with your number and PIN.",
+    pin: "PIN",
+    pinPlaceholder: "Your PIN",
+    staffLogin: "Log in",
+    wrongPin: "Wrong number or PIN.",
+    notStaff: "This number isn't set up as an admin or owner yet.",
+    customerLoginUnavailable: "Customer login is coming soon. You can book without logging in.",
   },
   footer: {
     blurb:
@@ -442,6 +460,15 @@ const te: Dictionary = {
     verify: "వెరిఫై చేసి లాగిన్ చేయండి",
     verifying: "వెరిఫై చేస్తోంది…",
     changePhone: "ఫోన్ నంబర్ మార్చండి",
+    customerTab: "కస్టమర్",
+    staffTab: "సిబ్బంది",
+    staffSubtitle: "అడ్మిన్‌లు మరియు వాహన యజమానుల కోసం — మీ నంబర్ మరియు PIN తో లాగిన్ అవ్వండి.",
+    pin: "PIN",
+    pinPlaceholder: "మీ PIN",
+    staffLogin: "లాగిన్",
+    wrongPin: "నంబర్ లేదా PIN తప్పు.",
+    notStaff: "ఈ నంబర్ ఇంకా అడ్మిన్ లేదా యజమాని ఖాతాగా సెట్ చేయబడలేదు.",
+    customerLoginUnavailable: "కస్టమర్ లాగిన్ త్వరలో వస్తుంది. లాగిన్ లేకుండానే మీరు బుక్ చేయవచ్చు.",
   },
   footer: {
     blurb:

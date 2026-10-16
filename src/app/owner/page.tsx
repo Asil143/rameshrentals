@@ -1,6 +1,12 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { formatRupees } from "@/lib/pricing";
+
+function formatDay(date: string) {
+  const [y, m, d] = date.split("-").map(Number);
+  return new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short" }).format(new Date(y, m - 1, d));
+}
 
 export default async function OwnerPage() {
   const supabase = await createClient();
@@ -54,7 +60,7 @@ export default async function OwnerPage() {
         <div className="overflow-x-auto rounded-2xl border border-hairline bg-surface-raised shadow-soft">
           <table className="w-full min-w-[640px] text-sm">
             <thead><tr className="border-b border-hairline text-left"><th className="px-4 py-3">Vehicle</th><th className="px-4 py-3">Town</th><th className="px-4 py-3">Price/day</th><th className="px-4 py-3">Status</th></tr></thead>
-            <tbody>{vehicles?.map((vehicle) => <tr key={vehicle.id} className="border-b border-hairline last:border-0"><td className="px-4 py-3">{vehicle.make} {vehicle.model}</td><td className="px-4 py-3">{vehicle.towns?.name}</td><td className="px-4 py-3">₹{vehicle.price_per_day}</td><td className="px-4 py-3 capitalize">{vehicle.status}</td></tr>)}</tbody>
+            <tbody>{vehicles?.map((vehicle) => <tr key={vehicle.id} className="border-b border-hairline last:border-0"><td className="px-4 py-3">{vehicle.make} {vehicle.model}</td><td className="px-4 py-3">{vehicle.towns?.name}</td><td className="px-4 py-3">{formatRupees(vehicle.price_per_day)}</td><td className="px-4 py-3 capitalize">{vehicle.status}</td></tr>)}</tbody>
           </table>
         </div>
       </section>
@@ -62,7 +68,7 @@ export default async function OwnerPage() {
       <section className="mt-10">
         <h2 className="font-display mb-4 text-lg font-semibold">Recent bookings</h2>
         <div className="grid gap-3">
-          {bookings?.map((booking) => <div key={booking.id} className="rounded-2xl border border-hairline bg-surface-raised p-4 shadow-soft"><p className="text-xs font-semibold text-[var(--color-brand-600)]">{booking.reference}</p><p className="font-semibold">{booking.vehicles?.make} {booking.vehicles?.model} · {booking.customer_name}</p><p className="text-sm text-ink-soft">{booking.start_date} to {booking.end_date} · {booking.status} · ₹{Number(booking.estimated_total ?? 0).toLocaleString("en-IN")}</p></div>)}
+          {bookings?.map((booking) => <div key={booking.id} className="rounded-2xl border border-hairline bg-surface-raised p-4 shadow-soft"><p className="text-xs font-semibold text-[var(--color-brand-600)]">{booking.reference}</p><p className="font-semibold">{booking.vehicles?.make} {booking.vehicles?.model} · {booking.customer_name}</p><p className="text-sm text-ink-soft">{formatDay(booking.start_date)} → {formatDay(booking.end_date)} · <span className="capitalize">{booking.status.replaceAll("_", " ")}</span> · {formatRupees(booking.estimated_total ?? 0)}</p></div>)}
         </div>
       </section>
 
