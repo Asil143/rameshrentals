@@ -116,10 +116,10 @@ export default async function Home() {
 
       <section className="border-b border-hairline bg-surface-raised">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-px px-4 py-4 sm:grid-cols-4 sm:px-6">
-          {t.features.map((feature, index) => (
-            <div key={feature.title} className="flex items-center gap-3 px-3 py-3 text-sm font-semibold">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-500)]/10 text-[var(--color-brand-700)]">{index + 1}</span>
-              {feature.title}
+          {dictionary.ui.promises.map((promise) => (
+            <div key={promise} className="flex items-center gap-3 px-3 py-3 text-sm font-semibold">
+              <span aria-hidden className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-500)]/12 font-bold text-[var(--color-brand-700)] dark:text-[var(--color-brand-400)]">✓</span>
+              {promise}
             </div>
           ))}
         </div>

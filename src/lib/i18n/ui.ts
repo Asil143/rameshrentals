@@ -136,6 +136,7 @@ export type UiText = {
   clearDates: string;
 
   // Home page
+  promises: [string, string, string, string];
   whereNeedVehicle: string;
   realLocalFleet: string;
   cleanInspected: string;
@@ -310,6 +311,7 @@ export const uiEn: UiText = {
   returnBeforePickup: "The return date can't be before the pickup date.",
   freeBetween: (from, to) => `Free from ${from} to ${to}`,
   clearDates: "Clear dates",
+  promises: ["No login needed", "Pay at pickup", "Free cancellation", "Doorstep delivery"],
   whereNeedVehicle: "Where do you need a vehicle?",
   realLocalFleet: "Real local fleet",
   cleanInspected: "Clean, inspected, ready to go.",
@@ -487,6 +489,7 @@ export const uiTe: UiText = {
   returnBeforePickup: "తిరిగి ఇచ్చే తేదీ పికప్ తేదీ కంటే ముందు ఉండకూడదు.",
   freeBetween: (from, to) => `${from} నుండి ${to} వరకు ఖాళీగా ఉన్నవి`,
   clearDates: "తేదీలు తీసివేయండి",
+  promises: ["లాగిన్ అవసరం లేదు", "పికప్‌లో చెల్లింపు", "ఉచిత రద్దు", "ఇంటి వద్దకు డెలివరీ"],
   whereNeedVehicle: "మీకు వాహనం ఎక్కడ కావాలి?",
   realLocalFleet: "నిజమైన స్థానిక వాహనాలు",
   cleanInspected: "శుభ్రంగా, తనిఖీ చేసి, సిద్ధంగా.",
