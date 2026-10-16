@@ -135,16 +135,15 @@ export async function getTestimonials(): Promise<Testimonial[]> {
 }
 
 export async function lookupBooking(reference: string, phone: string) {
-  const supabase = await createClient();
   const normalizedReference = reference.trim().toUpperCase();
   const normalizedPhone = phone.trim().replace(/\D/g, "").slice(-10);
   if (!normalizedReference || normalizedPhone.length !== 10) return null;
+  return getBookingSummary({ p_reference: normalizedReference, p_phone: normalizedPhone });
+}
 
-  const { data } = await supabase
-    .from("bookings")
-    .select("*, vehicles(make, model, type, towns(name, slug))")
-    .eq("reference", normalizedReference)
-    .eq("customer_phone", normalizedPhone)
-    .maybeSingle();
-  return data;
+/** Booking details safe to show a guest who holds the booking id or reference + phone. */
+export async function getBookingSummary(args: { p_booking_id?: string; p_reference?: string; p_phone?: string }) {
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("public_booking_summary", args);
+  return data?.[0] ?? null;
 }

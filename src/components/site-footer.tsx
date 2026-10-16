@@ -87,6 +87,14 @@ export async function SiteFooter() {
                   {t.myBookings}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/booking-status"
+                  className="text-ink-soft transition-colors hover:text-[var(--color-brand-700)] dark:hover:text-[var(--color-brand-400)]"
+                >
+                  Check booking status
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

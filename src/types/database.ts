@@ -95,6 +95,19 @@ export type Booking = {
   payment_due_at: string | null;
 };
 
+/** Non-personal booking details a guest can see (see public_booking_summary). */
+export type BookingSummary = Pick<
+  Booking,
+  | "reference" | "status" | "payment_status" | "start_date" | "end_date" | "pickup_time" | "return_time"
+  | "fulfillment_method" | "return_method" | "estimated_total" | "deposit_amount" | "advance_amount" | "payment_link"
+> & {
+  vehicle_make: string;
+  vehicle_model: string;
+  vehicle_type: VehicleType;
+  town_name: string;
+  town_slug: string;
+};
+
 export type BookingInspection = {
   id: string;
   booking_id: string;
@@ -279,6 +292,10 @@ export type Database = {
       };
       customer_cancel_booking: { Args: { p_booking_id: string }; Returns: boolean };
       customer_reschedule_booking: { Args: { p_booking_id: string; p_start: string; p_end: string }; Returns: boolean };
+      public_booking_summary: {
+        Args: { p_booking_id?: string; p_reference?: string; p_phone?: string };
+        Returns: BookingSummary[];
+      };
     };
   };
 };
