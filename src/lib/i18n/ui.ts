@@ -192,6 +192,7 @@ export type UiText = {
 
   // Vehicle reviews
   reviewsTitle: string;
+  similarVehicles: string;
   ratingSummary: (average: string, count: number) => string;
   noReviewsYet: string;
   reviewPageTitle: (vehicle: string) => string;
@@ -399,6 +400,7 @@ export const uiEn: UiText = {
   faqCancelQ: "Can I cancel my booking?",
   faqHoursA: (open, close) => `Pickup and return any time between ${open} and ${close}.`,
   reviewsTitle: "Reviews",
+  similarVehicles: "Similar vehicles",
   ratingSummary: (average, count) => `★ ${average} · ${count} review${count === 1 ? "" : "s"}`,
   noReviewsYet: "No reviews yet — be the first after your trip.",
   reviewPageTitle: (vehicle) => `How was your ${vehicle}?`,
@@ -604,6 +606,7 @@ export const uiTe: UiText = {
   faqCancelQ: "బుకింగ్ రద్దు చేయవచ్చా?",
   faqHoursA: (open, close) => `${open} నుండి ${close} మధ్య ఎప్పుడైనా పికప్ మరియు రిటర్న్ చేయవచ్చు.`,
   reviewsTitle: "రివ్యూలు",
+  similarVehicles: "ఇలాంటి వాహనాలు",
   ratingSummary: (average, count) => `★ ${average} · ${count} రివ్యూలు`,
   noReviewsYet: "ఇంకా రివ్యూలు లేవు — మీ ప్రయాణం తర్వాత మొదటి రివ్యూ ఇవ్వండి.",
   reviewPageTitle: (vehicle) => `మీ ${vehicle} ప్రయాణం ఎలా ఉంది?`,

@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { BookingForm } from "@/components/booking-form";
 import { VehicleGallery } from "@/components/vehicle-gallery";
 import { WhatsAppButton } from "@/components/whatsapp-button";
-import { getTownBySlug, getVehicleById, getVehicleRatings, getVehicleReviews } from "@/lib/queries";
+import { getTownBySlug, getVehicleById, getVehicleRatings, getVehicleReviews, getVehiclesForTown } from "@/lib/queries";
+import { VehicleCard } from "@/components/vehicle-card";
 import { whatsappBookingLink } from "@/lib/whatsapp";
 import { getPricingRows, formatRupees } from "@/lib/pricing";
 import { getLocale } from "@/lib/i18n/get-locale";
@@ -63,7 +64,12 @@ export default async function VehicleDetailPage({
     notFound();
   }
 
-  const [ratings, reviews] = await Promise.all([getVehicleRatings([vehicle.id]), getVehicleReviews(vehicle.id)]);
+  // Up to 4 other vehicles of the same type in this town, closest in price first.
+  const similar = (await getVehiclesForTown(town.id, vehicle.type))
+    .filter((other) => other.id !== vehicle.id)
+    .sort((a, b) => Math.abs(a.price_per_day - vehicle.price_per_day) - Math.abs(b.price_per_day - vehicle.price_per_day))
+    .slice(0, 4);
+  const [ratings, reviews] = await Promise.all([getVehicleRatings([vehicle.id, ...similar.map((other) => other.id)]), getVehicleReviews(vehicle.id)]);
   const rating = ratings.get(vehicle.id);
   const locale = await getLocale();
   const t = getDictionary(locale).vehicleDetail;
@@ -248,6 +254,16 @@ export default async function VehicleDetailPage({
         </div>
       </div>
     </div>
+    {similar.length > 0 && (
+      <section className="mx-auto max-w-5xl px-4 pb-28 sm:px-6 md:pb-14">
+        <h2 className="font-display mb-4 text-xl font-bold">{u.similarVehicles}</h2>
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+          {similar.map((other) => (
+            <VehicleCard key={other.id} vehicle={other} townSlug={townSlug} locale={locale} dates={dateRange} rating={ratings.get(other.id)} />
+          ))}
+        </div>
+      </section>
+    )}
     </>
   );
 }
