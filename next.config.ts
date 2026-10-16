@@ -2,6 +2,15 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  images: {
+    remotePatterns: process.env.NEXT_PUBLIC_SUPABASE_URL
+      ? [{
+          protocol: "https",
+          hostname: new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname,
+          pathname: "/storage/v1/object/public/**",
+        }]
+      : [],
+  },
   async headers() {
     const supabaseOrigin = process.env.NEXT_PUBLIC_SUPABASE_URL
       ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin
@@ -10,7 +19,7 @@ const nextConfig: NextConfig = {
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob:",
+      `img-src 'self' data: blob: ${supabaseOrigin}`.trim(),
       "font-src 'self'",
       `connect-src 'self' ${supabaseOrigin}`.trim(),
       "object-src 'none'",

@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { VehicleCard } from "@/components/vehicle-card";
 import { WhatsAppButton } from "@/components/whatsapp-button";
-import { getAllTowns, getTownBySlug, getVehiclesForTown } from "@/lib/queries";
+import { getAllTowns, getTestimonials, getTownBySlug, getVehiclesForTown } from "@/lib/queries";
 import { whatsappGeneralLink } from "@/lib/whatsapp";
 import { DEFAULT_TOWN_SLUG, GOOGLE_BUSINESS_URL, GOOGLE_REVIEW_URL, SITE_NAME, SITE_URL, WHATSAPP_NUMBER } from "@/lib/constants";
 import { getLocale } from "@/lib/i18n/get-locale";
@@ -38,7 +38,7 @@ const FEATURE_ICONS = [
 ];
 
 export default async function Home() {
-  const [town, towns] = await Promise.all([getTownBySlug(DEFAULT_TOWN_SLUG), getAllTowns()]);
+  const [town, towns, testimonials] = await Promise.all([getTownBySlug(DEFAULT_TOWN_SLUG), getAllTowns(), getTestimonials()]);
   const vehicles = town ? await getVehiclesForTown(town.id) : [];
   const activeTownCount = towns.filter((item) => item.active).length;
 
@@ -222,6 +222,22 @@ export default async function Home() {
       </section>
 
       {(GOOGLE_BUSINESS_URL || GOOGLE_REVIEW_URL) && <section className="border-y border-hairline bg-[var(--color-brand-900)] text-white"><div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 px-4 py-10 sm:flex-row sm:items-center sm:px-6"><div><p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-accent-300)]">Local and accountable</p><h2 className="font-display mt-1 text-2xl font-bold">See what real customers say</h2><p className="mt-1 text-sm text-white/70">Reviews are hosted and verified by Google.</p></div><div className="flex gap-3">{GOOGLE_BUSINESS_URL && <a href={GOOGLE_BUSINESS_URL} target="_blank" rel="noreferrer" className="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[var(--color-brand-900)]">View on Google</a>}{GOOGLE_REVIEW_URL && <a href={GOOGLE_REVIEW_URL} target="_blank" rel="noreferrer" className="rounded-xl bg-[var(--color-accent-400)] px-4 py-3 text-sm font-semibold text-[var(--color-brand-900)]">Leave a review</a>}</div></div></section>}
+
+      {testimonials.length > 0 && (
+        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-600)]">Customer trust</p>
+          <h2 className="font-display mb-6 text-2xl font-bold sm:text-3xl">Recent rental experiences</h2>
+          <div className="grid gap-4 md:grid-cols-3">
+            {testimonials.slice(0, 3).map((item) => (
+              <figure key={item.id} className="rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft">
+                <div className="mb-3 text-sm font-semibold text-[var(--color-accent-600)]">{"★".repeat(item.rating)}</div>
+                <blockquote className="text-sm leading-relaxed text-ink-soft">&ldquo;{item.quote}&rdquo;</blockquote>
+                <figcaption className="mt-4 font-semibold">{item.customer_name}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-600)] dark:text-[var(--color-brand-400)]">

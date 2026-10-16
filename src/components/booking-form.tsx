@@ -2,6 +2,7 @@
 
 import { useCallback, useState, useTransition } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createBooking } from "@/app/actions";
 import { AvailabilityCalendar } from "@/components/availability-calendar";
 import { getBookingDays, getEstimatedTotal } from "@/lib/pricing";
@@ -29,6 +30,7 @@ export function BookingForm({
   locale?: Locale;
 }) {
   const t = getDictionary(locale).bookingForm;
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -59,6 +61,7 @@ export function BookingForm({
       const result = await createBooking(formData);
       if (result.ok) {
         setSuccess(true);
+        router.push(`/booking-confirmed/${result.bookingId}`);
       } else {
         setError(result.error);
       }

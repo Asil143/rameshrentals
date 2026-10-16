@@ -191,10 +191,17 @@ export async function updateBookingOperations(formData: FormData): Promise<Actio
   const bookingId = String(formData.get("booking_id"));
   const paymentStatus = String(formData.get("payment_status"));
   const depositStatus = String(formData.get("deposit_status"));
+  const paymentLink = String(formData.get("payment_link") || "").trim();
+  const advanceAmount = Math.max(0, Number(formData.get("advance_amount")) || 0);
   const allowedPayments = ["unpaid", "part_paid", "paid", "refunded"];
   const allowedDeposits = ["not_collected", "held", "partially_refunded", "refunded", "forfeited"];
   if (!allowedPayments.includes(paymentStatus) || !allowedDeposits.includes(depositStatus)) return { ok: false, error: "Invalid payment status." };
-  const { error } = await supabase.from("bookings").update({ payment_status: paymentStatus as "unpaid", deposit_status: depositStatus as "not_collected" }).eq("id", bookingId);
+  const { error } = await supabase.from("bookings").update({
+    payment_status: paymentStatus as "unpaid",
+    deposit_status: depositStatus as "not_collected",
+    payment_link: paymentLink || null,
+    advance_amount: advanceAmount,
+  }).eq("id", bookingId);
   if (error) return { ok: false, error: "Couldn't update payment details." };
 
   const stage = String(formData.get("inspection_stage"));
@@ -286,6 +293,7 @@ export async function addVehicle(formData: FormData): Promise<ActionResult> {
   const pricePerDay = Number(formData.get("price_per_day"));
   const photoUrl = (formData.get("photo_url") as string)?.trim();
   const photoUrl2 = (formData.get("photo_url_2") as string)?.trim();
+  const photoFiles = formData.getAll("photos").filter((item): item is File => item instanceof File && item.size > 0);
   const fuelType = String(formData.get("fuel_type") || "") || null;
   const transmission = String(formData.get("transmission") || "") || null;
   const seats = Number(formData.get("seats")) || null;
@@ -306,8 +314,8 @@ export async function addVehicle(formData: FormData): Promise<ActionResult> {
     return { ok: false, error: "Enter a valid year and daily price." };
   }
   const photoUrls = [photoUrl, photoUrl2].filter((url): url is string => Boolean(url));
-  if (photoUrls.some((url) => !/^\/vehicles\/[a-zA-Z0-9._/-]+$/.test(url))) {
-    return { ok: false, error: "Photos must be paths under /public/vehicles." };
+  if (photoUrls.some((url) => !/^\/vehicles\/[a-zA-Z0-9._/-]+$/.test(url) && !/^https:\/\/[^\s]+$/.test(url))) {
+    return { ok: false, error: "Photos must be /vehicles paths or uploaded public URLs." };
   }
 
   const priceTiers: PriceTier[] = ([5, 10, 15] as const)
@@ -337,6 +345,21 @@ export async function addVehicle(formData: FormData): Promise<ActionResult> {
     return { ok: false, error: "No platform owner found — run the seed SQL first." };
   }
 
+  for (const file of photoFiles.slice(0, 4)) {
+    if (!["image/jpeg", "image/png", "image/webp", "image/avif"].includes(file.type)) {
+      return { ok: false, error: "Upload JPG, PNG, WebP, or AVIF vehicle photos." };
+    }
+    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const path = `${Date.now()}-${crypto.randomUUID()}.${ext}`;
+    const { error: uploadError } = await supabase.storage.from("vehicle-photos").upload(path, file, {
+      contentType: file.type,
+      upsert: false,
+    });
+    if (uploadError) return { ok: false, error: "Couldn't upload one of the photos." };
+    const { data: publicUrl } = supabase.storage.from("vehicle-photos").getPublicUrl(path);
+    photoUrls.push(publicUrl.publicUrl);
+  }
+
   const { error } = await supabase.from("vehicles").insert({
     owner_id: platformOwner.id,
     town_id: townId,
@@ -363,6 +386,44 @@ export async function addVehicle(formData: FormData): Promise<ActionResult> {
     return { ok: false, error: "Couldn't add the vehicle. Check for duplicate registration details." };
   }
 
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+export async function addMaintenanceBlock(formData: FormData): Promise<ActionResult> {
+  const { supabase, ok } = await requireAdmin();
+  if (!ok) return { ok: false, error: "Not authorized." };
+  const vehicleId = String(formData.get("vehicle_id"));
+  const startDate = String(formData.get("start_date"));
+  const endDate = String(formData.get("end_date"));
+  const reason = String(formData.get("reason") || "Maintenance").trim();
+  if (!vehicleId || !/^\d{4}-\d{2}-\d{2}$/.test(startDate) || !/^\d{4}-\d{2}-\d{2}$/.test(endDate) || endDate < startDate) {
+    return { ok: false, error: "Choose a valid maintenance date range." };
+  }
+  const { data: { user } } = await supabase.auth.getUser();
+  const { error } = await supabase.from("vehicle_maintenance_blocks").insert({
+    vehicle_id: vehicleId,
+    start_date: startDate,
+    end_date: endDate,
+    reason: reason || "Maintenance",
+    created_by: user?.id ?? null,
+  });
+  if (error) return { ok: false, error: "Couldn't add the maintenance block." };
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+export async function addTestimonial(formData: FormData): Promise<ActionResult> {
+  const { supabase, ok } = await requireAdmin();
+  if (!ok) return { ok: false, error: "Not authorized." };
+  const customerName = String(formData.get("customer_name") || "").trim();
+  const quote = String(formData.get("quote") || "").trim();
+  const townId = String(formData.get("town_id") || "") || null;
+  const rating = Math.min(5, Math.max(1, Number(formData.get("rating")) || 5));
+  if (customerName.length < 2 || quote.length < 10) return { ok: false, error: "Add a customer name and useful quote." };
+  const { error } = await supabase.from("testimonials").insert({ customer_name: customerName, quote, town_id: townId, rating, source: "manual" });
+  if (error) return { ok: false, error: "Couldn't add testimonial." };
+  revalidatePath("/");
   revalidatePath("/admin");
   return { ok: true };
 }

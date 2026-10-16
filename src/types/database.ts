@@ -89,6 +89,10 @@ export type Booking = {
   payment_status: "unpaid" | "part_paid" | "paid" | "refunded";
   deposit_status: "not_collected" | "held" | "partially_refunded" | "refunded" | "forfeited";
   customer_notes: string | null;
+  advance_amount: number;
+  payment_link: string | null;
+  payment_reference: string | null;
+  payment_due_at: string | null;
 };
 
 export type BookingInspection = {
@@ -108,6 +112,28 @@ export type Profile = {
   name: string | null;
   phone: string | null;
   is_admin: boolean;
+  owner_id: string | null;
+};
+
+export type VehicleMaintenanceBlock = {
+  id: string;
+  vehicle_id: string;
+  start_date: string;
+  end_date: string;
+  reason: string;
+  created_by: string | null;
+  created_at: string;
+};
+
+export type Testimonial = {
+  id: string;
+  customer_name: string;
+  town_id: string | null;
+  rating: number;
+  quote: string;
+  source: string;
+  active: boolean;
+  created_at: string;
 };
 
 type GenericRelationship = {
@@ -193,6 +219,18 @@ export type Database = {
         Row: BookingInspection;
         Insert: Partial<BookingInspection> & Pick<BookingInspection, "booking_id" | "stage">;
         Update: Partial<BookingInspection>;
+        Relationships: GenericRelationship[];
+      };
+      vehicle_maintenance_blocks: {
+        Row: VehicleMaintenanceBlock;
+        Insert: Partial<VehicleMaintenanceBlock> & Pick<VehicleMaintenanceBlock, "vehicle_id" | "start_date" | "end_date">;
+        Update: Partial<VehicleMaintenanceBlock>;
+        Relationships: GenericRelationship[];
+      };
+      testimonials: {
+        Row: Testimonial;
+        Insert: Partial<Testimonial> & Pick<Testimonial, "customer_name" | "quote">;
+        Update: Partial<Testimonial>;
         Relationships: GenericRelationship[];
       };
     };

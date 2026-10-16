@@ -84,6 +84,17 @@ export function AddVehicleForm({ towns }: { towns: Town[] }) {
         />
       </label>
 
+      <label className="flex flex-col gap-1.5 text-sm font-medium lg:col-span-2">
+        Upload photos
+        <input
+          name="photos"
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/avif"
+          multiple
+          className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5 text-sm"
+        />
+      </label>
+
       <label className="flex flex-col gap-1.5 text-sm font-medium">
         Second photo URL (optional)
         <input
@@ -95,7 +106,7 @@ export function AddVehicleForm({ towns }: { towns: Town[] }) {
       </label>
 
       <p className="text-xs text-ink-faint sm:col-span-2 lg:col-span-3">
-        Photos must be paths under /public/vehicles. Add a second for a mini gallery on the vehicle page.
+        You can paste existing /public/vehicles paths or upload new photos to Supabase Storage.
       </p>
 
       <label className="flex flex-col gap-1.5 text-sm font-medium">Fuel<select name="fuel_type" className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3.5 py-2.5"><option value="petrol">Petrol</option><option value="diesel">Diesel</option><option value="electric">Electric</option><option value="cng">CNG</option></select></label>

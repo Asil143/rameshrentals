@@ -15,13 +15,15 @@ export async function SiteHeader() {
   } = await supabase.auth.getUser();
 
   let isAdmin = false;
+  let isOwner = false;
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("is_admin")
+      .select("is_admin, owner_id")
       .eq("id", user.id)
       .single();
     isAdmin = profile?.is_admin ?? false;
+    isOwner = Boolean(profile?.owner_id);
   }
 
   const locale = await getLocale();
@@ -37,12 +39,26 @@ export async function SiteHeader() {
         <nav className="flex items-center gap-2 text-sm sm:gap-4">
           <LanguageToggle locale={locale} />
           <ThemeToggle />
+          <Link
+            href="/booking-status"
+            className="hidden font-medium text-ink-soft transition-colors hover:text-[var(--color-brand-700)] sm:inline dark:hover:text-[var(--color-brand-400)]"
+          >
+            Status
+          </Link>
           {isAdmin && (
             <Link
               href="/admin"
               className="font-medium text-ink-soft transition-colors hover:text-[var(--color-brand-700)] dark:hover:text-[var(--color-brand-400)]"
             >
               {t.admin}
+            </Link>
+          )}
+          {(isOwner || isAdmin) && (
+            <Link
+              href="/owner"
+              className="font-medium text-ink-soft transition-colors hover:text-[var(--color-brand-700)] dark:hover:text-[var(--color-brand-400)]"
+            >
+              Owner
             </Link>
           )}
           {user ? (

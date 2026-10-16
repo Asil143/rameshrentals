@@ -6,9 +6,24 @@ import { VehicleStatusSelect } from "@/components/admin/vehicle-status-select";
 import { BookingOperationsForm } from "@/components/admin/booking-operations-form";
 import { VehicleDetailsForm } from "@/components/admin/vehicle-details-form";
 import { TownOperationsForm } from "@/components/admin/town-operations-form";
+import { MaintenanceBlockForm } from "@/components/admin/maintenance-block-form";
+import { TestimonialForm } from "@/components/admin/testimonial-form";
 import Link from "next/link";
+import Form from "next/form";
+import type { BookingStatus } from "@/types/database";
 
-export default async function AdminPage() {
+const BOOKING_STATUSES: BookingStatus[] = ["pending", "confirmed", "ready", "picked_up", "returned", "completed", "cancelled"];
+
+function isBookingStatus(value: string | undefined): value is BookingStatus {
+  return BOOKING_STATUSES.some((status) => status === value);
+}
+
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string; q?: string; date?: string; town?: string }>;
+}) {
+  const filters = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -28,17 +43,30 @@ export default async function AdminPage() {
     redirect("/");
   }
 
-  const [{ data: bookings }, { data: vehicles }, { data: towns }] = await Promise.all([
-    supabase
+  let bookingsQuery = supabase
       .from("bookings")
       .select("*, vehicles(make, model, type, town_id, towns(name))")
-      .order("created_at", { ascending: false }),
+      .order("created_at", { ascending: false });
+  if (isBookingStatus(filters.status)) bookingsQuery = bookingsQuery.eq("status", filters.status);
+  if (filters.date) bookingsQuery = bookingsQuery.or(`start_date.eq.${filters.date},end_date.eq.${filters.date}`);
+  if (filters.q) {
+    const term = filters.q.replaceAll("%", "").trim();
+    if (term) bookingsQuery = bookingsQuery.or(`reference.ilike.%${term}%,customer_name.ilike.%${term}%,customer_phone.ilike.%${term}%`);
+  }
+
+  const [{ data: bookings }, { data: vehicles }, { data: towns }, { data: maintenanceBlocks }] = await Promise.all([
+    bookingsQuery,
     supabase
       .from("vehicles")
       .select("*, towns(name)")
       .order("created_at", { ascending: false }),
     supabase.from("towns").select("*").eq("active", true).order("name"),
+    supabase.from("vehicle_maintenance_blocks").select("*").order("start_date", { ascending: true }).limit(12),
   ]);
+
+  const visibleBookings = filters.town && bookings
+    ? bookings.filter((booking) => booking.vehicles?.town_id === filters.town)
+    : bookings;
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-10 sm:px-6">
@@ -65,13 +93,20 @@ export default async function AdminPage() {
           ].map(([label, value]) => <div key={String(label)} className="rounded-2xl border border-hairline bg-surface-raised p-4 shadow-soft"><strong className="font-display text-2xl">{value}</strong><span className="block text-xs text-ink-faint">{label}</span></div>)}
         </div>
         <div className="mb-4 flex items-center justify-between"><h2 className="font-display text-lg font-semibold">Bookings</h2><Link href="/admin/bookings.csv" className="rounded-lg border border-hairline px-3 py-2 text-xs font-semibold">Export CSV</Link></div>
-        {!bookings || bookings.length === 0 ? (
+        <Form action="/admin" className="mb-4 grid gap-2 rounded-2xl border border-hairline bg-surface-raised p-3 sm:grid-cols-5">
+          <input name="q" defaultValue={filters.q} placeholder="Reference, name, phone" className="rounded-lg border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm" />
+          <select name="status" defaultValue={filters.status ?? ""} className="rounded-lg border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm"><option value="">Any status</option><option value="pending">Pending</option><option value="confirmed">Confirmed</option><option value="ready">Ready</option><option value="picked_up">Picked up</option><option value="returned">Returned</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select>
+          <select name="town" defaultValue={filters.town ?? ""} className="rounded-lg border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm"><option value="">Any town</option>{towns?.map((town) => <option key={town.id} value={town.id}>{town.name}</option>)}</select>
+          <input name="date" type="date" defaultValue={filters.date} className="rounded-lg border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm" />
+          <button className="rounded-lg bg-[var(--color-brand-800)] px-3 py-2 text-sm font-semibold text-white">Filter</button>
+        </Form>
+        {!visibleBookings || visibleBookings.length === 0 ? (
           <p className="rounded-2xl border border-hairline bg-surface-raised p-6 text-sm text-ink-soft shadow-soft">
             No bookings yet.
           </p>
         ) : (
           <div className="flex flex-col gap-2.5">
-            {bookings.map((booking) => (
+            {visibleBookings.map((booking) => (
               <div
                 key={booking.id}
                 className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-hairline bg-surface-raised p-4 shadow-soft"
@@ -102,6 +137,17 @@ export default async function AdminPage() {
             ))}
           </div>
         )}
+      </section>
+
+      <section>
+        <h2 className="font-display mb-4 text-lg font-semibold">Maintenance calendar</h2>
+        <MaintenanceBlockForm vehicles={vehicles ?? []} />
+        {(maintenanceBlocks?.length ?? 0) > 0 && <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{maintenanceBlocks?.map((block) => <div key={block.id} className="rounded-xl border border-hairline bg-surface-raised p-3 text-sm"><strong>Blocked vehicle</strong><p className="text-ink-soft">{block.start_date} to {block.end_date} · {block.reason}</p></div>)}</div>}
+      </section>
+
+      <section>
+        <h2 className="font-display mb-4 text-lg font-semibold">Reviews & testimonials</h2>
+        <TestimonialForm towns={towns ?? []} />
       </section>
 
       <section>
