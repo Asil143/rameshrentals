@@ -2,7 +2,7 @@
 -- This Supabase project is shared with other apps (their tables live in
 -- `public`), so nothing here touches `public`.
 --
--- Generated from migrations/0001–0012 + seed files with `public.` rewritten
+-- Generated from migrations/0001–0013 + seed files with `public.` rewritten
 -- to `rameshrentals.`. New migrations must target `rameshrentals` too.
 --
 -- Before running: nothing. After running: add `rameshrentals` under
@@ -1114,6 +1114,18 @@ $$;
 
 revoke all on function rameshrentals.public_booking_summary(uuid, text, text) from public;
 grant execute on function rameshrentals.public_booking_summary(uuid, text, text) to anon, authenticated;
+
+-- ============================================================
+-- migrations/0013_fix_vehicle_updates.sql
+-- ============================================================
+
+-- Every update to a vehicle failed with "permission denied for function
+-- valid_price_tiers": 0005 revoked execute on it from PUBLIC, but the
+-- vehicles_valid_price_tiers CHECK constraint runs it as the user making the
+-- change. It only inspects the price-tier JSON it is given (no table access),
+-- so logged-in users (admins edit vehicles through RLS) may execute it.
+
+grant execute on function rameshrentals.valid_price_tiers(jsonb, numeric) to authenticated;
 
 -- ============================================================
 -- seed.sql

@@ -261,7 +261,10 @@ export async function updateVehicleDetails(formData: FormData): Promise<ActionRe
     last_inspected_at: String(formData.get("last_inspected_at") || "") || null,
   };
   const { error } = await supabase.from("vehicles").update(values).eq("id", vehicleId);
-  if (error) return { ok: false, error: "Couldn't update vehicle details." };
+  if (error) {
+    console.error("Admin update failed", { code: error.code, message: error.message });
+    return { ok: false, error: "Couldn't update vehicle details." };
+  }
   revalidatePath("/admin");
   return { ok: true };
 }
@@ -413,7 +416,10 @@ export async function addMaintenanceBlock(formData: FormData): Promise<ActionRes
     reason: reason || "Maintenance",
     created_by: user?.id ?? null,
   });
-  if (error) return { ok: false, error: "Couldn't add the maintenance block." };
+  if (error) {
+    console.error("Admin update failed", { code: error.code, message: error.message });
+    return { ok: false, error: "Couldn't add the maintenance block." };
+  }
   revalidatePath("/admin");
   return { ok: true };
 }
@@ -427,7 +433,10 @@ export async function addTestimonial(formData: FormData): Promise<ActionResult> 
   const rating = Math.min(5, Math.max(1, Number(formData.get("rating")) || 5));
   if (customerName.length < 2 || quote.length < 10) return { ok: false, error: "Add a customer name and useful quote." };
   const { error } = await supabase.from("testimonials").insert({ customer_name: customerName, quote, town_id: townId, rating, source: "manual" });
-  if (error) return { ok: false, error: "Couldn't add testimonial." };
+  if (error) {
+    console.error("Admin update failed", { code: error.code, message: error.message });
+    return { ok: false, error: "Couldn't add testimonial." };
+  }
   revalidatePath("/");
   revalidatePath("/admin");
   return { ok: true };
@@ -452,7 +461,10 @@ export async function setReviewHidden(reviewId: string, hidden: boolean): Promis
   const { supabase, ok } = await requireAdmin();
   if (!ok) return { ok: false, error: "Not authorized." };
   const { error } = await supabase.from("vehicle_reviews").update({ hidden }).eq("id", reviewId);
-  if (error) return { ok: false, error: "Couldn't update the review." };
+  if (error) {
+    console.error("Admin update failed", { code: error.code, message: error.message });
+    return { ok: false, error: "Couldn't update the review." };
+  }
   revalidatePath("/admin");
   revalidatePath("/[town]/vehicles", "layout");
   return { ok: true };
