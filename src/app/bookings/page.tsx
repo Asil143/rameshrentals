@@ -3,6 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { BookingControls } from "@/components/booking-controls";
+import Link from "next/link";
+import { DEFAULT_TOWN_SLUG } from "@/lib/constants";
+import { formatRupees } from "@/lib/pricing";
+import { formatShortDate, formatTime } from "@/lib/format";
 
 const STATUS_STYLES: Record<string, string> = {
   pending: "bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-400",
@@ -26,6 +30,7 @@ export default async function BookingsPage() {
 
   const locale = await getLocale();
   const t = getDictionary(locale).bookings;
+  const u = getDictionary(locale).ui;
 
   const { data: bookings } = await supabase
     .from("bookings")
@@ -38,9 +43,17 @@ export default async function BookingsPage() {
       <h1 className="font-display mb-8 text-2xl font-bold sm:text-3xl">{t.title}</h1>
 
       {!bookings || bookings.length === 0 ? (
-        <p className="rounded-2xl border border-hairline bg-surface-raised p-8 text-center text-ink-soft shadow-soft">
-          {t.empty}
-        </p>
+        <div className="rounded-2xl border border-hairline bg-surface-raised p-8 text-center shadow-soft">
+          <p className="text-ink-soft">{t.empty}</p>
+          <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link href={`/${DEFAULT_TOWN_SLUG}/vehicles`} className="rounded-full bg-[var(--color-brand-700)] px-5 py-2.5 text-sm font-semibold text-white">
+              {u.browseVehicles}
+            </Link>
+            <Link href="/booking-status" className="text-sm font-semibold text-[var(--color-brand-700)] hover:underline dark:text-[var(--color-brand-400)]">
+              {u.bookedAsGuest}
+            </Link>
+          </div>
+        </div>
       ) : (
         <ul className="flex flex-col gap-3">
           {bookings.map((booking) => (
@@ -55,16 +68,16 @@ export default async function BookingsPage() {
                   {booking.vehicles?.make} {booking.vehicles?.model}
                 </p>
                 <p className="text-sm text-ink-soft">
-                  {booking.start_date} → {booking.end_date}
+                  {formatShortDate(booking.start_date, u.dateLocale)} → {formatShortDate(booking.end_date, u.dateLocale)}
                   {booking.estimated_total != null && (
                     <>
                       {" "}
-                      · {t.estimatedPrefix} ₹{booking.estimated_total.toLocaleString("en-IN")}
+                      · {t.estimatedPrefix} {formatRupees(booking.estimated_total)}
                     </>
                   )}
                   <span className="block text-xs text-ink-faint">
-                    {booking.fulfillment_method === "doorstep_delivery" ? "Doorstep delivery" : "Pickup at location"}
-                    {booking.pickup_time ? ` · ${booking.pickup_time.slice(0, 5)}` : ""}
+                    {booking.fulfillment_method === "doorstep_delivery" ? u.deliveredToYou : u.atOurLocation}
+                    {booking.pickup_time ? ` · ${formatTime(booking.pickup_time, u.dateLocale)}` : ""}
                   </span>
                 </p>
               </div>
@@ -82,7 +95,7 @@ export default async function BookingsPage() {
                   return <div key={label}><span className={`block h-1.5 rounded-full ${active ? "bg-[var(--color-brand-500)]" : "bg-[var(--color-border)]"}`} /><span className="mt-1 block text-[10px] text-ink-faint">{label}</span></div>;
                 })}
               </div>
-              <BookingControls bookingId={booking.id} status={booking.status} />
+              <BookingControls bookingId={booking.id} status={booking.status} u={u} />
             </li>
           ))}
         </ul>

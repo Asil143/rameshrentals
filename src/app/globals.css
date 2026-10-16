@@ -135,6 +135,25 @@ button, a, select, input { -webkit-tap-highlight-color: transparent; }
   box-shadow: var(--shadow-lift);
 }
 
+/* Printing (invoices): always light, and only the page content. */
+@media print {
+  :root,
+  :root[data-theme="dark"],
+  :root:not([data-theme="light"]) {
+    --color-surface: #ffffff;
+    --color-surface-raised: #ffffff;
+    --color-ink: #0b1f17;
+    --color-ink-soft: rgba(11, 31, 23, 0.72);
+    --color-ink-faint: rgba(11, 31, 23, 0.6);
+    --color-border: rgba(11, 31, 23, 0.14);
+    --color-border-strong: rgba(11, 31, 23, 0.22);
+    --background: #ffffff;
+    --foreground: #0b1f17;
+    --shadow-soft: none;
+    --shadow-lift: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .card-hover {
     transition: none;

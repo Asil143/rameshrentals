@@ -9,9 +9,10 @@ export async function SiteFooter() {
   const locale = await getLocale();
   const towns = await getAllTowns();
   const t = getDictionary(locale).footer;
+  const u = getDictionary(locale).ui;
 
   return (
-    <footer className="mt-auto border-t border-hairline bg-surface-raised">
+    <footer className="mt-auto border-t print:hidden border-hairline bg-surface-raised">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
@@ -59,7 +60,7 @@ export async function SiteFooter() {
                   href="/concepts"
                   className="text-ink-soft transition-colors hover:text-[var(--color-brand-700)] hover:underline dark:hover:text-[var(--color-brand-400)]"
                 >
-                  Shed concepts
+                  {u.hubLink}
                 </Link>
               </li>
               <li><Link href="/privacy" className="text-ink-soft hover:text-[var(--color-brand-700)] hover:underline dark:hover:text-[var(--color-brand-400)]">{t.privacyPolicy}</Link></li>
@@ -92,7 +93,7 @@ export async function SiteFooter() {
                   href="/booking-status"
                   className="text-ink-soft transition-colors hover:text-[var(--color-brand-700)] dark:hover:text-[var(--color-brand-400)]"
                 >
-                  Check booking status
+                  {u.statusTitle}
                 </Link>
               </li>
             </ul>

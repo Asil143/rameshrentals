@@ -2,11 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatRupees } from "@/lib/pricing";
-
-function formatDay(date: string) {
-  const [y, m, d] = date.split("-").map(Number);
-  return new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short" }).format(new Date(y, m - 1, d));
-}
+import { formatShortDate } from "@/lib/format";
 
 export default async function OwnerPage() {
   const supabase = await createClient();
@@ -68,7 +64,7 @@ export default async function OwnerPage() {
       <section className="mt-10">
         <h2 className="font-display mb-4 text-lg font-semibold">Recent bookings</h2>
         <div className="grid gap-3">
-          {bookings?.map((booking) => <div key={booking.id} className="rounded-2xl border border-hairline bg-surface-raised p-4 shadow-soft"><p className="text-xs font-semibold text-[var(--color-brand-600)]">{booking.reference}</p><p className="font-semibold">{booking.vehicles?.make} {booking.vehicles?.model} · {booking.customer_name}</p><p className="text-sm text-ink-soft">{formatDay(booking.start_date)} → {formatDay(booking.end_date)} · <span className="capitalize">{booking.status.replaceAll("_", " ")}</span> · {formatRupees(booking.estimated_total ?? 0)}</p></div>)}
+          {bookings?.map((booking) => <div key={booking.id} className="rounded-2xl border border-hairline bg-surface-raised p-4 shadow-soft"><p className="text-xs font-semibold text-[var(--color-brand-600)]">{booking.reference}</p><p className="font-semibold">{booking.vehicles?.make} {booking.vehicles?.model} · {booking.customer_name}</p><p className="text-sm text-ink-soft">{formatShortDate(booking.start_date)} → {formatShortDate(booking.end_date)} · <span className="capitalize">{booking.status.replaceAll("_", " ")}</span> · {formatRupees(booking.estimated_total ?? 0)}</p></div>)}
         </div>
       </section>
 

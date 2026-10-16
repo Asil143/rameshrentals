@@ -1,3 +1,5 @@
+import { uiEn, uiTe, type UiText } from "./ui";
+
 export type Locale = "en" | "te";
 
 export const LOCALE_COOKIE = "lang";
@@ -142,6 +144,7 @@ type Dictionary = {
       cancelled: string;
     };
   };
+  ui: UiText;
   whatsapp: {
     generalMessage: (town?: string) => string;
     bookingMessage: (make: string, model: string, type: string, town: string) => string;
@@ -340,6 +343,7 @@ const en: Dictionary = {
       cancelled: "Cancelled",
     },
   },
+  ui: uiEn,
   whatsapp: {
     generalMessage: (town) =>
       town ? `Hi, I'd like to rent a bike/car in ${town}.` : "Hi, I'd like to rent a bike/car.",
@@ -539,6 +543,7 @@ const te: Dictionary = {
       cancelled: "రద్దు చేయబడింది",
     },
   },
+  ui: uiTe,
   whatsapp: {
     generalMessage: (town) =>
       town

@@ -12,6 +12,7 @@ import Link from "next/link";
 import Form from "next/form";
 import type { BookingStatus } from "@/types/database";
 import { formatRupees } from "@/lib/pricing";
+import { formatShortDate } from "@/lib/format";
 
 const BOOKING_STATUSES: BookingStatus[] = ["pending", "confirmed", "ready", "picked_up", "returned", "completed", "cancelled"];
 
@@ -34,11 +35,6 @@ const STATUS_STYLES: Record<BookingStatus, string> = {
   completed: "bg-[var(--color-border)] text-ink-soft",
   cancelled: "bg-red-500/10 text-red-700 dark:text-red-300",
 };
-
-function formatDay(date: string) {
-  const [y, m, d] = date.split("-").map(Number);
-  return new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short" }).format(new Date(y, m - 1, d));
-}
 
 function isBookingStatus(value: string | undefined): value is BookingStatus {
   return BOOKING_STATUSES.some((status) => status === value);
@@ -187,7 +183,7 @@ export default async function AdminPage({
                       {booking.customer_name} · <a href={`tel:+91${booking.customer_phone}`} className="hover:underline">{booking.customer_phone}</a>
                     </p>
                     <p className="text-sm text-ink-soft">
-                      {booking.vehicles?.make} {booking.vehicles?.model} · {booking.vehicles?.towns?.name} · {formatDay(booking.start_date)} → {formatDay(booking.end_date)}
+                      {booking.vehicles?.make} {booking.vehicles?.model} · {booking.vehicles?.towns?.name} · {formatShortDate(booking.start_date)} → {formatShortDate(booking.end_date)}
                       {" · "}{booking.fulfillment_method === "doorstep_delivery" ? "Doorstep delivery" : "Location pickup"}
                       {booking.estimated_total != null && <> · {formatRupees(booking.estimated_total)}</>}
                     </p>
@@ -259,7 +255,7 @@ export default async function AdminPage({
               {maintenanceBlocks?.map((block) => (
                 <div key={block.id} className="rounded-xl border border-hairline bg-surface-raised p-3 text-sm">
                   <strong>{vehicleNames.get(block.vehicle_id) ?? "Vehicle"}</strong>
-                  <p className="text-ink-soft">{formatDay(block.start_date)} → {formatDay(block.end_date)} · {block.reason}</p>
+                  <p className="text-ink-soft">{formatShortDate(block.start_date)} → {formatShortDate(block.end_date)} · {block.reason}</p>
                 </div>
               ))}
             </div>

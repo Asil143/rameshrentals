@@ -208,7 +208,7 @@ export function AvailabilityCalendar({
                     : selected
                     ? "bg-gradient-to-br from-[var(--color-brand-500)] to-[var(--color-brand-700)] text-white"
                     : inRange
-                      ? "bg-[var(--color-brand-500)]/15 text-[var(--color-brand-700)] dark:text-[var(--color-brand-300)]"
+                      ? "bg-[var(--color-brand-500)]/15 text-[var(--color-brand-700)] dark:text-[var(--color-brand-400)]"
                       : "hover:bg-[var(--color-border)]"
               }`}
             >

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createBooking } from "@/app/actions";
 import { AvailabilityCalendar } from "@/components/availability-calendar";
-import { getBookingDays, getEstimatedTotal } from "@/lib/pricing";
+import { formatRupees, getBookingDays, getEstimatedTotal } from "@/lib/pricing";
 import { getDictionary, type Locale } from "@/lib/i18n/dictionary";
 import type { PriceTier } from "@/types/database";
 
@@ -30,6 +30,7 @@ export function BookingForm({
   locale?: Locale;
 }) {
   const t = getDictionary(locale).bookingForm;
+  const u = getDictionary(locale).ui;
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +55,7 @@ export function BookingForm({
       return;
     }
     if (!availabilityReady) {
-      setError("Availability is still loading. Please try again in a moment.");
+      setError(u.availabilityLoading);
       return;
     }
     startTransition(async () => {
@@ -74,8 +75,8 @@ export function BookingForm({
         <p className="mb-0.5 font-display font-semibold">{t.successTitle}</p>
         <p>{t.successBody}</p>
         <dl className="mt-3 grid grid-cols-2 gap-2 border-t border-[var(--color-brand-500)]/20 pt-3">
-          <div><dt className="text-xs opacity-70">Dates</dt><dd className="font-semibold">{startDate} → {endDate}</dd></div>
-          <div><dt className="text-xs opacity-70">Estimated total</dt><dd className="font-semibold">₹{grandTotal.toLocaleString("en-IN")}</dd></div>
+          <div><dt className="text-xs opacity-70">{u.dates}</dt><dd className="font-semibold">{startDate} → {endDate}</dd></div>
+          <div><dt className="text-xs opacity-70">{u.estimatedTotal}</dt><dd className="font-semibold">{formatRupees(grandTotal)}</dd></div>
         </dl>
       </div>
     );
@@ -97,9 +98,9 @@ export function BookingForm({
       />
 
       <ol className="grid grid-cols-3 gap-2 text-center text-[10px] font-semibold uppercase tracking-wide text-ink-faint" aria-label="Booking steps">
-        <li className="rounded-lg bg-[var(--color-brand-500)]/10 px-2 py-2 text-[var(--color-brand-700)]">1 · Dates</li>
-        <li className="rounded-lg bg-[var(--color-brand-500)]/10 px-2 py-2">2 · Details</li>
-        <li className="rounded-lg bg-[var(--color-brand-500)]/10 px-2 py-2">3 · Confirm</li>
+        <li className="rounded-lg bg-[var(--color-brand-500)]/10 px-2 py-2 text-[var(--color-brand-700)] dark:text-[var(--color-brand-400)]">{u.steps[0]}</li>
+        <li className="rounded-lg bg-[var(--color-brand-500)]/10 px-2 py-2">{u.steps[1]}</li>
+        <li className="rounded-lg bg-[var(--color-brand-500)]/10 px-2 py-2">{u.steps[2]}</li>
       </ol>
 
       <div className="flex flex-col gap-1.5 text-sm font-medium">
@@ -168,23 +169,23 @@ export function BookingForm({
       </fieldset>
 
       {(fulfillmentMethod === "doorstep_delivery" || returnMethod === "doorstep_collection") && (
-        <label className="flex flex-col gap-1.5 text-sm font-medium">Delivery / collection address
-          <textarea name="delivery_address" required rows={3} maxLength={300} placeholder="House, street, landmark and town" className={inputClass} />
-          <span className="text-xs font-normal text-ink-faint">Delivery fee: ₹{deliveryFee.toLocaleString("en-IN")}</span>
+        <label className="flex flex-col gap-1.5 text-sm font-medium">{u.addressLabel}
+          <textarea name="delivery_address" required rows={3} maxLength={300} placeholder={u.addressPlaceholder} className={inputClass} />
+          <span className="text-xs font-normal text-ink-faint">{u.deliveryFee(formatRupees(deliveryFee))}</span>
         </label>
       )}
 
       <div className="grid grid-cols-2 gap-3">
-        <label className="flex flex-col gap-1.5 text-sm font-medium">Pickup time<input type="time" name="pickup_time" min="08:00" max="20:00" defaultValue="09:00" required className={inputClass} /></label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium">Return time<input type="time" name="return_time" min="08:00" max="20:00" defaultValue="09:00" required className={inputClass} /></label>
+        <label className="flex flex-col gap-1.5 text-sm font-medium">{u.pickupTime}<input type="time" name="pickup_time" min="08:00" max="20:00" defaultValue="09:00" required className={inputClass} /></label>
+        <label className="flex flex-col gap-1.5 text-sm font-medium">{u.returnTime}<input type="time" name="return_time" min="08:00" max="20:00" defaultValue="09:00" required className={inputClass} /></label>
       </div>
 
-      <label className="flex flex-col gap-1.5 text-sm font-medium">Return method
-        <select name="return_method" value={returnMethod} onChange={(event) => setReturnMethod(event.target.value as typeof returnMethod)} className={inputClass}><option value="location_return">Return at location</option><option value="doorstep_collection">Collect from my address (+₹{collectionFee.toLocaleString("en-IN")})</option></select>
+      <label className="flex flex-col gap-1.5 text-sm font-medium">{u.returnMethod}
+        <select name="return_method" value={returnMethod} onChange={(event) => setReturnMethod(event.target.value as typeof returnMethod)} className={inputClass}><option value="location_return">{u.returnAtLocation}</option><option value="doorstep_collection">{u.collectFromMe(formatRupees(collectionFee))}</option></select>
       </label>
 
-      <label className="flex flex-col gap-1.5 text-sm font-medium">Notes <span className="font-normal text-ink-faint">(optional)</span>
-        <textarea name="customer_notes" rows={2} maxLength={500} placeholder="Landmark, special request, or trip notes" className={inputClass} />
+      <label className="flex flex-col gap-1.5 text-sm font-medium">{u.notes} <span className="font-normal text-ink-faint">{u.optional}</span>
+        <textarea name="customer_notes" rows={2} maxLength={500} placeholder={u.notesPlaceholder} className={inputClass} />
       </label>
 
       <label className="flex items-start gap-2 text-xs text-ink-soft">

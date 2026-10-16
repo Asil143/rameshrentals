@@ -29,15 +29,16 @@ export async function SiteHeader() {
 
   const locale = await getLocale();
   const t = getDictionary(locale).header;
+  const u = getDictionary(locale).ui;
   const linkClass = "font-medium text-ink-soft transition-colors hover:text-[var(--color-brand-700)] dark:hover:text-[var(--color-brand-400)]";
   const accountLinks = [
     ...(isAdmin ? [{ href: "/admin", label: t.admin }] : []),
-    ...(isOwner || isAdmin ? [{ href: "/owner", label: "Owner" }] : []),
+    ...(isOwner || isAdmin ? [{ href: "/owner", label: u.owner }] : []),
     { href: "/bookings", label: t.myBookings },
   ];
 
   return (
-    <header className="sticky top-0 z-20 border-b border-hairline bg-[var(--color-surface)]/80 backdrop-blur-lg backdrop-saturate-150">
+    <header className="sticky top-0 z-20 print:hidden border-b border-hairline bg-[var(--color-surface)]/80 backdrop-blur-lg backdrop-saturate-150">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6">
         <Link href="/" className="group flex shrink-0 items-center gap-2.5">
           <Image src="/brand-icon.png" alt="" width={38} height={38} loading="eager" className="rounded-xl shadow-soft transition-transform group-hover:scale-105" />
@@ -50,7 +51,7 @@ export async function SiteHeader() {
             href="/booking-status"
             className="hidden font-medium text-ink-soft transition-colors hover:text-[var(--color-brand-700)] sm:inline dark:hover:text-[var(--color-brand-400)]"
           >
-            Status
+            {u.status}
           </Link>
           {user ? (
             <>
@@ -62,8 +63,8 @@ export async function SiteHeader() {
                 ))}
                 <SignOutButton locale={locale} />
               </span>
-              <MobileMenu label="Menu">
-                {[{ href: "/booking-status", label: "Booking status" }, ...accountLinks].map((item) => (
+              <MobileMenu label={u.menu}>
+                {[{ href: "/booking-status", label: u.statusTitle }, ...accountLinks].map((item) => (
                   <Link key={item.href} href={item.href} className="rounded-xl px-3 py-2.5 font-medium hover:bg-[var(--color-border)]">
                     {item.label}
                   </Link>

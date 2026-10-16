@@ -48,6 +48,7 @@ export default async function VehiclesPage({
 
   const locale = await getLocale();
   const t = getDictionary(locale).listing;
+  const u = getDictionary(locale).ui;
 
   if (!town.active) {
     return (
@@ -107,51 +108,51 @@ export default async function VehiclesPage({
       <Form action={`/${townSlug}/vehicles`} className="mb-8 grid grid-cols-2 gap-3 rounded-2xl border border-hairline bg-surface-raised p-4 shadow-soft lg:grid-cols-6">
         {vehicleType && <input type="hidden" name="type" value={vehicleType} />}
         <label className="col-span-2 flex flex-col gap-1 text-xs font-semibold text-ink-soft">
-          Search
+          {u.search}
           <input name="q" defaultValue={search.q} placeholder="Swift, Activa, Ertiga..." className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]" />
         </label>
         <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
-          From
+          {u.fromDate}
           <input name="start_date" type="date" defaultValue={search.start_date} className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]" />
         </label>
         <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
-          To
+          {u.toDate}
           <input name="end_date" type="date" defaultValue={search.end_date} className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]" />
         </label>
         <div className="col-span-2 flex items-end gap-2 max-lg:order-last">
-          <button className="flex-1 rounded-xl bg-[var(--color-brand-800)] px-4 py-2.5 text-sm font-semibold text-white lg:flex-none lg:py-2">Filter</button>
-          <Link href={`/${townSlug}/vehicles${vehicleType ? `?type=${vehicleType}` : ""}`} className="rounded-xl border border-hairline px-4 py-2.5 text-sm font-semibold lg:py-2">Reset</Link>
+          <button className="flex-1 rounded-xl bg-[var(--color-brand-800)] px-4 py-2.5 text-sm font-semibold text-white lg:flex-none lg:py-2">{u.filter}</button>
+          <Link href={`/${townSlug}/vehicles${vehicleType ? `?type=${vehicleType}` : ""}`} className="rounded-xl border border-hairline px-4 py-2.5 text-sm font-semibold lg:py-2">{u.reset}</Link>
         </div>
         <details open={moreFilterCount > 0} className="group col-span-2 lg:col-span-6">
           <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold text-[var(--color-brand-700)] dark:text-[var(--color-brand-400)] [&::-webkit-details-marker]:hidden">
             <span className="transition-transform group-open:rotate-90" aria-hidden>›</span>
-            More filters{moreFilterCount > 0 && ` (${moreFilterCount})`}
+            {u.moreFilters}{moreFilterCount > 0 && ` (${moreFilterCount})`}
           </summary>
           <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-5">
             <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
-              Max price
-              <input name="max_price" type="number" min="0" defaultValue={search.max_price} placeholder="₹/day" className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]" />
+              {u.maxPrice}
+              <input name="max_price" type="number" min="0" defaultValue={search.max_price} placeholder={u.pricePerDayPlaceholder} className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]" />
             </label>
             <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
-              Seats
+              {u.seats}
               <input name="seats" type="number" min="1" max="12" defaultValue={search.seats} className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]" />
             </label>
             <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
-              Fuel
+              {u.fuel}
               <select name="fuel" defaultValue={search.fuel ?? ""} className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]">
-                <option value="">Any</option><option value="petrol">Petrol</option><option value="diesel">Diesel</option><option value="electric">Electric</option><option value="cng">CNG</option>
+                <option value="">{u.any}</option><option value="petrol">{u.fuels.petrol}</option><option value="diesel">{u.fuels.diesel}</option><option value="electric">{u.fuels.electric}</option><option value="cng">{u.fuels.cng}</option>
               </select>
             </label>
             <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
-              Gear
+              {u.gear}
               <select name="transmission" defaultValue={search.transmission ?? ""} className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]">
-                <option value="">Any</option><option value="manual">Manual</option><option value="automatic">Automatic</option><option value="gearless">Gearless</option>
+                <option value="">{u.any}</option><option value="manual">{u.gears.manual}</option><option value="automatic">{u.gears.automatic}</option><option value="gearless">{u.gears.gearless}</option>
               </select>
             </label>
             <label className="col-span-2 flex flex-col gap-1 text-xs font-semibold text-ink-soft lg:col-span-1">
-              Sort
+              {u.sort}
               <select name="sort" defaultValue={search.sort ?? "price_asc"} className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]">
-                <option value="price_asc">Lowest price</option><option value="price_desc">Highest price</option><option value="newest">Newest</option>
+                <option value="price_asc">{u.sorts.priceAsc}</option><option value="price_desc">{u.sorts.priceDesc}</option><option value="newest">{u.sorts.newest}</option>
               </select>
             </label>
           </div>

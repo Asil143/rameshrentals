@@ -60,6 +60,7 @@ export default async function VehicleDetailPage({
 
   const locale = await getLocale();
   const t = getDictionary(locale).vehicleDetail;
+  const u = getDictionary(locale).ui;
 
   const productJsonLd = {
     "@context": "https://schema.org",
@@ -86,18 +87,21 @@ export default async function VehicleDetailPage({
         dangerouslySetInnerHTML={{ __html: toJsonLdScript(productJsonLd) }}
       />
     <div className="mx-auto grid max-w-5xl gap-10 px-4 py-10 pb-28 sm:px-6 md:grid-cols-2 md:pb-10">
-      {vehicle.photos.length > 0 ? (
-        <VehicleGallery photos={vehicle.photos} alt={`${vehicle.make} ${vehicle.model}`} />
-      ) : (
-        <div className="flex aspect-[4/3] items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--color-brand-50)] to-[var(--color-brand-100)] text-8xl shadow-soft dark:from-[var(--color-brand-900)] dark:to-[var(--color-brand-800)]">
-          <span aria-hidden>{PLACEHOLDER_IMAGE[vehicle.type]}</span>
-        </div>
-      )}
+      {/* Photo stays in view on wide screens while the booking form scrolls. */}
+      <div className="md:sticky md:top-24 md:self-start">
+        {vehicle.photos.length > 0 ? (
+          <VehicleGallery photos={vehicle.photos} alt={`${vehicle.make} ${vehicle.model}`} />
+        ) : (
+          <div className="flex aspect-[4/3] items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--color-brand-50)] to-[var(--color-brand-100)] text-8xl shadow-soft dark:from-[var(--color-brand-900)] dark:to-[var(--color-brand-800)]">
+            <span aria-hidden>{PLACEHOLDER_IMAGE[vehicle.type]}</span>
+          </div>
+        )}
+      </div>
 
       <div className="flex flex-col gap-5 md:self-start">
         <div>
           <span className="mb-1 inline-block text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-600)] dark:text-[var(--color-brand-400)]">
-            {vehicle.type} · {town.name}
+            {u.vehicleType[vehicle.type]} · {town.name}
           </span>
           <h1 className="font-display text-3xl font-bold">
             {vehicle.make} {vehicle.model}
@@ -111,13 +115,13 @@ export default async function VehicleDetailPage({
         </div>
 
         <div className="grid grid-cols-2 gap-2 text-sm">
-          <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Vehicle</span><strong className="capitalize">{vehicle.type}</strong></div>
-          <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Model year</span><strong>{vehicle.year}</strong></div>
-          <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Handover</span><strong>Delivery or pickup</strong></div>
-          <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Refundable deposit</span><strong>{formatRupees(vehicle.type === "bike" ? 1000 : 5000)}</strong></div>
+          <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">{u.vehicle}</span><strong>{u.vehicleType[vehicle.type]}</strong></div>
+          <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">{u.modelYear}</span><strong>{vehicle.year}</strong></div>
+          <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">{u.handover}</span><strong>{u.deliveryOrPickup}</strong></div>
+          <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">{u.refundableDeposit}</span><strong>{formatRupees(vehicle.type === "bike" ? 1000 : 5000)}</strong></div>
         </div>
-        {(vehicle.fuel_type || vehicle.transmission || vehicle.included_km_per_day) && <div className="flex flex-wrap gap-2 text-xs text-ink-soft">{vehicle.fuel_type && <span className="rounded-full border border-hairline px-3 py-1.5 capitalize">{vehicle.fuel_type}</span>}{vehicle.transmission && <span className="rounded-full border border-hairline px-3 py-1.5 capitalize">{vehicle.transmission}</span>}{vehicle.seats && <span className="rounded-full border border-hairline px-3 py-1.5">{vehicle.seats} seats</span>}{vehicle.included_km_per_day && <span className="rounded-full border border-hairline px-3 py-1.5">{vehicle.included_km_per_day} km/day included</span>}{vehicle.helmet_count > 0 && <span className="rounded-full border border-hairline px-3 py-1.5">{vehicle.helmet_count} helmet(s)</span>}</div>}
-        {town.pickup_address && <div className="rounded-2xl border border-hairline bg-surface-raised p-4 text-sm"><span className="block text-xs font-semibold uppercase tracking-wider text-ink-faint">Pickup location</span><p className="mt-1">{town.pickup_address}</p>{town.maps_url && <a href={town.maps_url} target="_blank" rel="noreferrer" className="mt-2 inline-block font-semibold text-[var(--color-brand-700)]">Open in Google Maps →</a>}</div>}
+        {(vehicle.fuel_type || vehicle.transmission || vehicle.included_km_per_day) && <div className="flex flex-wrap gap-2 text-xs text-ink-soft">{vehicle.fuel_type && <span className="rounded-full border border-hairline px-3 py-1.5 ">{u.fuels[vehicle.fuel_type]}</span>}{vehicle.transmission && <span className="rounded-full border border-hairline px-3 py-1.5 ">{u.gears[vehicle.transmission]}</span>}{vehicle.seats && <span className="rounded-full border border-hairline px-3 py-1.5">{u.seatsCount(vehicle.seats)}</span>}{vehicle.included_km_per_day && <span className="rounded-full border border-hairline px-3 py-1.5">{u.kmIncluded(vehicle.included_km_per_day)}</span>}{vehicle.helmet_count > 0 && <span className="rounded-full border border-hairline px-3 py-1.5">{u.helmets(vehicle.helmet_count)}</span>}</div>}
+        {town.pickup_address && <div className="rounded-2xl border border-hairline bg-surface-raised p-4 text-sm"><span className="block text-xs font-semibold uppercase tracking-wider text-ink-faint">{u.pickupLocation}</span><p className="mt-1">{town.pickup_address}</p>{town.maps_url && <a href={town.maps_url} target="_blank" rel="noreferrer" className="mt-2 inline-block font-semibold text-[var(--color-brand-700)]">Open in Google Maps →</a>}</div>}
 
         {vehicle.price_tiers.length > 0 && (
           <div className="rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft">
@@ -167,8 +171,8 @@ export default async function VehicleDetailPage({
       </div>
     </div>
     <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between border-t border-hairline bg-[var(--color-surface)]/95 px-4 py-3 shadow-[0_-8px_30px_rgba(0,0,0,.12)] backdrop-blur md:hidden">
-      <div><span className="block text-xs text-ink-faint">From</span><strong className="font-display text-xl">{formatRupees(vehicle.price_per_day)}<span className="text-xs font-normal text-ink-faint">/day</span></strong></div>
-      <a href="#booking" className="rounded-xl bg-[var(--color-accent-400)] px-5 py-3 font-semibold text-[var(--color-brand-900)]">Check availability</a>
+      <div><span className="block text-xs text-ink-faint">{u.from}</span><strong className="font-display text-xl">{formatRupees(vehicle.price_per_day)}<span className="text-xs font-normal text-ink-faint">{u.perDayShort}</span></strong></div>
+      <a href="#booking" className="rounded-xl bg-[var(--color-accent-400)] px-5 py-3 font-semibold text-[var(--color-brand-900)]">{u.checkAvailability}</a>
     </div>
     </>
   );

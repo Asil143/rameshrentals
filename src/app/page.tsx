@@ -75,7 +75,7 @@ export default async function Home() {
             </h1>
             <p className="mt-5 max-w-xl text-balance text-base leading-relaxed text-white/75 sm:text-lg">{t.subtitle(SITE_NAME, townList)}</p>
             <div className="mt-7 max-w-md rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur-md">
-              <label className="mb-2 block px-1 text-xs font-semibold uppercase tracking-[.14em] text-white/65">Where do you need a vehicle?</label>
+              <label className="mb-2 block px-1 text-xs font-semibold uppercase tracking-[.14em] text-white/65">{dictionary.ui.whereNeedVehicle}</label>
               <TownSelector currentSlug={DEFAULT_TOWN_SLUG} towns={towns} prominent />
             </div>
             <div className="mt-5 flex flex-wrap items-center gap-3">
@@ -89,8 +89,8 @@ export default async function Home() {
             <div className="relative aspect-[4/3] overflow-hidden rounded-[1.75rem] border border-white/15 bg-white/5 shadow-2xl">
               <Image src="/vehicles/maruti-suzuki-ertiga.webp" alt="Maruti Suzuki Ertiga available from Ramesh Rentals" fill preload sizes="(max-width: 1024px) 100vw, 45vw" className="object-cover" />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6 pt-20">
-                <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-accent-300)]">Real local fleet</p>
-                <p className="mt-1 font-display text-xl font-semibold">Clean, inspected, ready to go.</p>
+                <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-accent-300)]">{dictionary.ui.realLocalFleet}</p>
+                <p className="mt-1 font-display text-xl font-semibold">{dictionary.ui.cleanInspected}</p>
               </div>
             </div>
           </div>
@@ -131,12 +131,12 @@ export default async function Home() {
           <Link href={`/${DEFAULT_TOWN_SLUG}/vehicles?type=bike`} className="group relative min-h-64 overflow-hidden rounded-3xl bg-[var(--color-brand-900)] shadow-soft">
             <Image src="/vehicles/royal-enfield-classic-350-side.webp" alt="Browse rental bikes" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover opacity-75 transition duration-500 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 p-6 text-white"><p className="text-sm text-white/70">Easy local travel</p><h2 className="font-display text-3xl font-bold">{dictionary.listing.typeBikes}</h2><span className="mt-3 inline-block font-semibold text-[var(--color-accent-300)]">Browse bikes →</span></div>
+            <div className="absolute inset-x-0 bottom-0 p-6 text-white"><p className="text-sm text-white/70">{dictionary.ui.easyLocalTravel}</p><h2 className="font-display text-3xl font-bold">{dictionary.listing.typeBikes}</h2><span className="mt-3 inline-block font-semibold text-[var(--color-accent-300)]">Browse bikes →</span></div>
           </Link>
           <Link href={`/${DEFAULT_TOWN_SLUG}/vehicles?type=car`} className="group relative min-h-64 overflow-hidden rounded-3xl bg-[var(--color-brand-900)] shadow-soft">
             <Image src="/vehicles/maruti-suzuki-swift-angle.webp" alt="Browse rental cars" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover opacity-75 transition duration-500 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 p-6 text-white"><p className="text-sm text-white/70">Comfort for every trip</p><h2 className="font-display text-3xl font-bold">{dictionary.listing.typeCars}</h2><span className="mt-3 inline-block font-semibold text-[var(--color-accent-300)]">Browse cars →</span></div>
+            <div className="absolute inset-x-0 bottom-0 p-6 text-white"><p className="text-sm text-white/70">{dictionary.ui.comfortEveryTrip}</p><h2 className="font-display text-3xl font-bold">{dictionary.listing.typeCars}</h2><span className="mt-3 inline-block font-semibold text-[var(--color-accent-300)]">Browse cars →</span></div>
           </Link>
         </div>
       </section>
@@ -207,8 +207,8 @@ export default async function Home() {
 
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <div className="mb-9 max-w-xl">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-600)]">Simple from start to finish</p>
-          <h2 className="font-display text-3xl font-bold">On the road in three steps</h2>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-600)]">{dictionary.ui.simpleStartFinish}</p>
+          <h2 className="font-display text-3xl font-bold">{dictionary.ui.threeSteps}</h2>
         </div>
         <div className="grid gap-5 md:grid-cols-3">
           {dictionary.about.steps.map((step, index) => (
@@ -221,12 +221,12 @@ export default async function Home() {
         </div>
       </section>
 
-      {(GOOGLE_BUSINESS_URL || GOOGLE_REVIEW_URL) && <section className="border-y border-hairline bg-[var(--color-brand-900)] text-white"><div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 px-4 py-10 sm:flex-row sm:items-center sm:px-6"><div><p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-accent-300)]">Local and accountable</p><h2 className="font-display mt-1 text-2xl font-bold">See what real customers say</h2><p className="mt-1 text-sm text-white/70">Reviews are hosted and verified by Google.</p></div><div className="flex gap-3">{GOOGLE_BUSINESS_URL && <a href={GOOGLE_BUSINESS_URL} target="_blank" rel="noreferrer" className="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[var(--color-brand-900)]">View on Google</a>}{GOOGLE_REVIEW_URL && <a href={GOOGLE_REVIEW_URL} target="_blank" rel="noreferrer" className="rounded-xl bg-[var(--color-accent-400)] px-4 py-3 text-sm font-semibold text-[var(--color-brand-900)]">Leave a review</a>}</div></div></section>}
+      {(GOOGLE_BUSINESS_URL || GOOGLE_REVIEW_URL) && <section className="border-y border-hairline bg-[var(--color-brand-900)] text-white"><div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 px-4 py-10 sm:flex-row sm:items-center sm:px-6"><div><p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-accent-300)]">{dictionary.ui.localAccountable}</p><h2 className="font-display mt-1 text-2xl font-bold">{dictionary.ui.seeRealCustomers}</h2><p className="mt-1 text-sm text-white/70">{dictionary.ui.reviewsByGoogle}</p></div><div className="flex gap-3">{GOOGLE_BUSINESS_URL && <a href={GOOGLE_BUSINESS_URL} target="_blank" rel="noreferrer" className="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[var(--color-brand-900)]">{dictionary.ui.viewOnGoogle}</a>}{GOOGLE_REVIEW_URL && <a href={GOOGLE_REVIEW_URL} target="_blank" rel="noreferrer" className="rounded-xl bg-[var(--color-accent-400)] px-4 py-3 text-sm font-semibold text-[var(--color-brand-900)]">{dictionary.ui.leaveReview}</a>}</div></div></section>}
 
       {testimonials.length > 0 && (
         <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-600)]">Customer trust</p>
-          <h2 className="font-display mb-6 text-2xl font-bold sm:text-3xl">Recent rental experiences</h2>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-600)]">{dictionary.ui.customerTrust}</p>
+          <h2 className="font-display mb-6 text-2xl font-bold sm:text-3xl">{dictionary.ui.recentExperiences}</h2>
           <div className="grid gap-4 md:grid-cols-3">
             {testimonials.slice(0, 3).map((item) => (
               <figure key={item.id} className="rounded-2xl border border-hairline bg-surface-raised p-5 shadow-soft">
