@@ -95,7 +95,7 @@ export default async function BookingsPage() {
                   return <div key={label}><span className={`block h-1.5 rounded-full ${active ? "bg-[var(--color-brand-500)]" : "bg-[var(--color-border)]"}`} /><span className="mt-1 block text-[10px] text-ink-faint">{label}</span></div>;
                 })}
               </div>
-              <BookingControls bookingId={booking.id} status={booking.status} u={u} />
+              <BookingControls bookingId={booking.id} status={booking.status} locale={locale} />
             </li>
           ))}
         </ul>

@@ -5,9 +5,10 @@ import Link from "next/link";
 import { cancelOwnBooking, rescheduleOwnBooking } from "@/app/actions";
 import { createClient } from "@/lib/supabase/client";
 import type { BookingStatus } from "@/types/database";
-import type { UiText } from "@/lib/i18n/ui";
+import { getDictionary, type Locale } from "@/lib/i18n/dictionary";
 
-export function BookingControls({ bookingId, status, u }: { bookingId: string; status: BookingStatus; u: UiText }) {
+export function BookingControls({ bookingId, status, locale }: { bookingId: string; status: BookingStatus; locale: Locale }) {
+  const u = getDictionary(locale).ui;
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
   const changeable = status === "pending" || status === "confirmed";
