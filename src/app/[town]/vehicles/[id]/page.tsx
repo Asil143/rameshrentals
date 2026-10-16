@@ -5,7 +5,7 @@ import { VehicleGallery } from "@/components/vehicle-gallery";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { getTownBySlug, getVehicleById } from "@/lib/queries";
 import { whatsappBookingLink } from "@/lib/whatsapp";
-import { getPricingRows } from "@/lib/pricing";
+import { getPricingRows, formatRupees } from "@/lib/pricing";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { SITE_NAME, SITE_URL } from "@/lib/constants";
@@ -106,7 +106,7 @@ export default async function VehicleDetailPage({
         </div>
 
         <div className="flex items-baseline gap-1.5">
-          <span className="font-display text-3xl font-extrabold">₹{vehicle.price_per_day}</span>
+          <span className="font-display text-3xl font-extrabold">{formatRupees(vehicle.price_per_day)}</span>
           <span className="text-ink-faint">{t.perDay}</span>
         </div>
 
@@ -114,7 +114,7 @@ export default async function VehicleDetailPage({
           <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Vehicle</span><strong className="capitalize">{vehicle.type}</strong></div>
           <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Model year</span><strong>{vehicle.year}</strong></div>
           <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Handover</span><strong>Delivery or pickup</strong></div>
-          <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Refundable deposit</span><strong>₹{vehicle.type === "bike" ? "1,000" : "5,000"}</strong></div>
+          <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">Refundable deposit</span><strong>{formatRupees(vehicle.type === "bike" ? 1000 : 5000)}</strong></div>
         </div>
         {(vehicle.fuel_type || vehicle.transmission || vehicle.included_km_per_day) && <div className="flex flex-wrap gap-2 text-xs text-ink-soft">{vehicle.fuel_type && <span className="rounded-full border border-hairline px-3 py-1.5 capitalize">{vehicle.fuel_type}</span>}{vehicle.transmission && <span className="rounded-full border border-hairline px-3 py-1.5 capitalize">{vehicle.transmission}</span>}{vehicle.seats && <span className="rounded-full border border-hairline px-3 py-1.5">{vehicle.seats} seats</span>}{vehicle.included_km_per_day && <span className="rounded-full border border-hairline px-3 py-1.5">{vehicle.included_km_per_day} km/day included</span>}{vehicle.helmet_count > 0 && <span className="rounded-full border border-hairline px-3 py-1.5">{vehicle.helmet_count} helmet(s)</span>}</div>}
         {town.pickup_address && <div className="rounded-2xl border border-hairline bg-surface-raised p-4 text-sm"><span className="block text-xs font-semibold uppercase tracking-wider text-ink-faint">Pickup location</span><p className="mt-1">{town.pickup_address}</p>{town.maps_url && <a href={town.maps_url} target="_blank" rel="noreferrer" className="mt-2 inline-block font-semibold text-[var(--color-brand-700)]">Open in Google Maps →</a>}</div>}
@@ -128,7 +128,7 @@ export default async function VehicleDetailPage({
                   <tr key={row.label} className="border-t border-hairline first:border-t-0">
                     <td className="py-2 text-ink-soft">{row.label}</td>
                     <td className="py-2 text-right font-semibold">
-                      ₹{row.price_per_day}
+                      {formatRupees(row.price_per_day)}
                       {t.perDay}
                     </td>
                   </tr>
@@ -167,7 +167,7 @@ export default async function VehicleDetailPage({
       </div>
     </div>
     <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between border-t border-hairline bg-[var(--color-surface)]/95 px-4 py-3 shadow-[0_-8px_30px_rgba(0,0,0,.12)] backdrop-blur md:hidden">
-      <div><span className="block text-xs text-ink-faint">From</span><strong className="font-display text-xl">₹{vehicle.price_per_day}<span className="text-xs font-normal text-ink-faint">/day</span></strong></div>
+      <div><span className="block text-xs text-ink-faint">From</span><strong className="font-display text-xl">{formatRupees(vehicle.price_per_day)}<span className="text-xs font-normal text-ink-faint">/day</span></strong></div>
       <a href="#booking" className="rounded-xl bg-[var(--color-accent-400)] px-5 py-3 font-semibold text-[var(--color-brand-900)]">Check availability</a>
     </div>
     </>

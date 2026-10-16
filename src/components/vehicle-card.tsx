@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Vehicle } from "@/types/database";
 import { getDictionary, type Locale } from "@/lib/i18n/dictionary";
+import { formatRupees } from "@/lib/pricing";
 
 const PLACEHOLDER_IMAGE: Record<Vehicle["type"], string> = {
   bike: "🏍️",
@@ -12,10 +13,13 @@ export function VehicleCard({
   vehicle,
   townSlug,
   locale = "en",
+  eager = false,
 }: {
   vehicle: Vehicle;
   townSlug: string;
   locale?: Locale;
+  /** Load the photo immediately — for the first cards on screen. */
+  eager?: boolean;
 }) {
   const t = getDictionary(locale).vehicleCard;
 
@@ -30,6 +34,7 @@ export function VehicleCard({
             src={vehicle.photos[0]}
             alt={`${vehicle.make} ${vehicle.model}`}
             fill
+            loading={eager ? "eager" : "lazy"}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
@@ -39,29 +44,30 @@ export function VehicleCard({
         <span className="absolute left-2.5 top-2.5 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur-sm">
           {vehicle.type}
         </span>
-        <span className="absolute right-2.5 top-2.5 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-[var(--color-brand-800)]">Available</span>
+        <span className="absolute right-2.5 top-2.5 hidden rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold sm:inline text-[var(--color-brand-800)]">Available</span>
       </div>
-      <div className="flex flex-1 flex-col gap-1 p-4">
-        <h3 className="font-display font-semibold leading-snug">
+      <div className="flex flex-1 flex-col gap-0.5 p-3 sm:gap-1 sm:p-4">
+        <h3 className="font-display text-sm font-semibold leading-snug sm:text-base">
           {vehicle.make} {vehicle.model}
         </h3>
-        <p className="text-sm text-ink-faint">{vehicle.year}</p>
-        <div className="mt-2 flex flex-wrap gap-1.5 text-[11px] font-medium text-ink-soft">
+        <p className="text-xs text-ink-faint sm:text-sm">{vehicle.year}</p>
+        <div className="mt-2 hidden flex-wrap gap-1.5 text-[11px] font-medium text-ink-soft sm:flex">
           <span className="rounded-md bg-[var(--color-brand-500)]/8 px-2 py-1">Delivery or pickup</span>
-          <span className="rounded-md bg-[var(--color-brand-500)]/8 px-2 py-1">₹{vehicle.type === "bike" ? "1,000" : "5,000"} deposit</span>
+          <span className="rounded-md bg-[var(--color-brand-500)]/8 px-2 py-1">{formatRupees(vehicle.type === "bike" ? 1000 : 5000)} deposit</span>
           {vehicle.fuel_type && <span className="rounded-md bg-[var(--color-brand-500)]/8 px-2 py-1 capitalize">{vehicle.fuel_type}</span>}
           {vehicle.transmission && <span className="rounded-md bg-[var(--color-brand-500)]/8 px-2 py-1 capitalize">{vehicle.transmission}</span>}
         </div>
         <div className="mt-2 flex items-baseline gap-1">
-          <span className="font-display text-lg font-bold">₹{vehicle.price_per_day}</span>
+          <span className="font-display text-base font-bold sm:text-lg">{formatRupees(vehicle.price_per_day)}</span>
           <span className="text-sm text-ink-faint">{t.perDay}</span>
         </div>
         {vehicle.price_tiers.length > 0 && (
-          <span className="mt-1 inline-flex w-fit items-center gap-1 rounded-full bg-[var(--color-accent-400)]/15 px-2 py-0.5 text-[11px] font-semibold text-[var(--color-accent-600)]">
+          <span className="mt-1 inline-flex w-fit items-center gap-1 rounded-full bg-[var(--color-accent-400)]/15 px-2 py-0.5 text-[10px] font-semibold sm:text-[11px] text-[var(--color-accent-600)]">
             {t.cheaperLongTerm}
           </span>
         )}
-        <span className="mt-3 flex min-h-10 items-center justify-center rounded-xl bg-[var(--color-brand-800)] px-3 py-2 text-sm font-semibold text-white transition-colors group-hover:bg-[var(--color-brand-600)]">View details</span>
+        <span aria-hidden className="flex-1" />
+        <span className="mt-3 flex min-h-10 items-center justify-center rounded-xl bg-[var(--color-brand-800)] px-3 py-2 text-xs font-semibold sm:text-sm text-white transition-colors group-hover:bg-[var(--color-brand-600)]">View details</span>
       </div>
     </Link>
   );

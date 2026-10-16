@@ -47,3 +47,8 @@ export function getPricingRows(
   });
   return rows;
 }
+
+/** Rupee amount with Indian digit grouping, e.g. 1800 → "₹1,800". */
+export function formatRupees(amount: number | string): string {
+  return `₹${Number(amount).toLocaleString("en-IN")}`;
+}

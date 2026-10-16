@@ -83,6 +83,9 @@ export default async function VehiclesPage({
     sort: search.sort === "price_desc" || search.sort === "newest" ? search.sort : "price_asc",
   });
 
+  const moreFilterCount = [search.max_price, search.seats, search.fuel, search.transmission, search.sort && search.sort !== "price_asc" ? search.sort : ""]
+    .filter(Boolean).length;
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
@@ -101,9 +104,9 @@ export default async function VehiclesPage({
         <VehicleTypeToggle townSlug={townSlug} current={vehicleType ?? "all"} locale={locale} />
       </div>
 
-      <Form action={`/${townSlug}/vehicles`} className="mb-8 grid gap-3 rounded-2xl border border-hairline bg-surface-raised p-4 shadow-soft sm:grid-cols-2 lg:grid-cols-6">
+      <Form action={`/${townSlug}/vehicles`} className="mb-8 grid grid-cols-2 gap-3 rounded-2xl border border-hairline bg-surface-raised p-4 shadow-soft lg:grid-cols-6">
         {vehicleType && <input type="hidden" name="type" value={vehicleType} />}
-        <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft lg:col-span-2">
+        <label className="col-span-2 flex flex-col gap-1 text-xs font-semibold text-ink-soft">
           Search
           <input name="q" defaultValue={search.q} placeholder="Swift, Activa, Ertiga..." className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]" />
         </label>
@@ -115,44 +118,52 @@ export default async function VehiclesPage({
           To
           <input name="end_date" type="date" defaultValue={search.end_date} className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]" />
         </label>
-        <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
-          Max price
-          <input name="max_price" type="number" min="0" defaultValue={search.max_price} placeholder="₹/day" className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]" />
-        </label>
-        <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
-          Seats
-          <input name="seats" type="number" min="1" max="12" defaultValue={search.seats} className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]" />
-        </label>
-        <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
-          Fuel
-          <select name="fuel" defaultValue={search.fuel ?? ""} className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]">
-            <option value="">Any</option><option value="petrol">Petrol</option><option value="diesel">Diesel</option><option value="electric">Electric</option><option value="cng">CNG</option>
-          </select>
-        </label>
-        <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
-          Gear
-          <select name="transmission" defaultValue={search.transmission ?? ""} className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]">
-            <option value="">Any</option><option value="manual">Manual</option><option value="automatic">Automatic</option><option value="gearless">Gearless</option>
-          </select>
-        </label>
-        <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
-          Sort
-          <select name="sort" defaultValue={search.sort ?? "price_asc"} className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]">
-            <option value="price_asc">Lowest price</option><option value="price_desc">Highest price</option><option value="newest">Newest</option>
-          </select>
-        </label>
-        <div className="flex items-end gap-2 lg:col-span-2">
-          <button className="rounded-xl bg-[var(--color-brand-800)] px-4 py-2 text-sm font-semibold text-white">Filter</button>
-          <Link href={`/${townSlug}/vehicles${vehicleType ? `?type=${vehicleType}` : ""}`} className="rounded-xl border border-hairline px-4 py-2 text-sm font-semibold">Reset</Link>
+        <div className="col-span-2 flex items-end gap-2 max-lg:order-last">
+          <button className="flex-1 rounded-xl bg-[var(--color-brand-800)] px-4 py-2.5 text-sm font-semibold text-white lg:flex-none lg:py-2">Filter</button>
+          <Link href={`/${townSlug}/vehicles${vehicleType ? `?type=${vehicleType}` : ""}`} className="rounded-xl border border-hairline px-4 py-2.5 text-sm font-semibold lg:py-2">Reset</Link>
         </div>
+        <details open={moreFilterCount > 0} className="group col-span-2 lg:col-span-6">
+          <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold text-[var(--color-brand-700)] dark:text-[var(--color-brand-400)] [&::-webkit-details-marker]:hidden">
+            <span className="transition-transform group-open:rotate-90" aria-hidden>›</span>
+            More filters{moreFilterCount > 0 && ` (${moreFilterCount})`}
+          </summary>
+          <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-5">
+            <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
+              Max price
+              <input name="max_price" type="number" min="0" defaultValue={search.max_price} placeholder="₹/day" className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]" />
+            </label>
+            <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
+              Seats
+              <input name="seats" type="number" min="1" max="12" defaultValue={search.seats} className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]" />
+            </label>
+            <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
+              Fuel
+              <select name="fuel" defaultValue={search.fuel ?? ""} className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]">
+                <option value="">Any</option><option value="petrol">Petrol</option><option value="diesel">Diesel</option><option value="electric">Electric</option><option value="cng">CNG</option>
+              </select>
+            </label>
+            <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
+              Gear
+              <select name="transmission" defaultValue={search.transmission ?? ""} className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]">
+                <option value="">Any</option><option value="manual">Manual</option><option value="automatic">Automatic</option><option value="gearless">Gearless</option>
+              </select>
+            </label>
+            <label className="col-span-2 flex flex-col gap-1 text-xs font-semibold text-ink-soft lg:col-span-1">
+              Sort
+              <select name="sort" defaultValue={search.sort ?? "price_asc"} className="rounded-xl border border-hairline bg-[var(--color-surface)] px-3 py-2 text-sm font-normal text-[var(--color-ink)]">
+                <option value="price_asc">Lowest price</option><option value="price_desc">Highest price</option><option value="newest">Newest</option>
+              </select>
+            </label>
+          </div>
+        </details>
       </Form>
 
       {vehicles.length === 0 ? (
         <p className="py-16 text-center text-ink-soft">{t.empty}</p>
       ) : (
-        <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
-          {vehicles.map((vehicle) => (
-            <VehicleCard key={vehicle.id} vehicle={vehicle} townSlug={townSlug} locale={locale} />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
+          {vehicles.map((vehicle, index) => (
+            <VehicleCard key={vehicle.id} vehicle={vehicle} townSlug={townSlug} locale={locale} eager={index < 2} />
           ))}
         </div>
       )}

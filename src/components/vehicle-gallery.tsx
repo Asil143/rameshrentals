@@ -19,7 +19,7 @@ export function VehicleGallery({ photos, alt }: { photos: string[]; alt: string 
           setTouchStart(null);
         }}
       >
-        <Image src={photos[active]} alt={alt} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
+        <Image src={photos[active]} alt={alt} fill loading="eager" fetchPriority="high" sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
         {photos.length > 1 && <span className="absolute bottom-3 right-3 rounded-full bg-black/65 px-3 py-1 text-xs font-semibold text-white">{active + 1} / {photos.length}</span>}
       </div>
 

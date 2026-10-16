@@ -186,6 +186,7 @@ export function AvailabilityCalendar({
           if (!d) return <span key={i} />;
           const dStr = toDateStr(d);
           const disabled = isDisabled(d);
+          const booked = bookedDays.has(dStr);
           const isStart = start && dStr === toDateStr(start);
           const isEnd = end && dStr === toDateStr(end);
           const inRange = start && end && d > start && d < end;
@@ -197,12 +198,14 @@ export function AvailabilityCalendar({
               type="button"
               disabled={disabled}
               onClick={() => handleClick(d)}
-              aria-label={new Intl.DateTimeFormat(localeTag, { dateStyle: "full" }).format(d)}
+              aria-label={`${new Intl.DateTimeFormat(localeTag, { dateStyle: "full" }).format(d)}${booked ? ` — ${t.legendBooked}` : ""}`}
               aria-pressed={Boolean(selected || inRange)}
               className={`aspect-square rounded-lg text-xs font-medium transition-colors ${
-                disabled
-                  ? "cursor-not-allowed text-ink-faint/40 line-through"
-                  : selected
+                booked && d >= today
+                  ? "cursor-not-allowed bg-red-500/10 text-red-700/60 line-through dark:text-red-300/60"
+                  : disabled
+                    ? "cursor-not-allowed opacity-30"
+                    : selected
                     ? "bg-gradient-to-br from-[var(--color-brand-500)] to-[var(--color-brand-700)] text-white"
                     : inRange
                       ? "bg-[var(--color-brand-500)]/15 text-[var(--color-brand-700)] dark:text-[var(--color-brand-300)]"
@@ -225,7 +228,7 @@ export function AvailabilityCalendar({
         <span>{t.helperText}</span>
         {!loading && (
           <span className="flex items-center gap-1 whitespace-nowrap">
-            <span className="inline-block h-2 w-2 rounded-full bg-ink-faint/40" />
+            <span className="inline-block h-2.5 w-2.5 rounded-sm bg-red-500/20" />
             {t.legendBooked}
           </span>
         )}

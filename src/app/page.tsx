@@ -159,7 +159,7 @@ export default async function Home() {
               {t.viewAll}
             </Link>
           </div>
-          <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
             {vehicles.slice(0, 8).map((vehicle) => (
               <VehicleCard key={vehicle.id} vehicle={vehicle} townSlug={DEFAULT_TOWN_SLUG} locale={locale} />
             ))}
