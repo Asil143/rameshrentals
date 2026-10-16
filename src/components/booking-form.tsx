@@ -20,6 +20,8 @@ export function BookingForm({
   deliveryFee,
   collectionFee,
   locale = "en",
+  initialStart = "",
+  initialEnd = "",
 }: {
   vehicleId: string;
   townSlug: string;
@@ -28,6 +30,9 @@ export function BookingForm({
   deliveryFee: number;
   collectionFee: number;
   locale?: Locale;
+  /** Dates already chosen on the home or list page. */
+  initialStart?: string;
+  initialEnd?: string;
 }) {
   const t = getDictionary(locale).bookingForm;
   const u = getDictionary(locale).ui;
@@ -35,8 +40,8 @@ export function BookingForm({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(initialStart);
+  const [endDate, setEndDate] = useState(initialEnd);
   const [availabilityReady, setAvailabilityReady] = useState(false);
   const [fulfillmentMethod, setFulfillmentMethod] = useState<"location_pickup" | "doorstep_delivery">("location_pickup");
   const [returnMethod, setReturnMethod] = useState<"location_return" | "doorstep_collection">("location_return");

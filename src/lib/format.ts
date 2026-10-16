@@ -28,3 +28,14 @@ export function formatTime(time: string | null, locale = "en-IN") {
   const [h, m] = time.split(":").map(Number);
   return new Intl.DateTimeFormat(locale, { hour: "numeric", minute: "2-digit" }).format(new Date(2000, 0, 1, h, m));
 }
+
+/**
+ * A pickup/return pair from the URL, or null unless both are valid "YYYY-MM-DD"
+ * dates with the return on or after the pickup and the pickup not in the past (IST).
+ */
+export function parseDateRange(start?: string, end?: string): { start: string; end: string } | null {
+  const isDate = (value?: string): value is string => !!value && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value));
+  if (!isDate(start) || !isDate(end) || end < start) return null;
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(new Date());
+  return start < today ? null : { start, end };
+}

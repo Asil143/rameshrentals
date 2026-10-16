@@ -21,6 +21,7 @@ export type UiText = {
   from: string;
   perDayShort: string;
   checkAvailability: string;
+  totalForDays: (total: string, days: number) => string;
   seatsCount: (n: number) => string;
   kmIncluded: (km: number) => string;
   helmets: (n: number) => string;
@@ -108,6 +109,15 @@ export type UiText = {
   uploadFailed: string;
   uploaded: string;
 
+  // Home search
+  pickupDate: string;
+  returnDate: string;
+  showAvailable: string;
+  browseAll: string;
+  returnBeforePickup: string;
+  freeBetween: (from: string, to: string) => string;
+  clearDates: string;
+
   // Home page
   whereNeedVehicle: string;
   realLocalFleet: string;
@@ -171,6 +181,7 @@ export const uiEn: UiText = {
   from: "From",
   perDayShort: "/day",
   checkAvailability: "Check availability",
+  totalForDays: (total, days) => `${total} for ${days} day${days === 1 ? "" : "s"}`,
   seatsCount: (n) => `${n} seats`,
   kmIncluded: (km) => `${km} km/day included`,
   helmets: (n) => `${n} helmet${n === 1 ? "" : "s"}`,
@@ -258,6 +269,13 @@ export const uiEn: UiText = {
   uploadFailed: "Upload failed. Use JPG, PNG or PDF under 5 MB.",
   uploaded: "Document uploaded securely.",
 
+  pickupDate: "Pickup date",
+  returnDate: "Return date",
+  showAvailable: "Show available vehicles",
+  browseAll: "Browse all vehicles",
+  returnBeforePickup: "The return date can't be before the pickup date.",
+  freeBetween: (from, to) => `Free from ${from} to ${to}`,
+  clearDates: "Clear dates",
   whereNeedVehicle: "Where do you need a vehicle?",
   realLocalFleet: "Real local fleet",
   cleanInspected: "Clean, inspected, ready to go.",
@@ -323,6 +341,7 @@ export const uiTe: UiText = {
   from: "నుండి",
   perDayShort: "/రోజు",
   checkAvailability: "అందుబాటు చూడండి",
+  totalForDays: (total, days) => `${days} రోజులకు ${total}`,
   seatsCount: (n) => `${n} సీట్లు`,
   kmIncluded: (km) => `రోజుకు ${km} కి.మీ. కలిపి`,
   helmets: (n) => `${n} హెల్మెట్${n === 1 ? "" : "లు"}`,
@@ -410,6 +429,13 @@ export const uiTe: UiText = {
   uploadFailed: "అప్‌లోడ్ విఫలమైంది. 5 MB లోపు JPG, PNG లేదా PDF ఉపయోగించండి.",
   uploaded: "పత్రం సురక్షితంగా అప్‌లోడ్ అయింది.",
 
+  pickupDate: "పికప్ తేదీ",
+  returnDate: "తిరిగి ఇచ్చే తేదీ",
+  showAvailable: "అందుబాటులో ఉన్న వాహనాలు చూడండి",
+  browseAll: "అన్ని వాహనాలు చూడండి",
+  returnBeforePickup: "తిరిగి ఇచ్చే తేదీ పికప్ తేదీ కంటే ముందు ఉండకూడదు.",
+  freeBetween: (from, to) => `${from} నుండి ${to} వరకు ఖాళీగా ఉన్నవి`,
+  clearDates: "తేదీలు తీసివేయండి",
   whereNeedVehicle: "మీకు వాహనం ఎక్కడ కావాలి?",
   realLocalFleet: "నిజమైన స్థానిక వాహనాలు",
   cleanInspected: "శుభ్రంగా, తనిఖీ చేసి, సిద్ధంగా.",

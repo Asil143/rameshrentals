@@ -11,6 +11,7 @@ import { getDictionary } from "@/lib/i18n/dictionary";
 import { SITE_NAME, SITE_URL } from "@/lib/constants";
 import { toJsonLdScript } from "@/lib/json-ld";
 import type { Metadata } from "next";
+import { parseDateRange } from "@/lib/format";
 
 const PLACEHOLDER_IMAGE = { bike: "🏍️", car: "🚗" } as const;
 
@@ -44,10 +45,14 @@ export async function generateMetadata({
 
 export default async function VehicleDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ town: string; id: string }>;
+  searchParams: Promise<{ start_date?: string; end_date?: string }>;
 }) {
   const { town: townSlug, id } = await params;
+  const { start_date, end_date } = await searchParams;
+  const dateRange = parseDateRange(start_date, end_date);
 
   const [town, vehicle] = await Promise.all([
     getTownBySlug(townSlug),
@@ -152,6 +157,8 @@ export default async function VehicleDetailPage({
             deliveryFee={town.delivery_fee ?? 0}
             collectionFee={town.collection_fee ?? 0}
             locale={locale}
+            initialStart={dateRange?.start}
+            initialEnd={dateRange?.end}
           />
           <Link
             href="/about#policy"

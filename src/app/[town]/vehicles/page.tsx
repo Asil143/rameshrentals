@@ -12,6 +12,7 @@ import { SITE_NAME } from "@/lib/constants";
 import type { VehicleType } from "@/types/database";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
+import { formatShortDate, parseDateRange } from "@/lib/format";
 
 export async function generateMetadata({
   params,
@@ -84,6 +85,7 @@ export default async function VehiclesPage({
     sort: search.sort === "price_desc" || search.sort === "newest" ? search.sort : "price_asc",
   });
 
+  const dateRange = parseDateRange(search.start_date, search.end_date);
   const moreFilterCount = [search.max_price, search.seats, search.fuel, search.transmission, search.sort && search.sort !== "price_asc" ? search.sort : ""]
     .filter(Boolean).length;
 
@@ -159,12 +161,21 @@ export default async function VehiclesPage({
         </details>
       </Form>
 
+      {search.start_date && search.end_date && (
+        <p className="mb-5 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl bg-[var(--color-brand-500)]/10 px-4 py-3 text-sm font-semibold text-[var(--color-brand-800)] dark:text-[var(--color-brand-100)]">
+          ✓ {u.freeBetween(formatShortDate(search.start_date, u.dateLocale), formatShortDate(search.end_date, u.dateLocale))}
+          <Link href={`/${townSlug}/vehicles${vehicleType ? `?type=${vehicleType}` : ""}`} className="font-normal underline">
+            {u.clearDates}
+          </Link>
+        </p>
+      )}
+
       {vehicles.length === 0 ? (
         <p className="py-16 text-center text-ink-soft">{t.empty}</p>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
           {vehicles.map((vehicle, index) => (
-            <VehicleCard key={vehicle.id} vehicle={vehicle} townSlug={townSlug} locale={locale} eager={index < 2} />
+            <VehicleCard key={vehicle.id} vehicle={vehicle} townSlug={townSlug} locale={locale} eager={index < 2} dates={dateRange} />
           ))}
         </div>
       )}

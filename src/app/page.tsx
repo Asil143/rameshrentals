@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { VehicleCard } from "@/components/vehicle-card";
+import { HeroSearch } from "@/components/hero-search";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { getAllTowns, getTestimonials, getTownBySlug, getVehiclesForTown } from "@/lib/queries";
 import { whatsappGeneralLink } from "@/lib/whatsapp";
@@ -8,7 +9,6 @@ import { DEFAULT_TOWN_SLUG, GOOGLE_BUSINESS_URL, GOOGLE_REVIEW_URL, SITE_NAME, S
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { toJsonLdScript } from "@/lib/json-ld";
-import { TownSelector } from "@/components/town-selector";
 
 const FEATURE_ICONS = [
   <path
@@ -74,12 +74,11 @@ export default async function Home() {
               {t.heroLine1} <span className="text-[var(--color-accent-400)]">{t.heroLine2}</span>
             </h1>
             <p className="mt-5 max-w-xl text-balance text-base leading-relaxed text-white/75 sm:text-lg">{t.subtitle(SITE_NAME, townList)}</p>
-            <div className="mt-7 max-w-md rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur-md">
-              <label className="mb-2 block px-1 text-xs font-semibold uppercase tracking-[.14em] text-white/65">{dictionary.ui.whereNeedVehicle}</label>
-              <TownSelector currentSlug={DEFAULT_TOWN_SLUG} towns={towns} prominent />
+            <div className="mt-7 max-w-xl rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-md">
+              <p className="mb-3 px-1 font-display text-sm font-semibold text-white/90">{dictionary.ui.whereNeedVehicle}</p>
+              <HeroSearch towns={towns} defaultSlug={DEFAULT_TOWN_SLUG} locale={locale} />
             </div>
             <div className="mt-5 flex flex-wrap items-center gap-3">
-              <Link href={`/${DEFAULT_TOWN_SLUG}/vehicles`} className="rounded-xl bg-[var(--color-accent-400)] px-6 py-3.5 font-semibold text-[var(--color-brand-900)] shadow-lift transition hover:-translate-y-0.5 hover:bg-[var(--color-accent-300)]">{t.browseCta(townName)}</Link>
               <WhatsAppButton href={whatsappGeneralLink(town?.name, locale)} label={t.bookViaWhatsapp} className="shadow-lift" />
             </div>
           </div>

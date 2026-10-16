@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Vehicle } from "@/types/database";
 import { getDictionary, type Locale } from "@/lib/i18n/dictionary";
-import { formatRupees } from "@/lib/pricing";
+import { formatRupees, getBookingDays, getEstimatedTotal } from "@/lib/pricing";
 
 const PLACEHOLDER_IMAGE: Record<Vehicle["type"], string> = {
   bike: "🏍️",
@@ -14,19 +14,24 @@ export function VehicleCard({
   townSlug,
   locale = "en",
   eager = false,
+  dates,
 }: {
   vehicle: Vehicle;
   townSlug: string;
   locale?: Locale;
   /** Load the photo immediately — for the first cards on screen. */
   eager?: boolean;
+  /** Chosen pickup/return dates: show the trip total and carry the dates to the vehicle page. */
+  dates?: { start: string; end: string } | null;
 }) {
   const t = getDictionary(locale).vehicleCard;
+  const days = dates ? getBookingDays(dates.start, dates.end) : 0;
+  const href = `/${townSlug}/vehicles/${vehicle.id}${dates ? `?start_date=${dates.start}&end_date=${dates.end}` : ""}`;
   const u = getDictionary(locale).ui;
 
   return (
     <Link
-      href={`/${townSlug}/vehicles/${vehicle.id}`}
+      href={href}
       className="card-hover group flex flex-col overflow-hidden rounded-2xl border border-hairline bg-surface-raised shadow-soft"
     >
       <div className="relative flex aspect-[16/11] items-center justify-center overflow-hidden bg-gradient-to-br from-[var(--color-brand-50)] to-[var(--color-brand-100)] text-6xl dark:from-[var(--color-brand-900)] dark:to-[var(--color-brand-800)]">
@@ -62,6 +67,11 @@ export function VehicleCard({
           <span className="font-display text-base font-bold sm:text-lg">{formatRupees(vehicle.price_per_day)}</span>
           <span className="text-sm text-ink-faint">{t.perDay}</span>
         </div>
+        {dates && days > 0 && (
+          <span className="mt-1 w-fit rounded-md bg-[var(--color-brand-500)]/10 px-2 py-1 text-[11px] font-semibold text-[var(--color-brand-800)] sm:text-xs dark:text-[var(--color-brand-100)]">
+            {u.totalForDays(formatRupees(getEstimatedTotal(vehicle, dates.start, dates.end)), days)}
+          </span>
+        )}
         {vehicle.price_tiers.length > 0 && (
           <span className="mt-1 inline-flex w-fit items-center gap-1 rounded-full bg-[var(--color-accent-400)]/15 px-2 py-0.5 text-[10px] font-semibold sm:text-[11px] text-[var(--color-accent-600)]">
             {t.cheaperLongTerm}
