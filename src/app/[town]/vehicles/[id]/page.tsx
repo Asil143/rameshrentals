@@ -194,6 +194,7 @@ export default async function VehicleDetailPage({
             locale={locale}
             initialStart={dateRange?.start}
             initialEnd={dateRange?.end}
+            depositAmount={vehicle.type === "bike" ? 1000 : 5000}
           />
           <Link
             href="/about#policy"
@@ -211,10 +212,6 @@ export default async function VehicleDetailPage({
           />
         </div>
       </div>
-    </div>
-    <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between border-t border-hairline bg-[var(--color-surface)]/95 px-4 py-3 shadow-[0_-8px_30px_rgba(0,0,0,.12)] backdrop-blur md:hidden">
-      <div><span className="block text-xs text-ink-faint">{u.from}</span><strong className="font-display text-xl">{formatRupees(vehicle.price_per_day)}<span className="text-xs font-normal text-ink-faint">{u.perDayShort}</span></strong></div>
-      <a href="#booking" className="rounded-xl bg-[var(--color-accent-400)] px-5 py-3 font-semibold text-[var(--color-brand-900)]">{u.checkAvailability}</a>
     </div>
     </>
   );

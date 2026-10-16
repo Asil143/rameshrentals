@@ -28,6 +28,13 @@ export type UiText = {
   fuelPolicy: string;
   checkedOn: (date: string) => string;
   beforeYouBook: string;
+  viewBreakup: string;
+  hideBreakup: string;
+  rentLine: (days: number, rate: string) => string;
+  totalRent: string;
+  depositAtPickup: string;
+  payAtPickupTotal: string;
+  book: string;
   cancellationTitle: string;
   cancellationBody: string;
   documentsTitle: string;
@@ -198,6 +205,13 @@ export const uiEn: UiText = {
   fuelPolicy: "Fuel not included — return it with the same fuel level you received",
   checkedOn: (date) => `Inspected and cleaned on ${date}`,
   beforeYouBook: "Good to know",
+  viewBreakup: "View breakup",
+  hideBreakup: "Hide breakup",
+  rentLine: (days, rate) => `Rent: ${days} day${days === 1 ? "" : "s"} × ${rate}`,
+  totalRent: "Total rent",
+  depositAtPickup: "Refundable deposit (paid at pickup, returned after)",
+  payAtPickupTotal: "Nothing to pay now — everything is paid at pickup.",
+  book: "Book",
   cancellationTitle: "Free cancellation",
   cancellationBody: "Cancel any time before pickup — just message us on WhatsApp or call. No cancellation fee.",
   documentsTitle: "Bring at pickup",
@@ -368,6 +382,13 @@ export const uiTe: UiText = {
   fuelPolicy: "ఇంధనం కలపలేదు — ఇచ్చినప్పుడు ఉన్న ఇంధన స్థాయితో తిరిగి ఇవ్వండి",
   checkedOn: (date) => `${date}న తనిఖీ చేసి శుభ్రం చేశాం`,
   beforeYouBook: "తెలుసుకోవలసినవి",
+  viewBreakup: "వివరాలు చూడండి",
+  hideBreakup: "వివరాలు దాచండి",
+  rentLine: (days, rate) => `అద్దె: ${days} రోజులు × ${rate}`,
+  totalRent: "మొత్తం అద్దె",
+  depositAtPickup: "తిరిగి ఇచ్చే డిపాజిట్ (పికప్‌లో చెల్లించాలి, తర్వాత తిరిగి ఇస్తాం)",
+  payAtPickupTotal: "ఇప్పుడు ఏమీ చెల్లించనవసరం లేదు — అన్నీ పికప్ సమయంలో చెల్లించండి.",
+  book: "బుక్ చేయండి",
   cancellationTitle: "ఉచిత రద్దు",
   cancellationBody: "పికప్‌కు ముందు ఎప్పుడైనా రద్దు చేయవచ్చు — వాట్సాప్‌లో మెసేజ్ చేయండి లేదా కాల్ చేయండి. రద్దు ఛార్జీ లేదు.",
   documentsTitle: "పికప్ సమయంలో తీసుకురండి",

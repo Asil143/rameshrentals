@@ -22,6 +22,7 @@ export function BookingForm({
   locale = "en",
   initialStart = "",
   initialEnd = "",
+  depositAmount,
 }: {
   vehicleId: string;
   townSlug: string;
@@ -33,6 +34,8 @@ export function BookingForm({
   /** Dates already chosen on the home or list page. */
   initialStart?: string;
   initialEnd?: string;
+  /** Refundable deposit collected at pickup. */
+  depositAmount: number;
 }) {
   const t = getDictionary(locale).bookingForm;
   const u = getDictionary(locale).ui;
@@ -40,6 +43,7 @@ export function BookingForm({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [showBreakup, setShowBreakup] = useState(false);
   const [startDate, setStartDate] = useState(initialStart);
   const [endDate, setEndDate] = useState(initialEnd);
   const [availabilityReady, setAvailabilityReady] = useState(false);
@@ -51,7 +55,35 @@ export function BookingForm({
     startDate && endDate ? getBookingDays(startDate, endDate) : 0;
   const estimatedTotal =
     days > 0 ? getEstimatedTotal({ price_per_day: pricePerDay, price_tiers: priceTiers }, startDate, endDate) : 0;
-  const grandTotal = estimatedTotal + (fulfillmentMethod === "doorstep_delivery" ? deliveryFee : 0) + (returnMethod === "doorstep_collection" ? collectionFee : 0);
+  const deliveryCharge = fulfillmentMethod === "doorstep_delivery" ? deliveryFee : 0;
+  const collectionCharge = returnMethod === "doorstep_collection" ? collectionFee : 0;
+  const grandTotal = estimatedTotal + deliveryCharge + collectionCharge;
+
+  const breakdown = days > 0 && (
+    <div className="rounded-xl bg-[var(--color-accent-400)]/12 px-4 py-3 text-sm">
+      <dl className="space-y-1.5">
+        {[
+          { label: u.rentLine(days, formatRupees(Math.round(estimatedTotal / days))), value: estimatedTotal },
+          ...(deliveryCharge > 0 ? [{ label: t.doorstepDelivery, value: deliveryCharge }] : []),
+          ...(collectionCharge > 0 ? [{ label: u.collectedFromYou, value: collectionCharge }] : []),
+        ].map((row) => (
+          <div key={row.label} className="flex justify-between gap-3">
+            <dt className="text-ink-soft">{row.label}</dt>
+            <dd>{formatRupees(row.value)}</dd>
+          </div>
+        ))}
+        <div className="flex justify-between gap-3 border-t border-[var(--color-accent-400)]/30 pt-1.5 font-display font-semibold">
+          <dt>{u.totalRent}</dt>
+          <dd className="text-[var(--color-accent-600)]">{formatRupees(grandTotal)}</dd>
+        </div>
+        <div className="flex justify-between gap-3 text-xs text-ink-soft">
+          <dt>{u.depositAtPickup}</dt>
+          <dd>{formatRupees(depositAmount)}</dd>
+        </div>
+      </dl>
+      <p className="mt-2 text-xs text-ink-faint">{u.payAtPickupTotal}</p>
+    </div>
+  );
 
   function handleSubmit(formData: FormData) {
     setError(null);
@@ -88,6 +120,7 @@ export function BookingForm({
   }
 
   return (
+    <>
     <form action={handleSubmit} className="flex flex-col gap-4">
       <input type="hidden" name="vehicle_id" value={vehicleId} />
       <input type="hidden" name="town_slug" value={townSlug} />
@@ -130,16 +163,7 @@ export function BookingForm({
         />
       </div>
 
-      {days > 0 && (
-        <div className="rounded-xl bg-[var(--color-accent-400)]/12 px-4 py-3 text-sm">
-          <span className="text-ink-soft">
-            {t.estimateDays(days, Math.round(estimatedTotal / days))}
-          </span>{" "}
-          <span className="font-display font-semibold text-[var(--color-accent-600)]">
-            {t.estimateTotal(grandTotal.toLocaleString("en-IN"))}
-          </span>
-        </div>
-      )}
+      {breakdown}
 
       <label className="flex flex-col gap-1.5 text-sm font-medium">
         {t.yourName}
@@ -209,5 +233,32 @@ export function BookingForm({
       </button>
       <p className="text-xs text-ink-faint">{t.payAtPickupNote}</p>
     </form>
+
+    {/* Phone bottom bar: live total, breakup sheet, and a jump to the form */}
+    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-hairline bg-[var(--color-surface)]/95 shadow-[0_-8px_30px_rgba(0,0,0,.12)] backdrop-blur md:hidden">
+      {showBreakup && breakdown && <div className="max-h-[50vh] overflow-y-auto px-4 pt-3">{breakdown}</div>}
+      <div className="flex items-center justify-between gap-3 px-4 py-3">
+        {days > 0 ? (
+          <div>
+            <strong className="font-display text-xl">{formatRupees(grandTotal)}</strong>
+            <button type="button" onClick={() => setShowBreakup((open) => !open)} aria-expanded={showBreakup} className="block text-xs font-semibold text-[var(--color-brand-700)] underline dark:text-[var(--color-brand-400)]">
+              {showBreakup ? u.hideBreakup : u.viewBreakup}
+            </button>
+          </div>
+        ) : (
+          <div>
+            <span className="block text-xs text-ink-faint">{u.from}</span>
+            <strong className="font-display text-xl">
+              {formatRupees(pricePerDay)}
+              <span className="text-xs font-normal text-ink-faint">{u.perDayShort}</span>
+            </strong>
+          </div>
+        )}
+        <a href="#booking" className="rounded-xl bg-[var(--color-accent-400)] px-5 py-3 font-semibold text-[var(--color-brand-900)]">
+          {days > 0 ? u.book : u.checkAvailability}
+        </a>
+      </div>
+    </div>
+    </>
   );
 }
