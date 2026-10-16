@@ -167,8 +167,17 @@ export default async function VehicleDetailPage({
           {[
             { icon: "↺", title: u.cancellationTitle, body: u.cancellationBody },
             { icon: "🪪", title: u.documentsTitle, body: u.documentsBody },
+            {
+              icon: "🏠",
+              title: u.deliveryTitle,
+              body: u.deliveryBody(
+                town.delivery_radius_km,
+                Number(town.delivery_fee) > 0 ? formatRupees(town.delivery_fee) : null,
+                Number(town.collection_fee) > 0 ? formatRupees(town.collection_fee) : null
+              ),
+            },
           ].map((item) => (
-            <div key={item.title} className="rounded-2xl border border-hairline bg-surface-raised p-4 text-sm">
+            <div key={item.title} className="rounded-2xl border border-hairline bg-surface-raised p-4 text-sm last:sm:col-span-2">
               <p className="flex items-center gap-2 font-display font-semibold">
                 <span aria-hidden className="text-[var(--color-brand-600)]">{item.icon}</span>
                 {item.title}

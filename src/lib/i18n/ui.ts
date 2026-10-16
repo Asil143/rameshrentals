@@ -38,6 +38,8 @@ export type UiText = {
   cancellationTitle: string;
   cancellationBody: string;
   documentsTitle: string;
+  deliveryTitle: string;
+  deliveryBody: (radiusKm: number, fee: string | null, collection: string | null) => string;
   documentsBody: string;
   seatsCount: (n: number) => string;
   kmIncluded: (km: number) => string;
@@ -248,6 +250,12 @@ export const uiEn: UiText = {
   cancellationTitle: "Free cancellation",
   cancellationBody: "Cancel any time before pickup — just message us on WhatsApp or call. No cancellation fee.",
   documentsTitle: "Bring at pickup",
+  deliveryTitle: "Doorstep delivery",
+  deliveryBody: (radiusKm, fee, collection) =>
+    `We bring it to your home, hostel or hotel within ${radiusKm} km` +
+    (fee ? ` for ${fee}` : "") +
+    (collection ? `, and can collect it back for ${collection}` : "") +
+    (fee ? "." : ". We confirm any delivery charge when we call you."),
   documentsBody: "Your original driving licence and Aadhaar card. Photocopies alone aren't accepted.",
   seatsCount: (n) => `${n} seats`,
   kmIncluded: (km) => `${km} km/day included`,
@@ -454,6 +462,12 @@ export const uiTe: UiText = {
   cancellationTitle: "ఉచిత రద్దు",
   cancellationBody: "పికప్‌కు ముందు ఎప్పుడైనా రద్దు చేయవచ్చు — వాట్సాప్‌లో మెసేజ్ చేయండి లేదా కాల్ చేయండి. రద్దు ఛార్జీ లేదు.",
   documentsTitle: "పికప్ సమయంలో తీసుకురండి",
+  deliveryTitle: "ఇంటి వద్దకు డెలివరీ",
+  deliveryBody: (radiusKm, fee, collection) =>
+    `${radiusKm} కి.మీ. లోపు మీ ఇల్లు, హాస్టల్ లేదా హోటల్‌కు తెచ్చి ఇస్తాం` +
+    (fee ? ` — ఛార్జీ ${fee}` : "") +
+    (collection ? `, తిరిగి తీసుకెళ్లడానికి ${collection}` : "") +
+    (fee ? "." : ". డెలివరీ ఛార్జీ ఉంటే కాల్ చేసినప్పుడు చెబుతాం."),
   documentsBody: "మీ ఒరిజినల్ డ్రైవింగ్ లైసెన్స్ మరియు ఆధార్ కార్డు. కేవలం జిరాక్స్ కాపీలు అంగీకరించబడవు.",
   seatsCount: (n) => `${n} సీట్లు`,
   kmIncluded: (km) => `రోజుకు ${km} కి.మీ. కలిపి`,

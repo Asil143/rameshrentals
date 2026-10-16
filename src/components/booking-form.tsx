@@ -200,7 +200,7 @@ export function BookingForm({
       {(fulfillmentMethod === "doorstep_delivery" || returnMethod === "doorstep_collection") && (
         <label className="flex flex-col gap-1.5 text-sm font-medium">{u.addressLabel}
           <textarea name="delivery_address" required rows={3} maxLength={300} placeholder={u.addressPlaceholder} className={inputClass} />
-          <span className="text-xs font-normal text-ink-faint">{u.deliveryFee(formatRupees(deliveryFee))}</span>
+          {deliveryFee > 0 && <span className="text-xs font-normal text-ink-faint">{u.deliveryFee(formatRupees(deliveryFee))}</span>}
         </label>
       )}
 
