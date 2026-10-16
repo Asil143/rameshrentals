@@ -60,6 +60,7 @@ export type UiText = {
   filter: string;
   reset: string;
   moreFilters: string;
+  chips: { scooter: string; budget: (price: string) => string; sevenSeater: string; automatic: string };
 
   // Booking form
   availabilityLoading: string;
@@ -267,6 +268,7 @@ export const uiEn: UiText = {
   filter: "Filter",
   reset: "Reset",
   moreFilters: "More filters",
+  chips: { scooter: "Scooter (gearless)", budget: (price) => `Up to ${price}/day`, sevenSeater: "7-seater", automatic: "Automatic" },
 
   availabilityLoading: "Availability is still loading. Please try again in a moment.",
   dates: "Dates",
@@ -471,6 +473,7 @@ export const uiTe: UiText = {
   filter: "ఫిల్టర్",
   reset: "రీసెట్",
   moreFilters: "మరిన్ని ఫిల్టర్లు",
+  chips: { scooter: "స్కూటర్ (గేర్‌లెస్)", budget: (price) => `రోజుకు ${price} వరకు`, sevenSeater: "7 సీట్లు", automatic: "ఆటోమేటిక్" },
 
   availabilityLoading: "అందుబాటు ఇంకా లోడ్ అవుతోంది. కొద్దిసేపటి తర్వాత మళ్లీ ప్రయత్నించండి.",
   dates: "తేదీలు",

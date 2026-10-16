@@ -9,7 +9,7 @@ import { WhatsAppButton } from "@/components/whatsapp-button";
 import { getAllTowns, getTownBySlug, getVehicleRatings, getVehiclesForTown } from "@/lib/queries";
 import { whatsappGeneralLink } from "@/lib/whatsapp";
 import { SITE_NAME } from "@/lib/constants";
-import type { VehicleType } from "@/types/database";
+import type { Vehicle, VehicleType } from "@/types/database";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { formatShortDate, formatTime, parseDateRange } from "@/lib/format";
@@ -90,7 +90,8 @@ export default async function VehiclesPage({
   const dateRange = parseDateRange(search.start_date, search.end_date);
   const ratings = await getVehicleRatings(vehicles.map((vehicle) => vehicle.id));
   // FAQ answers come from this town's real data: prices, fees and opening hours.
-  const allTownVehicles = dateRange || vehicleType || search.q ? await getVehiclesForTown(town.id) : vehicles;
+  const anyFilter = Object.values(search).some(Boolean);
+  const allTownVehicles = anyFilter ? await getVehiclesForTown(town.id) : vehicles;
   const cheapest = (type: VehicleType) => {
     const prices = allTownVehicles.filter((vehicle) => vehicle.type === type).map((vehicle) => Number(vehicle.price_per_day));
     return prices.length ? formatRupees(Math.min(...prices)) : null;
@@ -103,6 +104,25 @@ export default async function VehiclesPage({
     { q: u.faqCancelQ, a: u.cancellationBody },
     { q: u.faqHoursQ, a: u.faqHoursA(formatTime(town.opening_time, u.dateLocale), formatTime(town.closing_time, u.dateLocale)) },
   ];
+
+  // Quick filters: one tap sets a filter, a second tap clears it. A chip only
+  // shows when at least one vehicle in this town matches it.
+  const BUDGET = 400;
+  const quickFilters = [
+    { key: "transmission", value: "gearless", label: u.chips.scooter, matches: (v: Vehicle) => v.transmission === "gearless" },
+    { key: "max_price", value: String(BUDGET), label: u.chips.budget(formatRupees(BUDGET)), matches: (v: Vehicle) => Number(v.price_per_day) <= BUDGET },
+    { key: "seats", value: "7", label: u.chips.sevenSeater, matches: (v: Vehicle) => (v.seats ?? 0) >= 7 },
+    { key: "transmission", value: "automatic", label: u.chips.automatic, matches: (v: Vehicle) => v.transmission === "automatic" },
+  ]
+    .filter((chip) => allTownVehicles.some(chip.matches))
+    .map((chip) => {
+      const params = new URLSearchParams(Object.entries(search).filter((entry): entry is [string, string] => Boolean(entry[1])));
+      const active = params.get(chip.key) === chip.value;
+      if (active) params.delete(chip.key);
+      else params.set(chip.key, chip.value);
+      const query = params.toString();
+      return { ...chip, active, href: `/${townSlug}/vehicles${query ? `?${query}` : ""}` };
+    });
 
   const moreFilterCount = [search.max_price, search.seats, search.fuel, search.transmission, search.sort && search.sort !== "price_asc" ? search.sort : ""]
     .filter(Boolean).length;
@@ -124,6 +144,26 @@ export default async function VehiclesPage({
       <div className="mb-8">
         <VehicleTypeToggle townSlug={townSlug} current={vehicleType ?? "all"} locale={locale} />
       </div>
+
+      {quickFilters.length > 0 && (
+        <nav aria-label={u.filter} className="-mt-4 mb-6 flex flex-wrap gap-2">
+          {quickFilters.map((chip) => (
+            <Link
+              key={chip.label}
+              href={chip.href}
+              aria-pressed={chip.active}
+              className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-colors ${
+                chip.active
+                  ? "border-[var(--color-brand-600)] bg-[var(--color-brand-600)] text-white"
+                  : "border-hairline bg-surface-raised text-ink-soft hover:border-[var(--color-brand-500)]"
+              }`}
+            >
+              {chip.active && "✓ "}
+              {chip.label}
+            </Link>
+          ))}
+        </nav>
+      )}
 
       <Form action={`/${townSlug}/vehicles`} className="mb-8 grid grid-cols-2 gap-3 rounded-2xl border border-hairline bg-surface-raised p-4 shadow-soft lg:grid-cols-6">
         {vehicleType && <input type="hidden" name="type" value={vehicleType} />}
