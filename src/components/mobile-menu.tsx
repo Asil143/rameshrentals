@@ -14,7 +14,7 @@ export function MobileMenu({ label, children }: { label: string; children: React
 
   return (
     <details ref={ref} className="relative sm:hidden">
-      <summary className="flex h-10 cursor-pointer list-none items-center rounded-full border border-hairline bg-surface-raised px-4 text-sm font-semibold [&::-webkit-details-marker]:hidden">
+      <summary aria-label={label} className="flex h-10 cursor-pointer list-none items-center rounded-full border border-hairline bg-surface-raised px-4 text-sm font-semibold [&::-webkit-details-marker]:hidden">
         {label}
       </summary>
       <div className="absolute right-0 top-12 z-30 flex w-48 flex-col gap-1 rounded-2xl border border-hairline bg-surface-raised p-2 shadow-lift">

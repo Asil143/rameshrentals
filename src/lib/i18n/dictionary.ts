@@ -60,6 +60,9 @@ type Dictionary = {
     nextMonth: string;
     legendBooked: string;
     helperText: string;
+    loading: string;
+    retry: string;
+    loadError: string;
   };
   bookingForm: {
     startDate: string;
@@ -100,6 +103,7 @@ type Dictionary = {
     customerTab: string;
     staffTab: string;
     staffSubtitle: string;
+    customerLoginHelp: string;
     pin: string;
     pinPlaceholder: string;
     staffLogin: string;
@@ -129,6 +133,11 @@ type Dictionary = {
     questionsTitle: string;
     questionsBody: (towns: string) => string;
     chatCta: string;
+  };
+  privacy: {
+    title: string;
+    lastUpdated: string;
+    sections: { title: string; body: string }[];
   };
   bookings: {
     title: string;
@@ -226,6 +235,9 @@ const en: Dictionary = {
     nextMonth: "Next month",
     legendBooked: "Booked",
     helperText: "Tap a start date, then an end date.",
+    loading: "Checking availability…",
+    retry: "Try again",
+    loadError: "Availability could not be loaded.",
   },
   bookingForm: {
     startDate: "Start date",
@@ -267,6 +279,7 @@ const en: Dictionary = {
     customerTab: "Customer",
     staffTab: "Staff",
     staffSubtitle: "For admins and vehicle owners — log in with your number and PIN.",
+    customerLoginHelp: "Login is optional — you can browse and book without an account.",
     pin: "PIN",
     pinPlaceholder: "Your PIN",
     staffLogin: "Log in",
@@ -328,6 +341,16 @@ const en: Dictionary = {
     questionsTitle: "Still have questions?",
     questionsBody: (towns) => `We're on WhatsApp and serve ${towns}. Message us any time.`,
     chatCta: "Chat with us on WhatsApp",
+  },
+  privacy: {
+    title: "Privacy policy",
+    lastUpdated: "Last updated: September 3, 2026",
+    sections: [
+      { title: "Information we collect", body: "We collect your name, phone number, requested dates, selected vehicle, and account identifier when you request a booking or sign in." },
+      { title: "How we use it", body: "We use this information only to process rentals, contact you about a request, prevent fraud, maintain records, and comply with legal obligations. We do not sell personal information." },
+      { title: "Retention and security", body: "Booking records are retained only as long as required for operations, disputes, and applicable law. Access is restricted to authorized administrators." },
+      { title: "Your choices", body: "You may ask us on WhatsApp to access, correct, or delete your information, subject to records we must legally retain." },
+    ],
   },
   bookings: {
     title: "My Bookings",
@@ -427,6 +450,9 @@ const te: Dictionary = {
     nextMonth: "తదుపరి నెల",
     legendBooked: "బుక్ చేయబడింది",
     helperText: "ప్రారంభ తేదీని నొక్కండి, తర్వాత ముగింపు తేదీని నొక్కండి.",
+    loading: "అందుబాటును తనిఖీ చేస్తున్నాం…",
+    retry: "మళ్లీ ప్రయత్నించండి",
+    loadError: "అందుబాటు లోడ్ కాలేదు.",
   },
   bookingForm: {
     startDate: "ప్రారంభ తేదీ",
@@ -467,6 +493,7 @@ const te: Dictionary = {
     customerTab: "కస్టమర్",
     staffTab: "సిబ్బంది",
     staffSubtitle: "అడ్మిన్‌లు మరియు వాహన యజమానుల కోసం — మీ నంబర్ మరియు PIN తో లాగిన్ అవ్వండి.",
+    customerLoginHelp: "లాగిన్ ఐచ్ఛికం — ఖాతా లేకుండానే వాహనాలు చూసి బుక్ చేయవచ్చు.",
     pin: "PIN",
     pinPlaceholder: "మీ PIN",
     staffLogin: "లాగిన్",
@@ -528,6 +555,16 @@ const te: Dictionary = {
     questionsTitle: "ఇంకా ప్రశ్నలు ఉన్నాయా?",
     questionsBody: (towns) => `మేము వాట్సాప్‌లో ఉన్నాం మరియు ${towns}‌లో సేవలు అందిస్తున్నాం. ఎప్పుడైనా మమ్మల్ని సంప్రదించండి.`,
     chatCta: "వాట్సాప్‌లో మాతో చాట్ చేయండి",
+  },
+  privacy: {
+    title: "గోప్యతా విధానం",
+    lastUpdated: "చివరిగా నవీకరించిన తేదీ: సెప్టెంబర్ 3, 2026",
+    sections: [
+      { title: "మేము సేకరించే సమాచారం", body: "మీరు బుకింగ్ కోరినప్పుడు లేదా లాగిన్ అయినప్పుడు మీ పేరు, ఫోన్ నంబర్, కోరిన తేదీలు, ఎంచుకున్న వాహనం మరియు ఖాతా గుర్తింపును సేకరిస్తాం." },
+      { title: "దాన్ని ఎలా ఉపయోగిస్తాం", body: "అద్దెలను ప్రాసెస్ చేయడానికి, మీ అభ్యర్థన గురించి సంప్రదించడానికి, మోసాన్ని నిరోధించడానికి, రికార్డులను నిర్వహించడానికి మరియు చట్టపరమైన బాధ్యతలను నెరవేర్చడానికి మాత్రమే ఈ సమాచారాన్ని ఉపయోగిస్తాం. వ్యక్తిగత సమాచారాన్ని విక్రయించము." },
+      { title: "నిల్వ మరియు భద్రత", body: "ఆపరేషన్లు, వివాదాలు మరియు వర్తించే చట్టానికి అవసరమైనంతకాలం మాత్రమే బుకింగ్ రికార్డులను ఉంచుతాం. అధికారం ఉన్న నిర్వాహకులకు మాత్రమే యాక్సెస్ ఉంటుంది." },
+      { title: "మీ ఎంపికలు", body: "చట్టపరంగా తప్పనిసరిగా ఉంచాల్సిన రికార్డులకు లోబడి, మీ సమాచారాన్ని చూడటానికి, సరిచేయడానికి లేదా తొలగించడానికి వాట్సాప్‌లో మమ్మల్ని అడగవచ్చు." },
+    ],
   },
   bookings: {
     title: "నా బుకింగ్‌లు",

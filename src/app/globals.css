@@ -80,6 +80,11 @@ body {
 
 button, a, select, input { -webkit-tap-highlight-color: transparent; }
 
+:where(a, button, summary, select, input, textarea):focus-visible {
+  outline: 3px solid var(--color-accent-400);
+  outline-offset: 3px;
+}
+
 ::selection { background: var(--color-accent-400); color: #14211a; }
 
 .theme-icon-dark { display: none; }
@@ -116,6 +121,10 @@ button, a, select, input { -webkit-tap-highlight-color: transparent; }
 
 .shadow-brand {
   box-shadow: var(--shadow-brand);
+}
+
+.safe-area-bottom {
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
 }
 
 .mesh-hero {

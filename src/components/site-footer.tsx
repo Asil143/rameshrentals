@@ -10,6 +10,7 @@ export async function SiteFooter() {
   const towns = await getAllTowns();
   const t = getDictionary(locale).footer;
   const u = getDictionary(locale).ui;
+  const displayPhone = `+91 ${WHATSAPP_NUMBER.slice(2, 7)} ${WHATSAPP_NUMBER.slice(7)}`;
 
   return (
     <footer className="mt-auto border-t print:hidden border-hairline bg-surface-raised">
@@ -21,7 +22,7 @@ export async function SiteFooter() {
               <span className="font-display text-base font-bold">{SITE_NAME}</span>
             </div>
             <p className="max-w-xs text-sm leading-relaxed text-ink-soft">{t.blurb}</p>
-            <a href={`tel:+${WHATSAPP_NUMBER}`} className="mt-4 inline-block text-sm font-semibold text-[var(--color-brand-700)] dark:text-[var(--color-brand-400)]">+91 97271 78763</a>
+            <a href={`tel:+${WHATSAPP_NUMBER}`} className="mt-4 inline-block text-sm font-semibold text-[var(--color-brand-700)] dark:text-[var(--color-brand-400)]">{displayPhone}</a>
           </div>
 
           <div>

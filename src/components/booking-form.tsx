@@ -258,7 +258,7 @@ export function BookingForm({
     {/* Phone bottom bar: live total, breakup sheet, and a jump to the form */}
     <div className="fixed inset-x-0 bottom-0 z-30 border-t border-hairline bg-[var(--color-surface)]/95 shadow-[0_-8px_30px_rgba(0,0,0,.12)] backdrop-blur md:hidden">
       {showBreakup && breakdown && <div className="max-h-[50vh] overflow-y-auto px-4 pt-3">{breakdown}</div>}
-      <div className="flex items-center justify-between gap-3 px-4 py-3">
+      <div className="safe-area-bottom flex items-center justify-between gap-3 px-4 pt-3">
         {days > 0 ? (
           <div>
             <strong className="font-display text-xl">{formatRupees(grandTotal)}</strong>

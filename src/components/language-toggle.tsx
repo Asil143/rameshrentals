@@ -22,6 +22,7 @@ export function LanguageToggle({ locale }: { locale: Locale }) {
       <button
         type="button"
         disabled={isPending}
+        aria-pressed={locale === "en"}
         onClick={() => switchTo("en")}
         className={`rounded-full px-2.5 py-1 transition-colors ${
           locale === "en"
@@ -34,6 +35,7 @@ export function LanguageToggle({ locale }: { locale: Locale }) {
       <button
         type="button"
         disabled={isPending}
+        aria-pressed={locale === "te"}
         onClick={() => switchTo("te")}
         className={`rounded-full px-2.5 py-1 transition-colors ${
           locale === "te"

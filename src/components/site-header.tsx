@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { SITE_NAME } from "@/lib/constants";
+import { DEFAULT_TOWN_SLUG, SITE_NAME, WHATSAPP_NUMBER } from "@/lib/constants";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { LanguageToggle } from "@/components/language-toggle";
@@ -30,7 +30,15 @@ export async function SiteHeader() {
   const locale = await getLocale();
   const t = getDictionary(locale).header;
   const u = getDictionary(locale).ui;
+  const footer = getDictionary(locale).footer;
   const linkClass = "font-medium text-ink-soft transition-colors hover:text-[var(--color-brand-700)] dark:hover:text-[var(--color-brand-400)]";
+  const publicLinks = [
+    { href: `/${DEFAULT_TOWN_SLUG}/vehicles`, label: u.browseVehicles },
+    { href: "/booking-status", label: u.statusTitle },
+    { href: "/about", label: footer.aboutPolicies },
+    { href: "/concepts", label: u.hubLink },
+    { href: `tel:+${WHATSAPP_NUMBER}`, label: `Call +91 ${WHATSAPP_NUMBER.slice(2, 7)} ${WHATSAPP_NUMBER.slice(7)}` },
+  ];
   const accountLinks = [
     ...(isAdmin ? [{ href: "/admin", label: t.admin }] : []),
     ...(isOwner || isAdmin ? [{ href: "/owner", label: u.owner }] : []),
@@ -47,6 +55,10 @@ export async function SiteHeader() {
         <nav className="flex items-center gap-2 text-sm sm:gap-4">
           <LanguageToggle locale={locale} />
           <ThemeToggle />
+          <span className="hidden items-center gap-4 lg:flex">
+            <Link href={publicLinks[0].href} className={linkClass}>{publicLinks[0].label}</Link>
+            <Link href={publicLinks[2].href} className={linkClass}>{publicLinks[2].label}</Link>
+          </span>
           <Link
             href="/booking-status"
             className="hidden font-medium text-ink-soft transition-colors hover:text-[var(--color-brand-700)] sm:inline dark:hover:text-[var(--color-brand-400)]"
@@ -64,7 +76,7 @@ export async function SiteHeader() {
                 <SignOutButton locale={locale} />
               </span>
               <MobileMenu label={u.menu}>
-                {[{ href: "/booking-status", label: u.statusTitle }, ...accountLinks].map((item) => (
+                {[...publicLinks, ...accountLinks].map((item) => (
                   <Link key={item.href} href={item.href} className="rounded-xl px-3 py-2.5 font-medium hover:bg-[var(--color-border)]">
                     {item.label}
                   </Link>
@@ -75,12 +87,24 @@ export async function SiteHeader() {
               </MobileMenu>
             </>
           ) : (
-            <Link
-              href="/login"
-              className="rounded-full bg-gradient-to-br from-[var(--color-brand-500)] to-[var(--color-brand-700)] px-4 py-2 text-sm font-semibold text-white shadow-soft transition-all hover:shadow-brand hover:brightness-105 active:scale-[0.97]"
-            >
-              {t.login}
-            </Link>
+            <>
+              <MobileMenu label={u.menu}>
+                {publicLinks.map((item) => (
+                  <Link key={item.href} href={item.href} className="rounded-xl px-3 py-2.5 font-medium hover:bg-[var(--color-border)]">
+                    {item.label}
+                  </Link>
+                ))}
+                <div className="border-t border-hairline px-3 pb-1 pt-2.5">
+                  <Link href="/login" className="block font-semibold text-[var(--color-brand-700)] dark:text-[var(--color-brand-400)]">{t.login}</Link>
+                </div>
+              </MobileMenu>
+              <Link
+                href="/login"
+                className="rounded-full bg-gradient-to-br from-[var(--color-brand-500)] to-[var(--color-brand-700)] px-4 py-2 text-sm font-semibold text-white shadow-soft transition-all hover:shadow-brand hover:brightness-105 active:scale-[0.97]"
+              >
+                {t.login}
+              </Link>
+            </>
           )}
         </nav>
       </div>

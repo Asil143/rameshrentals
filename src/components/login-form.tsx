@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getDictionary, type Locale } from "@/lib/i18n/dictionary";
 import { staffLoginEmail } from "@/lib/staff-login";
@@ -11,6 +12,7 @@ const inputClass =
 
 export function LoginForm({ locale }: { locale: Locale }) {
   const t = getDictionary(locale).login;
+  const u = getDictionary(locale).ui;
   const router = useRouter();
   const supabase = createClient();
 
@@ -110,16 +112,18 @@ export function LoginForm({ locale }: { locale: Locale }) {
         </span>
         <h1 className="font-display text-2xl font-bold">{t.title}</h1>
         <p className="mb-5 mt-1 text-sm text-ink-soft">{mode === "staff" ? t.staffSubtitle : t.subtitle}</p>
+        {mode === "customer" && <p className="-mt-2 mb-5 text-xs text-ink-faint">{t.customerLoginHelp}</p>}
 
-        <div role="tablist" className="mb-6 flex gap-1 rounded-full border border-hairline bg-[var(--color-surface)] p-1">
-          <button type="button" role="tab" aria-selected={mode === "customer"} onClick={() => switchMode("customer")} className={tabClass(mode === "customer")}>
+        <div role="tablist" aria-label={t.title} className="mb-6 flex gap-1 rounded-full border border-hairline bg-[var(--color-surface)] p-1">
+          <button id="customer-login-tab" type="button" role="tab" aria-selected={mode === "customer"} aria-controls="login-panel" tabIndex={mode === "customer" ? 0 : -1} onClick={() => switchMode("customer")} className={tabClass(mode === "customer")}>
             {t.customerTab}
           </button>
-          <button type="button" role="tab" aria-selected={mode === "staff"} onClick={() => switchMode("staff")} className={tabClass(mode === "staff")}>
+          <button id="staff-login-tab" type="button" role="tab" aria-selected={mode === "staff"} aria-controls="login-panel" tabIndex={mode === "staff" ? 0 : -1} onClick={() => switchMode("staff")} className={tabClass(mode === "staff")}>
             {t.staffTab}
           </button>
         </div>
 
+        <div id="login-panel" role="tabpanel" aria-labelledby={mode === "staff" ? "staff-login-tab" : "customer-login-tab"}>
         {mode === "staff" ? (
           <form onSubmit={staffSignIn} className="flex flex-col gap-4">
             <label className="flex flex-col gap-1.5 text-sm font-medium">
@@ -193,6 +197,9 @@ export function LoginForm({ locale }: { locale: Locale }) {
             >
               {isLoading ? t.sendingCode : cooldown > 0 ? `Try again in ${cooldown}s` : t.sendCode}
             </button>
+            <Link href="/addanki/vehicles" className="text-center text-sm font-semibold text-[var(--color-brand-700)] hover:underline dark:text-[var(--color-brand-400)]">
+              {u.browseVehicles}
+            </Link>
           </form>
         ) : (
           <form onSubmit={verifyOtp} className="flex flex-col gap-4">
@@ -225,6 +232,7 @@ export function LoginForm({ locale }: { locale: Locale }) {
             </button>
           </form>
         )}
+        </div>
       </div>
     </div>
   );

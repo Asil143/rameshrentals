@@ -134,6 +134,20 @@ export default async function VehicleDetailPage({
           <span className="text-ink-faint">{t.perDay}</span>
         </div>
 
+        <div className="flex flex-wrap items-center gap-2">
+          <a href="#booking" className="rounded-full bg-[var(--color-accent-400)] px-5 py-2.5 text-sm font-semibold text-[var(--color-brand-900)] shadow-soft transition hover:bg-[var(--color-accent-300)]">
+            {u.checkAvailability}
+          </a>
+          <span className="rounded-full bg-[var(--color-brand-500)]/10 px-3 py-1.5 text-xs font-semibold text-[var(--color-brand-700)] dark:text-[var(--color-brand-400)]">
+            {u.deposit(formatRupees(vehicle.type === "bike" ? 1000 : 5000))}
+          </span>
+          <span className="rounded-full bg-[var(--color-brand-500)]/10 px-3 py-1.5 text-xs font-semibold text-[var(--color-brand-700)] dark:text-[var(--color-brand-400)]">
+            {u.cancellationTitle}
+          </span>
+        </div>
+        <p className="text-xs text-ink-soft">{u.payAtPickupTotal}</p>
+        {vehicle.last_inspected_at && <p className="text-xs font-medium text-[var(--color-brand-700)] dark:text-[var(--color-brand-400)]">✓ {u.checkedOn(formatLongDate(vehicle.last_inspected_at, u.dateLocale))}</p>}
+
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">{u.vehicle}</span><strong>{u.vehicleType[vehicle.type]}</strong></div>
           <div className="rounded-xl border border-hairline bg-surface-raised p-3"><span className="block text-xs text-ink-faint">{u.modelYear}</span><strong>{vehicle.year}</strong></div>

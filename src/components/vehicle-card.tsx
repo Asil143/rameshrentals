@@ -49,7 +49,7 @@ export function VehicleCard({
         ) : (
           <span aria-hidden>{PLACEHOLDER_IMAGE[vehicle.type]}</span>
         )}
-        <span className="absolute left-2.5 top-2.5 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur-sm">
+        <span className="absolute left-2.5 top-2.5 rounded-full bg-black/60 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white backdrop-blur-sm">
           {u.vehicleType[vehicle.type]}
         </span>
         {rating && (
@@ -60,7 +60,7 @@ export function VehicleCard({
         <span className="absolute right-2.5 top-2.5 hidden rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold sm:inline text-[var(--color-brand-800)]">{u.available}</span>
       </div>
       <div className="flex flex-1 flex-col gap-0.5 p-3 sm:gap-1 sm:p-4">
-        <h3 className="font-display text-sm font-semibold leading-snug sm:text-base">
+        <h3 className="min-h-10 line-clamp-2 font-display text-sm font-semibold leading-snug sm:min-h-0 sm:text-base">
           {vehicle.make} {vehicle.model}
         </h3>
         <p className="text-xs text-ink-faint sm:text-sm">{vehicle.year}</p>

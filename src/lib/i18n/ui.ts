@@ -224,6 +224,9 @@ export type UiText = {
   notFoundTitle: string;
   notFoundBody: string;
   backHome: string;
+  errorTitle: string;
+  errorBody: string;
+  tryAgain: string;
 };
 
 export const uiEn: UiText = {
@@ -444,6 +447,9 @@ export const uiEn: UiText = {
   notFoundTitle: "Page not found",
   notFoundBody: "The vehicle or page may no longer be available.",
   backHome: "Back home",
+  errorTitle: "Something went wrong",
+  errorBody: "We couldn’t load this page. Please try again.",
+  tryAgain: "Try again",
 };
 
 export const uiTe: UiText = {
@@ -664,4 +670,7 @@ export const uiTe: UiText = {
   notFoundTitle: "పేజీ కనబడలేదు",
   notFoundBody: "ఈ వాహనం లేదా పేజీ ఇప్పుడు అందుబాటులో లేకపోవచ్చు.",
   backHome: "హోమ్‌కు వెళ్లండి",
+  errorTitle: "ఏదో తప్పు జరిగింది",
+  errorBody: "ఈ పేజీని లోడ్ చేయలేకపోయాం. దయచేసి మళ్లీ ప్రయత్నించండి.",
+  tryAgain: "మళ్లీ ప్రయత్నించండి",
 };

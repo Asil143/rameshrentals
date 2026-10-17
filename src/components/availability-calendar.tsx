@@ -42,6 +42,7 @@ export function AvailabilityCalendar({
   const [bookedDays, setBookedDays] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const [viewMonth, setViewMonth] = useState(() => {
     const base = startDate ? parseDateStr(startDate) : new Date();
     return new Date(base.getFullYear(), base.getMonth(), 1);
@@ -82,7 +83,7 @@ export function AvailabilityCalendar({
     return () => {
       cancelled = true;
     };
-  }, [vehicleId, onAvailabilityChange]);
+  }, [vehicleId, onAvailabilityChange, retryCount]);
 
   const today = startOfDay(new Date());
 
@@ -153,7 +154,7 @@ export function AvailabilityCalendar({
   const end = endDate ? parseDateStr(endDate) : null;
 
   return (
-    <div className="rounded-xl border border-hairline bg-[var(--color-surface)] p-3.5">
+    <div className="rounded-xl border border-hairline bg-[var(--color-surface)] p-3.5" aria-busy={loading}>
       <div className="mb-3 flex items-center justify-between">
         <button
           type="button"
@@ -218,10 +219,18 @@ export function AvailabilityCalendar({
         })}
       </div>
 
-      {loadError && (
-        <p role="alert" className="mt-3 text-xs text-red-600">
-          Availability could not be loaded. Refresh the page to try again.
+      {loading && (
+        <p role="status" aria-live="polite" className="mt-3 flex items-center gap-2 text-xs font-medium text-[var(--color-brand-700)] dark:text-[var(--color-brand-400)]">
+          <span className="h-3 w-3 animate-spin rounded-full border-2 border-[var(--color-brand-500)]/25 border-t-[var(--color-brand-600)]" aria-hidden />
+          {t.loading}
         </p>
+      )}
+
+      {loadError && (
+        <div role="alert" className="mt-3 flex items-center justify-between gap-3 text-xs text-red-600">
+          <span>{t.loadError}</span>
+          <button type="button" onClick={() => setRetryCount((count) => count + 1)} className="shrink-0 font-semibold underline">{t.retry}</button>
+        </div>
       )}
 
       <div className="mt-3 flex items-center justify-between gap-2 border-t border-hairline pt-2.5 text-[11px] text-ink-faint">
